@@ -1,0 +1,322 @@
+[
+{
+    "name": "Авиабилеты",
+    "url": "avia.yandex.ru",
+    "icon": "avia.png"
+},
+{
+    "name": "Авто.ру",
+    "url": "m.auto.ru",
+    "icon": "auto.ru.png"
+},
+{
+    "name": "АОН",
+    "url": "yandex.ru",
+    "icon": "aon.png"
+},
+{
+    "name": "Аура",
+    "url": "yandex.ru/aura",
+    "icon": "aura.png"
+},
+{
+    "name": "Афиша",
+    "url": "afisha.yandex.ru",
+    "icon": "afisha.png"
+},
+{
+    "name": "Беру",
+    "url": "m.beru.ru",
+    "icon": "beru.png"
+},
+{
+    "name": "Деньги",
+    "url": "yandex.ru",
+    "icon": "money.png"
+},
+{
+    "name": "Диск",
+    "url": "disk.yandex.ru",
+    "icon": "disk.png"
+},
+{
+    "name": "Драйв",
+    "url": "yandex.ru/drive",
+    "icon": "drive.png"
+},
+{
+    "name": "Еда",
+    "url": "eda.yandex",
+    "icon": "eda.png"
+},
+{
+    "name": "Едадил",
+    "url": "edadeal.ru",
+    "icon": "edadeal.png"
+},
+{
+    "name": "Здоровье",
+    "url": "health.yandex.ru/searchapp",
+    "icon": "health.png"
+},
+{
+    "name": "Зеркало",
+    "url": "yandex.ru/mirror",
+    "icon": "mirror.png"
+},
+{
+    "name": "Игры",
+    "url": "yandex.ru/games",
+    "icon": "games.png"
+},
+{
+    "name": "Интернетометр",
+    "url": "yandex.ru/internet",
+    "icon": "internetometr.png"
+},
+{
+    "name": "Календарь",
+    "url": "calendar.yandex.ru",
+    "icon": "calendar.png"
+},
+{
+    "name": "Картинки",
+    "url": "yandex.ru",
+    "icon": "images.png"
+},
+{
+    "name": "Карты",
+    "url": "yandex.ru/maps",
+    "icon": "maps.png"
+},
+{
+    "name": "Кинопоиск",
+    "url": "kinopoisk.ru",
+    "icon": "kinopoisk.png"
+},
+{
+    "name": "Коллекции",
+    "url": "yandex.ru/collections",
+    "icon": "collections.png"
+},
+{
+    "name": "Маркет",
+    "url": "m.market.yandex.ru",
+    "icon": "market.png"
+},
+{
+    "name": "Метрика",
+    "url": "yandex.ru",
+    "icon": "appmetrica.png"
+},
+{
+    "name": "Метро",
+    "url": "yandex.ru/metro",
+    "icon": "metro_msk.png"
+},
+{
+    "name": "Музыка",
+    "url": "music.yandex.ru",
+    "icon": "music.png"
+},
+{
+    "name": "Навигатор",
+    "url": "yandex.ru/maps/213/moscow/?ll=37.587765,55.736176&mode=routes&rtext=&rtt=auto&z=14",
+    "icon": "navi.png"
+},
+{
+    "name": "Почта",
+    "url": "mail.yandex.ru",
+    "icon": "mail.png"
+},
+{
+    "name": "Работа",
+    "url": "m.rabota.yandex.ru",
+    "icon": "jobs.png"
+},
+{
+    "name": "Район",
+    "url": "yandex.ru/local",
+    "icon": "local.png"
+},
+{
+    "name": "Чаты",
+    "url": "yandex.ru",
+    "icon": "chats.png"
+},
+{
+    "name": "Эфир",
+    "url": "yandex.ru/efir",
+    "icon": "efir.png"
+},
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+    "name": "Новости",
+    "url": "news.yandex.ru",
+    "icon": "news.png"
+},
+{
+    "name": "Автозагрузка фото",
+    "url": "yandex.ru",
+    "icon": "photos.png"
+},
+{
+    "name": "Плюс",
+    "url": "plus.yandex.ru",
+    "icon": "plus.png"
+},
+{
+    "name": "Практикум",
+    "url": "praktikum.yandex.ru",
+    "icon": "practicum.png"
+},
+{
+    "name": "Расписания",
+    "url": "t.rasp.yandex.ru",
+    "icon": "raspisania.png"
+},
+
+{
+    "name": "Устройства",
+    "url": "yandex.ru",
+    "icon": "smart_home.png"
+},
+{
+    "name": "Спорт",
+    "url": "yandex.ru/sport",
+    "icon": "sport.png"
+},
+{
+    "name": "Такси",
+    "url": "taxi.yandex.ru",
+    "icon": "taxi.png"
+},
+{
+    "name": "Время",
+    "url": "yandex.ru/time",
+    "icon": "time.png"
+},
+{
+    "name": "Толока",
+    "url": "toloka.yandex.ru",
+    "icon": "toloka.png"
+},
+{
+    "name": "Переводчик",
+    "url": "translate.yandex.ru",
+    "icon": "translate_black.png"
+},
+{
+    "name": "Транспорт",
+    "url": "yandex.ru",
+    "icon": "transport.png"
+},
+{
+    "name": "Путешествия",
+    "url": "travel.yandex.ru",
+    "icon": "travel.png"
+},
+{
+    "name": "Репетитор",
+    "url": "yandex.ru/tutor",
+    "icon": "tutor.png"
+},
+{
+    "name": "Телепрограмма",
+    "url": "tv.yandex.ru",
+    "icon": "tvonline.png"
+},
+{
+    "name": "Отзывы",
+    "url": "yandex.ru/ugcpub/cabinet",
+    "icon": "ugc.png"
+},
+{
+    "name": "Услуги",
+    "url": "yandex.ry/uslugi",
+    "icon": "uslugi.png"
+},
+{
+    "name": "Видео",
+    "url": "yandex.ru/video",
+    "icon": "video.png"
+},
+{
+    "name": "Погода",
+    "url": "yandex.ru/pogoda",
+    "icon": "weather.png"
+},
+{
+    "name": "Дзен",
+    "url": "zen.yandex.ru",
+    "icon": "zen.png"
+},
+{
+    "name": "Знатоки",
+    "url": "yandex.ru/znatoki",
+    "icon": "znatoki.png"
+},
+{
+    "name": "Шеф",
+    "url": "chef.yandex.ru",
+    "icon": "sheff.png"
+},
+
+
+
+
+
+
+
+{
+    "name": "VK",
+    "url": "vk.com",
+    "icon": "vk.site.png",
+    "color": "#5B7AA8"
+},
+{
+    "name": "OK",
+    "url": "ok.ru",
+    "icon": "ok.site.png",
+    "color": "#F4731C"
+},
+{
+    "name": "Youtube",
+    "url": "youtube.com",
+    "icon": "youtube.site.png",
+    "color": "#EA0C00"
+},
+{
+    "name": "Яндекс",
+    "url": "yandex.ru",
+    "icon": "yandex.site.png",
+    "color": "#FF3333"
+}
+
+]
