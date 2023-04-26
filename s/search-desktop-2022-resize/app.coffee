@@ -35,6 +35,10 @@ screen = new Layer
 	backgroundColor: "white"
 
 
+{ Preview } = require "PreviewComponent"
+# new Preview { view: screen, forceDesktop: true }
+
+
 
 updateScreen = () ->
 	update_columns()

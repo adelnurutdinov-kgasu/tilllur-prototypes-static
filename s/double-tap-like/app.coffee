@@ -70,9 +70,14 @@ heartButton.onTap ->
 
 screenView.onDoubleTap ->
 	isLiked = true
-	heartBig.stateSwitch("start")
 	heartButton.stateSwitch("shown")
-	heartBig.animate("shown", curve: Spring(damping: 0.8), time: 0.4)
+
+	heartBig.stateSwitch("start")
+	# heartBig.animate("shown", curve: Spring(damping: 0.8), time: 0.4)
+	# heartBig.animate("shown", curve: Bezier(.15,.87,.63,1.22), time: 0.4)
+	heartBig.animate("shown", curve: Spring(tension: 450, friction: 25))
+
+
 	Utils.delay 1, ->
 		heartBig.animate("hidden", curve: Bezier.linear, time: 0.2)
 

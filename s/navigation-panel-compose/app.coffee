@@ -11,7 +11,7 @@ figmaView = new Layer
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: screen, borderRadius: 16 }
+
 
 
 
@@ -88,6 +88,7 @@ bottomSection.stateSwitch("base")
 
 
 
+# new Preview { view: figmaView }
 new Preview { view: figmaView }
 
 # Names

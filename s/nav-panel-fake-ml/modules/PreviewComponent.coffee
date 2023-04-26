@@ -5,12 +5,11 @@ Framer.Extras.Hints.disable()
 # {PreviewClass1} = require "PreviewClass1"
 # {PreviewClass4} = require "PreviewClass4"
 # {PreviewClass5} = require "PreviewClass5"
-{PreviewClass6} = require "PreviewClass6"
+{TreeLayerView} = require "TreeLayerView"
 
 # print Preview
 
-
-class FixPreviewExport extends PreviewClass6
+class FixPreviewExport extends TreeLayerView
 class exports.Preview extends FixPreviewExport
 
 
@@ -36,15 +35,10 @@ window.addEventListener("animateNormal", receiveMessageNormal, false);
 window.addEventListener("animateFill", receiveMessage, false);
 `
 
-
-
-
 # preview.addSection("Section Title", [
 # 	{ title: "Title1", handler: handler1 },
 # 	{ title: "Title2", handler: handler2 },
 # ])
-
-
 
 
 
