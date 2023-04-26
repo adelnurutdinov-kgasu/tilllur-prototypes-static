@@ -55,14 +55,14 @@ videoURLArray = [
 		video: "images/video/rock.mp4",
 		prompt: "images/prompt06.png",
 	},
-	
-	
-
-	
-	
-	
-	
-	
+	{ 
+		video: "images/video/serf.mp4",
+		prompt: "images/prompt07.png",
+	},
+	{ 
+		video: "images/video/clouds.mp4",
+		prompt: "images/prompt08.png",
+	},	
 ]
 
 videoClip = new Layer
@@ -75,16 +75,20 @@ videoClip = new Layer
 	clip: true
 	backgroundColor: null
 
+
+
 videoView = new VideoLayer
 	parent: videoClip
 	width: 363
 	height: 363
 	video: videoURLArray[0].video
 	backgroundColor: "white"
-	# scale: 1.7
 
+videoView.player.mute = true
 videoView.player.loop = true
 videoView.player.play()
+
+
 
 
 
@@ -119,6 +123,9 @@ showVideoN2 = () -> changeVideo(videoURLArray[3])
 showVideoM1 = () -> changeVideo(videoURLArray[4])
 showVideoM2 = () -> changeVideo(videoURLArray[5])
 
+showVideoL1 = () -> changeVideo(videoURLArray[6])
+showVideoL2 = () -> changeVideo(videoURLArray[7])
+
 preview.addSection("Runaway:", [
   { title: "Dog", handler: showVideoR1 },
   { title: "Person", handler: showVideoR2 },
@@ -129,7 +136,12 @@ preview.addSection("NVidia:", [
   { title: "Fireworks", handler: showVideoN2 },
 ]);
 
-preview.addSection("More:", [
+preview.addSection("Custom:", [
   { title: "Rabbit", handler: showVideoM1 },
   { title: "Rock", handler: showVideoM2 },
+]);
+
+preview.addSection("Movable Images:", [
+  { title: "Wave", handler: showVideoL1 },
+  { title: "Clouds", handler: showVideoL2 },
 ]);
