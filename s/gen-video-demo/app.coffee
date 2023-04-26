@@ -84,7 +84,7 @@ videoView = new VideoLayer
 	video: videoURLArray[0].video
 	backgroundColor: "white"
 
-videoView.player.mute = true
+videoView.player.muted = true
 videoView.player.loop = true
 videoView.player.play()
 
