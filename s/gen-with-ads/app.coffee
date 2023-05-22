@@ -114,14 +114,14 @@ buttonGenerate = new Layer
 	width: 200
 	height: panel.height
 	x: Align.right
-	backgroundColor: "red"
+	backgroundColor: null
 	opacity: 0.5
 
 buttonClear = new Layer
 	parent: panel
 	width: 100
 	height: panel.height
-	backgroundColor: "red"
+	backgroundColor: null
 	opacity: 0.5
 
 
@@ -173,7 +173,7 @@ videoClip = new Layer
 	y: Align.top(228)
 	borderRadius: 12
 	clip: true
-	backgroundColor: "red"
+	backgroundColor: null
 
 videoClip.states =
 	"shown": { opacity: 1.0 }
