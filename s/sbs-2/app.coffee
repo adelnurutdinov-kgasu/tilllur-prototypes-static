@@ -108,18 +108,14 @@ getState = (stateKey = "json", defaultResult = "images/test2.json") ->
 		valuePart = keyValuePair[1]
 
 		if keyPart == stateKey
-			# print valuePart
 			return valuePart
 	
 	return defaultResult
 
-# url = "" + getState()
+
+# ?json=https://jing.yandex-team.ru/files/tilllur/test1.json
 
 imageData = JSON.parse Utils.domLoadDataSync getState()
-# for image in imageData.images
-	# print image["prompt"]
-
-
 
 screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 400, backgroundColor: "null" }
 
@@ -129,6 +125,8 @@ preview = new Preview { view: screen, forceDesktop: true }
 
 
 
+
+showResults = false
 
 pages = new PageComponent
 	parent: screen
@@ -140,12 +138,19 @@ pages = new PageComponent
 	backgroundColor: null
 
 pages.on "change:currentPage", ->
-	try
-		scopePageText.text = "Сравнение #{pages.currentPage.custom.index + 1} / #{IMAGE_NUM}"
-		scorePromptText.text = pages.currentPage.custom.title
 
-	catch
-		scopePageText.text = "Результаты"
+	scopePageText.text = "Сравнение #{pages.currentPage.custom.index + 1} / #{IMAGE_NUM}"
+	scorePromptText.text = pages.currentPage.custom.title
+	
+	currentIndex = -1
+	for item, i in pages.content.children
+		if item == pages.currentPage
+			currentIndex = i
+
+	if currentIndex != -1
+		if currentIndex == pages.content.children.length - 1
+			showResults = true
+			composeResults()
 
 	
 
@@ -369,8 +374,6 @@ Events.wrap(window).addEventListener "keydown", (event) ->
 
 
 
-
-
 resultsButton = new Text
 	parent: screen
 	text: "#{imageData["name-1"]} — X %\n#{imageData["name-2"]} – Y %"
@@ -380,6 +383,10 @@ resultsButton = new Text
 	width: 400
 	x: Align.right
 	y: Align.top(80)
+
+resultsButton.onTap ->
+	showResults = !showResults
+	composeResults()
 
 
 composeResults = () ->
@@ -394,8 +401,11 @@ composeResults = () ->
 
 	numb = allYandex / (allYandex + allOther)
 	value = (numb * 100).toFixed()
-	resultsButton.text = "#{imageData["name-1"]} vs #{imageData["name-2"]}	 #{(numb * 100).toFixed()} %"
-	resultsButton.text = "#{imageData["name-1"]} — #{value} %\n#{imageData["name-2"]} – #{100 - value} %"
+	
+	if showResults
+		resultsButton.text = "#{imageData["name-1"]} — #{value} %\n#{imageData["name-2"]} – #{100 - value} %"
+	else
+		resultsButton.text = "#{imageData["name-1"]} — X %\n#{imageData["name-2"]} – Y %"
 
 
 
