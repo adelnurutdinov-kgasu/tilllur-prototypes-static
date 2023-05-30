@@ -322,3 +322,5 @@ message.onTap ->
 prompt.onTap ->
 	if stateGuard.states.current.name == "end"
 		stateGuard.stateSwitch("start")
+
+

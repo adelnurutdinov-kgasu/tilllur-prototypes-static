@@ -1,0 +1,16 @@
+{
+  "name-1": "1",
+  "name-2": "2",
+  "images": [
+    {
+      "prompt": "огромное незамкнутое лиминальное пространство",
+      "image-1": "https://masterpiecer-images.s3.yandex.net/5fcda56b7e849f3:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/5fcda56b7e849f3:upscaled"
+    },
+    {
+      "prompt": "небесный город в китайском стиле в облаках из белого мрамора, нефрит",
+      "image-1": "https://masterpiecer-images.s3.yandex.net/5fcda5d4e721b53:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/5fcda5d4e721b53:upscaled"
+    }
+  ]
+}
