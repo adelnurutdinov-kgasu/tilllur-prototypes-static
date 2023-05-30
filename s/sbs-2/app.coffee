@@ -114,8 +114,11 @@ getState = (stateKey = "json", defaultResult = "images/test2.json") ->
 
 
 # ?json=https://jing.yandex-team.ru/files/tilllur/test1.json
+# https://dl.dropboxusercontent.com/s/k5gjg26iptld6nd/k21tgbot_vs_v5.json?dl=0
+# https://adelnurutdinov-kgasu.github.io/tilllur-prototypes-static/s/sbs-2/index.html?json=https://dl.dropboxusercontent.com/s/k5gjg26iptld6nd/k21tgbot_vs_v5.json?dl=0
 
-imageData = JSON.parse Utils.domLoadDataSync getState()
+jsonURL = getState()
+imageData = JSON.parse Utils.domLoadDataSync jsonURL
 
 screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 400, backgroundColor: "null" }
 
@@ -255,7 +258,6 @@ scorePromptText = new Text
 	fontSize: 36
 	color: "white"
 
-	
 
 
 
@@ -373,6 +375,11 @@ Events.wrap(window).addEventListener "keydown", (event) ->
 
 
 
+saveButton = new TextButton
+	parent: screen
+	text: "Save"
+	x: Align.right
+	y: Align.top(80)
 
 resultsButton = new Text
 	parent: screen
@@ -380,8 +387,8 @@ resultsButton = new Text
 	textAlign: "right"
 	fontSize: 32
 	height: 200
-	width: 400
-	x: Align.right
+	width: 800
+	x: Align.right(-saveButton.width - 48)
 	y: Align.top(80)
 
 resultsButton.onTap ->
@@ -458,4 +465,62 @@ composeResults = () ->
 
 
 
+
+
+
+
+
+saveResults = () ->
+	output = ""
+
+	output += "{\n"
+	output += "\t\"name\": \"#{jsonURL}\",\n"
+
+	allYandex = 0.0
+	allOther = 0.0
+
+	for page in pages.content.children
+		if page.custom.score.yandex != -1 and page.custom.score.other != -1
+			allYandex = allYandex + page.custom.score.yandex
+			allOther = allOther + page.custom.score.other
+	
+	output += "\t\"sum-1\": #{allYandex},\n"
+	output += "\t\"sum-2\": #{allOther},\n"
+	output += "\t\"images\": [\n"
+	
+	for page, i in pages.content.children
+		output += "\t\t{\n"
+
+		output += "\t\t\t\"prompt\": \"#{page.custom.title}\",\n"
+		output += "\t\t\t\"score-1\": \"#{page.custom.score.yandex}\",\n"
+		output += "\t\t\t\"score-2\": \"#{page.custom.score.other}\",\n"
+
+
+		if i == pages.content.children.length - 1 then output += "\t\t}\n"
+		else output += "\t\t},\n"
+
+	output += "\t]\n"
+	output += "}\n"
+
+	download(output, "result_#{(new Date().toJSON())}.json", "text/plain");
+
+
+`function download(content, fileName, contentType) {
+    var a = document.createElement("a");
+    var file = new Blob([content], {type: contentType});
+    a.href = URL.createObjectURL(file);
+    a.download = fileName;
+    a.click();
+}
+`
+
+
+# `function test(str) {
+#     alert(str)
+# }
+# `
+# test("hello")
+
+
+saveButton.handler = saveResults
 
