@@ -1,11 +1,6 @@
 
 
-Canvas.backgroundColor = "222"
 
-
-Framer.Defaults.Animation =
-	curve: Spring(damping: 1)
-	time: 0.5
 
 { Preview } = require "PreviewComponent"
 

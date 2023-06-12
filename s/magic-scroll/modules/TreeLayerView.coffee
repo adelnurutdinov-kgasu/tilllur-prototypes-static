@@ -1,9 +1,9 @@
 
 
-{SectionView} = require "SectionView"
+# {SectionView} = require "SectionView"
+# class exports.TreeLayerView extends SectionView
 
-
-class exports.TreeLayerView extends SectionView
+class exports.TreeLayerView extends Layer
 	constructor: (@options={}) ->
 
 		treeViewLayer = new ScrollComponent
