@@ -123,7 +123,7 @@ imageData = JSON.parse Utils.domLoadDataSync jsonURL
 screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 400, backgroundColor: "null" }
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: screen, forceDesktop: true }
+preview = new Preview { view: screen, forceDesktop: true, config: false }
 
 
 

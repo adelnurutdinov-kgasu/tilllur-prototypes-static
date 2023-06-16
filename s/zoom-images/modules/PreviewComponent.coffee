@@ -41,7 +41,7 @@ class FixPreviewExport extends Layer
 			currentState: "fill" # fill / normal
 
 			showButton: true # deprecated
-			config: true
+			config: false
 			showLogo: true
 			forceDesktop: false
 
