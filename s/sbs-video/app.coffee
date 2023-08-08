@@ -175,7 +175,7 @@ getState = (stateKey = "json", defaultResult = "images/video-test.json") ->
 jsonURL = getState()
 imageData = JSON.parse Utils.domLoadDataSync jsonURL
 
-print imageData.images[0]
+# print imageData.images[0]
 
 screen = new Layer { width: 1024 * 3 + 20, height: 1024 + 400, backgroundColor: "null" }
 
@@ -628,3 +628,14 @@ saveResults = () ->
 
 saveButton.handler = saveResults
 
+Utils.delay 1, ->
+	if pages.currentPage == pages.content.children[0]
+		item.play() for item in pages.content.children[0].children
+
+Utils.delay 3, ->
+	if pages.currentPage == pages.content.children[0]
+		item.play() for item in pages.content.children[0].children
+
+Utils.delay 5, ->
+	if pages.currentPage == pages.content.children[0]
+		item.play() for item in pages.content.children[0].children
