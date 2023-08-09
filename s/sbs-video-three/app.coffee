@@ -1,7 +1,5 @@
 
 document.body.style.cursor = "auto"
-shouldShuffle = true
-
 
 
 shuffle = (source) ->
@@ -11,7 +9,7 @@ shuffle = (source) ->
 		[source[index], source[randomIndex]] = [source[randomIndex], source[index]]
 	source
 
-
+# fontAveria = "Raleway"
 
 class Text extends TextLayer
 	constructor: (@options={}) ->
@@ -120,11 +118,23 @@ class VideoButton extends Text
 			parent: @
 			width: @width
 			height: @height
-			backgroundColor: "333"
+			backgroundColor: "pink"
 		
 		localLayer.player.autoplay = false
 		localLayer.player.muted = true
 		localLayer.player.loop = true
+		
+		# @videoLayer = localLayer
+	
+	# @define 'videoLayer',
+	# 	get: -> @options.videoLayer
+	# 	set: (value) ->
+	# 		print value
+	# 		print "????"
+	# 		@options.videoLayer.video = value
+
+	# print: =>
+		# print @videoLayer.video
 	
 	setVideo: (videoURL) =>
 		@children[0].video = videoURL
@@ -135,17 +145,13 @@ class VideoButton extends Text
 	pause: =>
 		@children[0].player.pause()
 	
-	restart: =>
-		@children[0].player.currentTime = 0
-		@children[0].player.play()
 
 
 
 
+shouldShuffle = true
 
-
-
-getState = (stateKey = "json", defaultResult = "images/video-github.json") ->
+getState = (stateKey = "json", defaultResult = "images/video-test.json") ->
 	result = defaultResult
 
 	for item in location.search[1..].split('&')
@@ -153,13 +159,14 @@ getState = (stateKey = "json", defaultResult = "images/video-github.json") ->
 		keyPart = keyValuePair[0]
 		valuePart = keyValuePair[1]
 
-		# if keyPart == "shuffle"
-		# 	shouldShuffle = false
+		if keyPart == "shuffle"
+			shouldShuffle = false
 
 		if keyPart == stateKey
 			return valuePart
 	
 	return defaultResult
+
 
 # ?json=https://jing.yandex-team.ru/files/tilllur/test1.json
 # https://dl.dropboxusercontent.com/s/k5gjg26iptld6nd/k21tgbot_vs_v5.json?dl=0
@@ -168,7 +175,9 @@ getState = (stateKey = "json", defaultResult = "images/video-github.json") ->
 jsonURL = getState()
 imageData = JSON.parse Utils.domLoadDataSync jsonURL
 
-screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 400, backgroundColor: "null" }
+print imageData.images[0]
+
+screen = new Layer { width: 1024 * 3 + 20, height: 1024 + 400, backgroundColor: "null" }
 
 { Preview } = require "PreviewComponent"
 preview = new Preview { view: screen, forceDesktop: true, config: false }
@@ -203,69 +212,26 @@ pages.on "change:currentPage", ->
 			showResults = true
 			composeResults()
 	
-	if currentIndex > -1
-		updateMasterPage(imageData.images[currentIndex])
+	for localPage, i in pages.content.children
+		if i == currentIndex
+			for videoButton, j in localPage.children
+				videoButton.play()
+		else
+			for videoButton, j in localPage.children
+				videoButton.pause()
+
 	
 
+positionTuple = [0, 1024+10, (1024+10)*2]
 
-	
-
-masterPage = new Layer
-	parent: pages
-	width: pages.width
-	height: pages.height
-	backgroundColor: null
-
-image1 = new VideoButton
-	parent: masterPage
-	text: ""
-	width: 1024
-	height: 1024
-	backgroundColor: null
-	custom:
-		type: "one"
-		twin: null
-
-image2 = new VideoButton
-	parent: masterPage
-	text: ""
-	width: 1024
-	height: 1024
-	backgroundColor: null
-	custom:
-		type: "two"
-		twin: null
-
-image1.custom.twin = image2
-image2.custom.twin = image1
-
-for item in [image1, image2]
-	item.states =
-		"start": { opacity: 1 }
-		"select": { opacity: 1 }
-		"deselect": { opacity: 0.4 }
-	item.stateSwitch("start")
-
-	item.onTap ->
-		@stateSwitch("select")
-		@custom.twin.stateSwitch("deselect")
-		
-		if @custom.type == "one"
-			pages.currentPage.custom.score.one = 1.0
-			pages.currentPage.custom.score.two = 0.0
-		else if @custom.type == "two"
-			pages.currentPage.custom.score.one = 0.0
-			pages.currentPage.custom.score.two = 1.0
-		
-		composeResults()
-	
-
-
-
-positionTuple = [0, 1024+10]
+# shouldShuffle = false
 
 IMAGE_NUM = imageData.images.length
 for currentImage, i in imageData.images
+
+	
+	if shouldShuffle then currentPositionTuple = shuffle(positionTuple)
+	else currentPositionTuple = positionTuple
 
 	page = new Layer
 		parent: pages.content
@@ -276,43 +242,87 @@ for currentImage, i in imageData.images
 		custom:
 			index: i
 			title: currentImage.prompt
-			position: if shouldShuffle then Utils.randomChoice([positionTuple, [1024+10, 0]]) else positionTuple
 			score:
 				one: -1
 				two: -1
-	
-	# print page.custom.position
-	# if i == 0 then print page.custom.position
+				three: -1
 	
 
 
+	image1 = new VideoButton
+		parent: page
+		text: ""
+		width: 1024
+		height: 1024
+		borderRadius: 0
+		x: currentPositionTuple[0]
+		custom:
+			type: "one"
+			twinImages: null
+	
+	image2 = new VideoButton
+		parent: page
+		text: ""
+		width: 1024
+		height: 1024
+		borderRadius: 0
+		x: currentPositionTuple[1]
+		backgroundColor: "green"
+		# videoLayer: currentImage["image-2"]
+		custom:
+			type: "two"
+			twinImages: null
+	
+	image3 = new VideoButton
+		parent: page
+		text: ""
+		width: 1024
+		height: 1024
+		borderRadius: 0
+		x: currentPositionTuple[2]
+		backgroundColor: "green"
+		# videoLayer: currentImage["image-3"]
+		custom:
+			type: "three"
+			twinImages: null
 
-
-updateMasterPage = (currentImage) ->
-
+	
 	image1.setVideo(currentImage["image-1"])
 	image2.setVideo(currentImage["image-2"])
-
-	image1.play()
-	image2.play()
-
-	# image2.x = 1024 + 10
-	# print pages.currentPage.custom.position
-	image1.x = pages.currentPage.custom.position[0]
-	image2.x = pages.currentPage.custom.position[1]
+	image3.setVideo(currentImage["image-3"])
 	
-	score1 = pages.currentPage.custom.score.one
-	score2 = pages.currentPage.custom.score.two
+	image1.custom.twinImages = [image2, image3]
+	image2.custom.twinImages = [image1, image3]
+	image3.custom.twinImages = [image1, image2]
 
-	if score1 == -1 then image1.stateSwitch("start")
-	else if score1 == 1 then image1.stateSwitch("select")
-	else image1.stateSwitch("deselect")
+	for item in [image1, image2, image3]
+		item.states =
+			"start": { opacity: 1 }
+			"select": { opacity: 1 }
+			"deselect": { opacity: 0.4 }
+		item.stateSwitch("start")
 
-	if score2 == -1 then image2.stateSwitch("start")
-	else if score2 == 1 then image2.stateSwitch("select")
-	else image2.stateSwitch("deselect")
+		item.onTap ->
+			@stateSwitch("select")
+			for twinLayer in @custom.twinImages
+				twinLayer.stateSwitch("deselect")
+			
+			if @custom.type == "one"
+				@parent.custom.score.one = 1.0
+				@parent.custom.score.two = 0.0
+				@parent.custom.score.three = 0.0
+			else if @custom.type == "two"
+				@parent.custom.score.one = 0.0
+				@parent.custom.score.two = 1.0
+				@parent.custom.score.three = 0.0
+			else
+				@parent.custom.score.one = 0.0
+				@parent.custom.score.two = 0.0
+				@parent.custom.score.three = 1.0
+			
+			composeResults()
 
-updateMasterPage(imageData.images[0])
+	
 
 
 scopePageText = new Text
@@ -363,6 +373,11 @@ prevHandler = () ->
 	pages.snapToNextPage("left", false)
 
 nextHandler = (withAnimation = false) ->
+	# if withAnimation
+	# 	Utils.delay 0.2, ->
+	# 		pages.snapToNextPage("right", false)
+	
+	# else
 	pages.snapToNextPage("right", false)
 
 nextButton.handler = nextHandler
@@ -370,17 +385,17 @@ prevButton.handler = prevHandler
 
 
 
-selectLeftButton = new TextButton
-	parent: screen
-	text: "Выбрать 1"
-	x: Align.center(-500)
-	y: Align.bottom(-120)
+# selectLeftButton = new TextButton
+# 	parent: screen
+# 	text: "Выбрать 1"
+# 	x: Align.center(-500)
+# 	y: Align.bottom(-120)
 
-selectRightButton = new TextButton
-	parent: screen
-	text: "Выбрать 2"
-	x: Align.center(500)
-	y: Align.bottom(-120)
+# selectRightButton = new TextButton
+# 	parent: screen
+# 	text: "Выбрать 2"
+# 	x: Align.center(500)
+# 	y: Align.bottom(-120)
 
 selectNone = new TextButton
 	parent: screen
@@ -390,36 +405,38 @@ selectNone = new TextButton
 
 
 
-selectLeftHandler = Utils.throttle 0.2, ->
-	# print "L"
-	for item in masterPage.children
-		if item.x == 0 then item.emit Events.Tap
 
 
-selectRightHandler = Utils.throttle 0.2, ->
-	# print "R"
-	for item in masterPage.children
-		if item.x == 1024 + 10 then item.emit Events.Tap
+selectOneHandler = Utils.throttle 0.2, ->
+	for item in pages.currentPage.children
+		if item.x == 0
+			item.emit Events.Tap
+			print item.custom.type
+
+selectTwoHandler = Utils.throttle 0.2, ->
+	for item in pages.currentPage.children
+		if item.x == (1024 + 10) * 1 then item.emit Events.Tap
+
+selectThreeHandler = Utils.throttle 0.2, ->
+	for item in pages.currentPage.children
+		if item.x == (1024 + 10) * 2 then item.emit Events.Tap
 
 
 selectDrawHandler = Utils.throttle 0.2, ->
-	pages.currentPage.custom.score.one = 0.5
-	pages.currentPage.custom.score.two = 0.5
+	pages.currentPage.custom.score.one = 0.33
+	pages.currentPage.custom.score.two = 0.33
+	pages.currentPage.custom.score.three = 0.33
 
-	masterPage.children[0].stateSwitch("deselect")
-	masterPage.children[1].stateSwitch("deselect")
+	pages.currentPage.children[0].stateSwitch("deselect")
+	pages.currentPage.children[1].stateSwitch("deselect")
+	pages.currentPage.children[2].stateSwitch("deselect")
 
-	# nextHandler(true)
 	composeResults()
 
 
-restartVideoHandler = Utils.throttle 0.2, ->
-	image1.restart()
-	image2.restart()
 
-
-selectLeftButton.handler = selectLeftHandler
-selectRightButton.handler = selectRightHandler
+# selectLeftButton.handler = selectOneHandler
+# selectRightButton.handler = selectThrHandler
 selectNone.handler = selectDrawHandler
 
 
@@ -433,16 +450,16 @@ Events.wrap(window).addEventListener "keydown", (event) ->
 		nextHandler()
 
 	else if event.code is "Digit1"
-		selectLeftHandler()
+		selectOneHandler()
 	
 	else if event.code is "Digit2"
-		selectRightHandler()
+		selectTwoHandler()
+	
+	else if event.code is "Digit3"
+		selectThreeHandler()
 	
 	else if event.code is "Space"
 		selectDrawHandler()
-	
-	else if event.code is "KeyR"
-		restartVideoHandler()
 
 
 
@@ -455,22 +472,21 @@ saveButton = new TextButton
 	x: Align.right
 	y: Align.top(80)
 
+initSamplePrint = "#{imageData["name-1"]} — X %\n#{imageData["name-2"]} – Y %\n#{imageData["name-1"]} — Z %"
+
 resultsButton = new Text
 	parent: screen
-	text: "#{imageData["name-1"]} — X %\n#{imageData["name-2"]} – Y %"
+	text: initSamplePrint
 	textAlign: "right"
 	fontSize: 32
 	height: 200
 	width: 800
 	x: Align.right(-saveButton.width - 48)
-	y: Align.top(80)
+	y: Align.top(40)
 
 resultsButton.onTap ->
 	showResults = !showResults
 	composeResults()
-
-
-
 
 
 cleanValue = (top, bottom) => 
@@ -480,24 +496,70 @@ cleanValue = (top, bottom) =>
 composeResults = () ->
 	allOne = 0.0
 	allTwo = 0.0
+	allThree = 0.0
 	allResults = 0.0
 
 	for page in pages.content.children
-		if page.custom.score.one != -1 and page.custom.score.two != -1
+		if page.custom.score.one != -1 and page.custom.score.two != -1 and page.custom.score.three != -1
 			allOne = allOne + page.custom.score.one
 			allTwo = allTwo + page.custom.score.two
+			allThree = allThree + page.custom.score.three
 			allResults = allResults + 1.0
 	
 
-	numb = allOne / (allOne + allTwo)
-	value = (numb * 100).toFixed()
+	# print allOne + " " + allTwo + " " + allThree
 	
 	if showResults
-		# resultsButton.text = "#{imageData["name-1"]} — #{value} %\n#{imageData["name-2"]} – #{100 - value} %"
-		resultsButton.text = "#{imageData["name-1"]} — #{cleanValue(allOne, allResults)} %\n#{imageData["name-2"]} – #{cleanValue(allTwo, allResults)} %\n"
+		resultsButton.text = "#{imageData["name-1"]} — #{cleanValue(allOne, allResults)} %\n#{imageData["name-2"]} – #{cleanValue(allTwo, allResults)} %\n#{imageData["name-3"]} — #{cleanValue(allThree, allResults)} %"
 	else
-		resultsButton.text = "#{imageData["name-1"]} — X %\n#{imageData["name-2"]} – Y %"
+		resultsButton.text = initSamplePrint
 
+
+
+
+
+
+
+
+
+# json = ""
+
+# readImage = (url) ->
+# 	# https://shedevrum.ai/post/5fcd9c58de09ae8
+# 	# https://masterpiecer-images.s3.yandex.net/5fcd9c58de09ae8:upscaled
+# 	return "https://masterpiecer-images.s3.yandex.net/" + url.split("post/")[1] + ":upscaled"
+
+# readLines = (url) ->
+# 	string = Utils.domLoadDataSync url
+# 	return string.split("\n")
+
+
+# prompts = readLines "images/prompts.txt"
+# input1 = readLines "images/input1.txt"
+# input2 = readLines "images/input2.txt"
+
+# json += "{\n"
+# json += "	  \"name-1\": \"n1\",\n"
+# json += "	  \"name-2\": \"n2\",\n"
+# json += "	\"images\": [\n"
+
+# for item, i in prompts
+# 	data = ""
+# 	data += "	{\n"
+
+# 	data += "		\"prompt\": \"#{prompts[i]}\",\n"
+# 	data += "		\"image-1\": \"#{readImage(input1[i])}\",\n"
+# 	data += "		\"image-2\": \"#{readImage(input2[i])}\",\n"
+	
+# 	if i == prompts.length - 1 then data += "	}\n"
+# 	else data += "	},\n"
+
+# 	json += data
+
+# json += "	]\n"
+# json += "}\n"
+
+# print json
 
 
 
@@ -516,14 +578,17 @@ saveResults = () ->
 
 	allOne = 0.0
 	allTwo = 0.0
+	allThree = 0.0
 
 	for page in pages.content.children
-		if page.custom.score.one != -1 and page.custom.score.two != -1
+		if page.custom.score.one != -1 and page.custom.score.two != -1 and page.custom.score.three != -1
 			allOne = allOne + page.custom.score.one
 			allTwo = allTwo + page.custom.score.two
+			allThree = allThree + page.custom.score.three
 	
 	output += "\t\"sum-1\": #{allOne},\n"
 	output += "\t\"sum-2\": #{allTwo},\n"
+	output += "\t\"sum-3\": #{allThree},\n"
 	output += "\t\"images\": [\n"
 	
 	for page, i in pages.content.children
@@ -532,6 +597,7 @@ saveResults = () ->
 		output += "\t\t\t\"prompt\": \"#{page.custom.title}\",\n"
 		output += "\t\t\t\"score-1\": \"#{page.custom.score.one}\",\n"
 		output += "\t\t\t\"score-2\": \"#{page.custom.score.two}\",\n"
+		output += "\t\t\t\"score-3\": \"#{page.custom.score.three}\",\n"
 
 
 		if i == pages.content.children.length - 1 then output += "\t\t}\n"
@@ -553,16 +619,12 @@ saveResults = () ->
 `
 
 
+# `function test(str) {
+#     alert(str)
+# }
+# `
+# test("hello")
+
+
 saveButton.handler = saveResults
 
-Utils.delay 1, ->
-	if pages.currentPage == pages.content.children[0]
-		item.play() for item in pages.content.children[0].children
-
-Utils.delay 3, ->
-	if pages.currentPage == pages.content.children[0]
-		item.play() for item in pages.content.children[0].children
-
-Utils.delay 5, ->
-	if pages.currentPage == pages.content.children[0]
-		item.play() for item in pages.content.children[0].children

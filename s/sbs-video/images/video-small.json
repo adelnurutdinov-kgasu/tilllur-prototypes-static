@@ -1,0 +1,21 @@
+{
+  "name-1": "skip1",
+  "name-2": "skip2",
+  "images": [
+    {
+      "prompt": "a guy getting questioned manages to get the officer attached to the handcuffs",
+      "image-1": "images/0/video1.mp4",
+      "image-2": "images/0/video2.mp4"
+    },
+    {
+      "prompt": "a beautiful cartoon show on the screen",
+      "image-1": "images/1/video3.mp4",
+      "image-2": "images/1/video4.mp4"
+    },
+    {
+      "prompt": "a blonde reporter in a store",
+      "image-1": "images/2/video5.mp4",
+      "image-2": "images/2/video6.mp4"
+    }
+  ]
+}
