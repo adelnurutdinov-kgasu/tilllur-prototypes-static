@@ -153,8 +153,8 @@ getState = (stateKey = "json", defaultResult = "images/video-github.json") ->
 		keyPart = keyValuePair[0]
 		valuePart = keyValuePair[1]
 
-		# if keyPart == "shuffle"
-		# 	shouldShuffle = false
+		if keyPart == "shuffle"
+			shouldShuffle = false
 
 		if keyPart == stateKey
 			return valuePart
