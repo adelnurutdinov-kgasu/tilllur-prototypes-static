@@ -173,9 +173,11 @@ flow.showNext(start_NavView)
 
 
 
-start_Space = new Layer
-	width: 393, height: 134
-	backgroundColor: "white"
+start_Title = new Layer
+	width: 392.0
+	height: 134.0
+	image: "images/mainHeader.png"
+
 
 
 # Domain
@@ -254,7 +256,7 @@ start_Card2 = init_VideoCard("video/video2.mp4")
 start_Card0.player.autoplay = false
 
 start_Feed = Stack.vertical([start_Card0, start_Card1, start_Card2], 8)
-start_Image = Stack.vertical([start_Space, start_DomainView, start_Omnibox, start_Feed], 0)
+start_Image = Stack.vertical([start_Title, start_DomainView, start_Omnibox, start_Feed], 0)
 start_Image.parent = start_NavView.content
 
 
