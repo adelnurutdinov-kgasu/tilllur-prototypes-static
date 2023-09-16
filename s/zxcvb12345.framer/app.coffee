@@ -19,7 +19,12 @@ ShoppingData = require "ShoppingData"
 
 screen = new Layer { width: 393, height: 852 }
 # new Preview { view: screen }
+
 screen.center()
+if Utils.isMobile() then screen.scale = Screen.width / 393
+else
+	screen.borderRadius = 42
+	screen.clip = true
 
 flow = new FlowComponent
 	parent: screen
