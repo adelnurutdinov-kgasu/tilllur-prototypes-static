@@ -71,7 +71,7 @@ class ButtonVideo extends VideoLayer
 		super @options
 
 		@states =
-			"pressed": { scale: 0.98 }
+			"pressed": { scale: 0.96 }
 			"normal": { scale: 1.0 }
 		
 		guard.parent = @

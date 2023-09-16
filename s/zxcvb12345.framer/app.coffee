@@ -150,6 +150,24 @@ init_VideoCard = (withVideo) ->
 	
 	return videoCard
 
+init_ImageCard = (withImage) ->
+
+	videoCard = new ButtonOmnibox
+		width: 373, height: 620
+		x: 10, y: 580
+		backgroundColor: "black"
+		borderRadius: 32
+		clip: true
+		image: withImage
+
+	videoControl = new Layer
+		width: 373.0
+		height: 620.0
+		image: "images/videoControl.png"
+		parent: videoCard
+	
+	return videoCard
+
 
 
 handler_OpenView = (navigationView) ->
@@ -254,15 +272,17 @@ start_Omnibox = new ButtonOmnibox
 start_Omnibox.handler = (event, layer) -> handler_OpenSearchView(search_NavView)
 
 
-start_Card0 = init_VideoCard("video/video3.mp4")
-start_Card1 = init_VideoCard("video/video1.mp4")
-start_Card2 = init_VideoCard("video/video2.mp4")
+start_Card0 = init_ImageCard("images/demo.jpg")
+start_Card1 = init_VideoCard("video/video2.mp4")
+start_Card2 = init_VideoCard("video/video3.mp4")
 
-start_Card0.player.autoplay = false
+# start_Card0.player.autoplay = false
 
 start_Feed = Stack.vertical([start_Card0, start_Card1, start_Card2], 8)
 start_Image = Stack.vertical([start_Title, start_DomainView, start_Omnibox, start_Feed], 0)
 start_Image.parent = start_NavView.content
+
+start_NavView
 
 
 
