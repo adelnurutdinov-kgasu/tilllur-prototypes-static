@@ -12,7 +12,7 @@ class exports.DeviceView extends ScaleView
 		
 		super @options
 
-		print "???"
+	
 
 		@borderView = new Layer
 			backgroundColor: "000"

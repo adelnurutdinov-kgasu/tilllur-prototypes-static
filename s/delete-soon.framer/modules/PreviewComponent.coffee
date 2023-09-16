@@ -12,8 +12,6 @@ Framer.Extras.Hints.disable()
 class FixPreviewExport extends TreeLayerView
 class exports.Preview extends FixPreviewExport
 
-print "?"
-
 
 # Native
 
