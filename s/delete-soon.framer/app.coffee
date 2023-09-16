@@ -12,6 +12,7 @@ screenGuard = new Layer
 
 
 { Preview } = require "PreviewComponent"
+{ CameraLayer } = require "CameraLayer"
 { Button, ButtonOmnibox, ButtonVideo } = require "Buttons"
 Stack = require "Stack"
 ShoppingData = require "ShoppingData"
@@ -39,8 +40,8 @@ flow = new FlowComponent
 create_BackButton = (parentLayer) ->
 	backButton = new Layer
 		parent: parentLayer
-		width: 100, height: 80, y: 60
-		backgroundColor: "blue"
+		width: 100, height: 82, y: 54
+		backgroundColor: null
 		opacity: 0.4
 	
 	backButton.onTap ->
@@ -66,7 +67,7 @@ init_NavigationView = () ->
 	navigationView = new ScrollComponent
 		width: screen.width
 		height: screen.height
-		backgroundColor: "white"
+		backgroundColor: "red"
 		scrollVertical: true
 		scrollHorizontal: false
 		directionLock: true
@@ -145,7 +146,7 @@ shoppingLink = new Button
 	x: 28
 	image: "images/shoppingLink.png"
 
-placeLink = new Button
+placesLink = new Button
 	parent: start_DomainView
 	width: 168.0
 	height: 84.0
@@ -174,6 +175,17 @@ videoLink = new Button
 	x: 196, y: 84
 
 
+# Handlers
+
+shoppingLink.handler = (event, layer) ->
+	handler_OpenView(shopping_NavView)
+	shopping_ShopScrollView.scrollX = 0
+
+videoLink.handler = (event, layer) -> handler_OpenView(video_NavView)
+
+cameraLink.handler = (event, layer) -> handler_OpenView(camera_NavView)
+placesLink.handler = (event, layer) -> handler_OpenView(places_NavView)
+
 
 # Start Feed
 
@@ -199,11 +211,7 @@ start_Image.parent = start_NavView.content
 
 
 
-shoppingLink.handler = (event, layer) ->
-	handler_OpenView(shopping_NavView)
-	shopping_ShopScrollView.scrollX = 0
-	
-videoLink.handler = (event, layer) -> handler_OpenView(video_NavView)
+
 
 
 
@@ -234,12 +242,13 @@ shopping_Navigation = new Layer
 	height: 98.0
 	image: "images/shopping_navigation.png"
 
-shopping_Space2 = new Layer
-	width: 393, height: 24
-	backgroundColor: null
+shopping_Breaker = new Layer
+	width: 393, height: 44
+	backgroundColor: "white"
+	image: "images/breaker.png"
 
 shopping_ShopScrollView = new ScrollComponent
-	width: 393.0, height: 112
+	width: 393.0, height: 112-12
 	backgroundColor: "white"
 	scrollHorizontal: true
 	scrollVertical: false
@@ -264,7 +273,7 @@ shopping_leftStack = Stack.vertical(ShoppingData.data.left)
 shopping_rightStack = Stack.vertical(ShoppingData.data.right)
 shopping_Stack = Stack.horizontal([shopping_leftStack, shopping_rightStack], 8, { x: 16, y: 0 })
 
-shopping_Image = Stack.vertical([shopping_Space, shopping_Title, shopping_Omnibox, shopping_Navigation, shopping_ShopScrollView, shopping_Space2, shopping_Stack], 0)
+shopping_Image = Stack.vertical([shopping_Space, shopping_Title, shopping_Omnibox, shopping_Navigation, shopping_ShopScrollView, shopping_Breaker, shopping_Stack], 0)
 shopping_Image.parent = shopping_NavView.content
 shopping_NavView.updateContent()
 
@@ -306,7 +315,7 @@ video_Omnibox = new ButtonOmnibox
 
 
 video_ScrollView = new ScrollComponent
-	width: 393.0, height: 124
+	width: 393.0, height: 110
 	backgroundColor: "white"
 	scrollHorizontal: true
 	scrollVertical: false
@@ -325,12 +334,13 @@ video_Bloggers = new Layer
 	# handler_OpenView(shop_NavView)
 
 
-video_Space2 = new Layer
-	width: 393, height: 20
+video_Breaker = new Layer
+	width: 393, height: 44
 	backgroundColor: "white"
+	image: "images/breaker.png"
 
 video_TabsScrollView = new ScrollComponent
-	width: 393.0, height: 74
+	width: 393.0, height: 74 - 16
 	backgroundColor: "white"
 	scrollHorizontal: true
 	scrollVertical: false
@@ -342,6 +352,7 @@ video_TabsScrollView.on Events.SwipeRightStart, (event, layer) ->
 
 video_Tabs = new Layer
 	parent: video_TabsScrollView.content
+	y: -16
 	width: 451.0
 	height: 74.0
 	image: "images/video_tabs.png"
@@ -353,5 +364,108 @@ video_Card2 = init_VideoCard("video/video3.mp4")
 video_Feed = Stack.vertical([video_Card0, video_Card1, video_Card2], 8)
 
 
-video_Image = Stack.vertical([video_Space, video_Title, video_Omnibox, video_ScrollView, video_Space2, video_TabsScrollView, video_Feed], 0)
+video_Image = Stack.vertical([video_Space, video_Title, video_Omnibox, video_ScrollView, video_Breaker, video_TabsScrollView, video_Feed], 0)
 video_Image.parent = video_NavView.content
+
+
+
+
+
+
+# Camera
+
+camera_NavView = init_NavigationView()
+camera_NavView.image = "images/camera_example.jpg"
+
+# flow.showNext(camera_NavView, animate: false)
+
+camera_VideoLayer = new CameraLayer
+	parent: camera_NavView
+	width: screen.width, height: screen.height
+
+
+camera_Record = new Layer
+	parent: camera_NavView
+	size: 54
+	x: Align.center
+	y: Align.bottom(137)
+	backgroundColor: null
+
+camera_Record.states =
+	"shown": { opacity: 1 }
+	"hidden": { opacity: 1 }
+camera_Record.stateSwitch("hidden")
+
+camera_Record.on Events.StateSwitchEnd, (from, to) ->
+	if to == "shown" then camera_VideoLayer.start()
+	else camera_VideoLayer.stop()
+
+camera_Record.onTap ->
+	if @states.current.name == "shown" then nextState = "hidden"
+	else nextState = "shown"
+	@stateSwitch(nextState)
+
+
+camera_Image = new Layer
+	parent: camera_NavView
+	width: 393.0
+	height: 852.0
+	image: "images/camera.png"
+
+# Places
+
+places_NavView = init_NavigationView()
+places_NavView.image = "images/map.jpg"
+
+
+places_Space = new Layer
+	width: 393, height: 58
+	backgroundColor: null
+
+places_Title = new Layer
+	width: 393.0
+	height: 78.0
+	image: "images/places_Title.png"
+
+places_Omnibox = new Layer
+	width: 393.0
+	height: 70.0
+	image: "images/places_Omnibox.png"
+
+places_SpaceMap = new Layer
+	width: 393, height: 210
+	backgroundColor: null
+
+
+
+places_TabsScrollView = new ScrollComponent
+	width: 393.0, height: 100
+	backgroundColor: "white"
+	scrollHorizontal: true
+	scrollVertical: false
+	directionLock: true
+
+places_TabsScrollView.on Events.SwipeRightStart, (event, layer) ->
+	if @scrollX > 0 then event.stopPropagation()
+
+places_Scroll = new Layer
+	parent: places_TabsScrollView.content
+	width: 584.0
+	height: 100.0
+	image: "images/places_scroll.png"
+
+
+places_Card0 = init_VideoCard("video/video2.mp4")
+places_Card1 = init_VideoCard("video/video1.mp4")
+places_Card2 = init_VideoCard("video/video3.mp4")
+places_Feed = Stack.vertical([places_Card0, places_Card1, places_Card2], 8)
+
+places_FeedWithTabs = Stack.vertical([places_TabsScrollView, places_Feed])
+places_FeedWithTabs.borderRadius = 32
+places_FeedWithTabs.clip = true
+
+
+places_Image = Stack.vertical([places_Space, places_Title, places_Omnibox, places_SpaceMap, places_FeedWithTabs], 0)
+places_Image.backgroundColor = null
+places_Image.parent = places_NavView.content
+
