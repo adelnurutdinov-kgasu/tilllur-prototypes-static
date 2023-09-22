@@ -252,7 +252,10 @@ shoppingLink.handler = (event, layer) ->
 	handler_OpenView(shopping_NavView)
 	shopping_ShopScrollView.scrollX = 0
 
-videoLink.handler = (event, layer) -> handler_OpenView(video_NavView)
+# videoLink.handler = (event, layer) -> handler_OpenView(video_NavView)
+# videoLink.handler = (event, layer) ->
+# 	handler_OpenView(scrollX)
+# 	shopping_ShopScrollView.scrollX = 0
 
 cameraLink.handler = (event, layer) -> handler_OpenView(camera_NavView)
 placesLink.handler = (event, layer) -> handler_OpenView(places_NavView)

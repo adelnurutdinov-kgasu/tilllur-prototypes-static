@@ -15,7 +15,6 @@ class exports.LocationView extends DeviceView
 		
 		super @options
 
-		print "wtf"
 		@scalePreview()
 
 
@@ -42,7 +41,6 @@ class exports.LocationView extends DeviceView
 	
 	
 	scalePreview: () =>
-		print "here scalePreivew"
 		forceDesktopMode = @getStateGeneric("desktop", [{ value: "false", result: false },
 														{ value: "true", result: true }], false)
 
@@ -134,7 +132,7 @@ class exports.LocationView extends DeviceView
 	
 	
 	previewMobile: () =>
-		print "here"
+
 		@scale = Screen.width / @width
 		@originX = 0
 		@originY = 0

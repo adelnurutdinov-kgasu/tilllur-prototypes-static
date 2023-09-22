@@ -12,8 +12,6 @@ class exports.DeviceView extends ScaleView
 		
 		super @options
 
-	
-
 		@borderView = new Layer
 			backgroundColor: "000"
 			borderRadius: @borderRadius + 16

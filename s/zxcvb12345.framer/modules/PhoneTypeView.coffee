@@ -23,8 +23,6 @@ class exports.PhoneTypeView extends InitView
 			
 		
 		super @options
-
-		print "12123"
 	
 
 

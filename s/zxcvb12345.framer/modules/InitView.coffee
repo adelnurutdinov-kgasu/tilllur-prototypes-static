@@ -19,7 +19,6 @@ class exports.InitView extends Layer
 		
 		super @options
 
-		print "start 1"
 
 		window.savePreviewMessageFramerObject(@)
 		

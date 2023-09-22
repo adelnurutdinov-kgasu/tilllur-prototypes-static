@@ -24,8 +24,6 @@ class exports.TreeLayerView extends SectionView
 		
 		super @options
 
-		print "tree"
-
 		treeViewLayer.parent = @parent
 
 	
