@@ -15,7 +15,7 @@ screenGuard = new Layer
 { CameraLayer } = require "CameraLayer"
 { Button, ButtonOmnibox, ButtonVideo } = require "Buttons"
 Stack = require "Stack"
-ShoppingData = require "ShoppingData"
+# ShoppingData = require "ShoppingData"
 
 screen = new Layer { width: 393, height: 852 }
 # new Preview { view: screen }
@@ -41,6 +41,13 @@ flow = new FlowComponent
 
 
 # System
+
+feedColor = () ->
+	return "EFF1F5"
+
+makeIsland = (layer) ->
+	layer.borderRadius = 20
+	layer.clip = true
 
 spaceWhite = (spaceHeight) ->
 	return space(spaceHeight).backgroundColor = "white"
@@ -71,6 +78,18 @@ stackTransition = (nav, layerA, layerB, overlay) ->
 		layerB:
 			show: {x: 0, y: 0}
 			hide: {x: layerB.width, y: 0}
+		overlay:
+			show: {opacity: .5, x: 0, y: 0, size: nav.size}
+			hide: {opacity: 0, x: 0, y: 0, size: nav.size}
+
+modalTransition = (nav, layerA, layerB, overlay) ->
+	transition =
+		layerA:
+			show: {x: 0, y: 0}
+			hide: {x: 0, y: 0}
+		layerB:
+			show: {x: 0, y: 0}
+			hide: {x: 0, y: layerA?.height + 10}
 		overlay:
 			show: {opacity: .5, x: 0, y: 0, size: nav.size}
 			hide: {opacity: 0, x: 0, y: 0, size: nav.size}
@@ -106,6 +125,65 @@ init_NavigationView = () ->
 	view_BackButton = create_BackButton(navigationView.content)
 	
 	return navigationView
+
+
+init_ModalView = () ->
+	navigationView_Wrapper = new Layer
+		name: "ada"
+		width: screen.width
+		height: screen.height
+		backgroundColor: null
+		# backgroundColor: "red"
+		custom:
+			view: null
+			handler: null
+
+	navigationView = new ScrollComponent
+		parent: navigationView_Wrapper
+		y: 66
+		width: screen.width
+		height: screen.height - 66
+		backgroundColor: null
+		backgroundColor: "white"
+		scrollVertical: true
+		scrollHorizontal: false
+		directionLock: true
+		borderRadius: 56
+
+	navigationView_Wrapper.custom.view = navigationView
+
+	navigationView_Handler = new Layer
+		parent: navigationView_Wrapper
+		width: 40, height: 3, x: Align.center, y: 55
+		backgroundColor: "white", opacity: 0.5
+	
+	navigationView_Wrapper.custom.handler = navigationView_Handler
+
+	# navigationView.content.on "change:y", ->
+	# 	value = @parent.scrollY
+	# 	if value <= 0
+	# 		@parent.parent.custom.handler.y = Utils.modulate(value, [0, -100], [55, 55 + 100])
+
+
+	navigationView.on Events.SwipeRightStart, (event, layer) ->
+		flow.showPrevious()
+
+	navigationView.on Events.SwipeDownStart, (event, layer) ->
+		if @scrollY < 0 then flow.showPrevious()
+	
+	flow.showNext(navigationView_Wrapper)
+	flow.showPrevious(animate: false)
+
+	# view_BackButton = create_BackButton(navigationView.content)
+	
+	return navigationView_Wrapper
+
+init_NavigationViewContent = (navigationView, contentView) ->
+	if navigationView.custom and navigationView.custom.view
+		contentView.parent = navigationView.custom.view.content
+		contentView.backgroundColor = null
+	else
+		contentView.parent = navigationView.content
 
 
 init_SearchNavigationView = () ->
@@ -171,8 +249,13 @@ init_ImageCard = (withImage) ->
 
 
 handler_OpenView = (navigationView) ->
-	navigationView.scrollToTop(false)
-	flow.transition(navigationView, stackTransition)
+	if navigationView.custom and navigationView.custom.view
+		navigationView.custom.view.scrollToTop(false)
+		flow.transition(navigationView, modalTransition)
+	else
+		navigationView.scrollToTop(false)
+		flow.transition(navigationView, stackTransition)
+
 
 handler_OpenSearchView = (navigationView) ->
 	navigationView.scrollToTop(false)
@@ -205,61 +288,65 @@ start_Title = new Layer
 
 # Domain
 
-start_DomainView = new Layer
-	parent: start_Image
-	width: 393, height: 252
-	y: 134
-	backgroundColor: "white"
-
-shoppingLink = new Button
-	parent: start_DomainView
-	width: 168.0, height: 168.0
-	x: 28
-	image: "images/shoppingLink.png"
-
-placesLink = new Button
-	parent: start_DomainView
-	width: 168.0
-	height: 84.0
-	x: 196
-	image: "images/placeLink.png"
-
-aliceLink = new Button
-	parent: start_DomainView
+bubbleAlice = new Button
 	width: 84.0
 	height: 84.0
-	image: "images/aliceLink.png"
-	x: 28, y: 168
+	image: "images/bubble_alice.png"
 
-cameraLink = new Button
-	parent: start_DomainView
+bubbleCamera = new Button
 	width: 84.0
 	height: 84.0
-	image: "images/cameraLink.png"
-	x: 112, y: 168
+	image: "images/bubble_camera.png"
 
-videoLink = new Button
-	parent: start_DomainView
+bubbleImages = new Button
 	width: 168.0
 	height: 168.0
-	image: "images/videoLink.png"
-	x: 196, y: 84
+	image: "images/bubble_images.png"
 
+bubblePlaces = new Button
+	width: 168.0
+	height: 84.0
+	image: "images/bubble_places.png"
+
+bubbleShopping = new Button
+	width: 168.0
+	height: 168.0
+	image: "images/bubble_shopping.png"
+
+bubbleVideo = new Button
+	width: 168.0
+	height: 168.0
+	image: "images/bubble_video.png"
+
+
+
+# Compose
 
 # Handlers
 
-shoppingLink.handler = (event, layer) ->
+left_SingleView = Stack.horizontal([bubbleAlice, bubbleCamera], 0)
+left_BubbleView = Stack.vertical([bubblePlaces, bubbleShopping, left_SingleView], 0)
+right_BubbleView = Stack.vertical([bubbleImages, bubbleVideo], 0)
+
+bubleView = Stack.horizontal([left_BubbleView, right_BubbleView], 0, { x: 28, y: 0 })
+bubleView.parent = start_NavView.content
+bubleView.y = 134
+
+
+bubbleShopping.handler = (event, layer) ->
 	handler_OpenView(shopping_NavView)
 	shopping_ShopScrollView.scrollX = 0
+	shopping_TabScrollView.scrollX = 0
 
-videoLink.handler = (event, layer) -> handler_OpenView(video_NavView)
-# videoLink.handler = (event, layer) ->
-# 	handler_OpenView(scrollX)
-# 	shopping_ShopScrollView.scrollX = 0
+bubbleVideo.handler = (event, layer) -> handler_OpenView(video_NavView)
 
-cameraLink.handler = (event, layer) -> handler_OpenView(camera_NavView)
-placesLink.handler = (event, layer) -> handler_OpenView(places_NavView)
-aliceLink.handler = (event, layer) -> handler_OpenView(alice_NavView)
+bubbleImages.handler = (event, layer) ->
+	handler_OpenView(images_NavView)
+	images_ScrollView.scrollX = 0
+
+bubbleCamera.handler = (event, layer) -> handler_OpenView(camera_NavView)
+bubblePlaces.handler = (event, layer) -> handler_OpenView(places_NavView)
+bubbleAlice.handler = (event, layer) -> handler_OpenView(alice_NavView)
 
 
 
@@ -282,10 +369,8 @@ start_Card2 = init_VideoCard("video/video3.mp4")
 # start_Card0.player.autoplay = false
 
 start_Feed = Stack.vertical([start_Card0, start_Card1, start_Card2], 8)
-start_Image = Stack.vertical([start_Title, start_DomainView, start_Omnibox, start_Feed], 0)
+start_Image = Stack.vertical([start_Title, bubleView, start_Omnibox, start_Feed], 0)
 start_Image.parent = start_NavView.content
-
-start_NavView
 
 
 
@@ -301,11 +386,7 @@ start_NavView
 # Shopping
 
 shopping_NavView = init_NavigationView()
-# shopping_NavView.backgroundColor = "EFF1F5"
 
-shopping_Space = new Layer
-	width: 393, height: 58
-	backgroundColor: "white"
 
 shopping_Title = new Layer
 	width: 393.0
@@ -317,18 +398,9 @@ shopping_Omnibox = new ButtonOmnibox
 	height: 60.0
 	image: "images/video_Omnibox.png"
 
-shopping_Navigation = new Layer
-	width: 393.0
-	height: 98.0
-	image: "images/shopping_navigation.png"
-
-shopping_Breaker = new Layer
-	width: 393, height: 44
-	backgroundColor: "white"
-	image: "images/breaker.png"
 
 shopping_ShopScrollView = new ScrollComponent
-	width: 393.0, height: 112-12
+	width: 393.0, height: 110
 	backgroundColor: "white"
 	scrollHorizontal: true
 	scrollVertical: false
@@ -348,28 +420,65 @@ shops.onTap ->
 
 
 
+shopping_TabScrollView = new ScrollComponent
+	width: 393.0, height: 66
+	backgroundColor: "white"
+	scrollHorizontal: true
+	scrollVertical: false
+	directionLock: true
 
-shopping_leftStack = Stack.vertical(ShoppingData.data.left)
-shopping_rightStack = Stack.vertical(ShoppingData.data.right)
-shopping_Stack = Stack.horizontal([shopping_leftStack, shopping_rightStack], 8, { x: 16, y: 0 })
+shopping_TabScrollView.on Events.SwipeRightStart, (event, layer) ->
+	if @scrollX > 0 then event.stopPropagation()
 
-shopping_Image = Stack.vertical([shopping_Space, shopping_Title, shopping_Omnibox, shopping_Navigation, shopping_ShopScrollView, shopping_Breaker, shopping_Stack], 0)
-shopping_Image.parent = shopping_NavView.content
-shopping_NavView.updateContent()
+shopping_Tabs = new Layer
+	parent: shopping_TabScrollView.content
+	width: 867.0
+	height: 66.0
+	image: "images/shopping_tabs.png"
+
+
+
+
+
+# shopping_leftStack = Stack.vertical(ShoppingData.data.left)
+# shopping_rightStack = Stack.vertical(ShoppingData.data.right)
+# shopping_Stack = Stack.horizontal([shopping_leftStack, shopping_rightStack], 8, { x: 16, y: 0 })
+# makeIsland(shopping_Stack)
+
+shopping_Stack = new Layer
+	width: 393.0
+	height: 1361.6666666666665
+	image: "images/shopping_content.png"
+
+shopping_ContentView = Stack.vertical([shopping_TabScrollView, shopping_Stack], 0)
+
+
+shopping_Header = Stack.vertical([space(58), shopping_Title, shopping_Omnibox, shopping_ShopScrollView], 0)
+makeIsland(shopping_Header)
+
+shopping_Image = Stack.vertical([shopping_Header, space(8), shopping_ContentView], 0)
+shopping_Image.backgroundColor = feedColor()
+init_NavigationViewContent(shopping_NavView, shopping_Image)
 
 
 
 
 # Shop
 
-shop_NavView = init_NavigationView()
+shop_NavView = init_ModalView()
+
+# shop_Image = new Layer
+# 	width: 393.0
+# 	height: 1348.0
+# 	image: "images/shop_image.png"
 
 shop_Image = new Layer
-	parent: shop_NavView.content
 	width: 393.0
-	height: 1348.0
-	image: "images/shop_image.png"
-	
+	height: 1172.6666666666665
+	image: "images/shop_content.png"
+
+
+init_NavigationViewContent(shop_NavView, shop_Image)
 
 
 # Video
@@ -451,26 +560,15 @@ video_Image.parent = video_NavView.content
 
 # Channel
 
-channel_NavView = init_NavigationView()
-channel_NavView.backgroundColor = "EFF1F5"
-
-channel_Space = new Layer
-	width: 393, height: 58
-	backgroundColor: "white"
-
-channelTitle = new Layer
-	width: 393.0
-	height: 78.0
-	image: "images/channel_title.png"
+channel_NavView = init_ModalView()
 
 channelInfo = new Layer
 	width: 393.0
 	height: 254.0
 	image: "images/channel_info.png"
 
-channel_HeaderView = Stack.vertical([channel_Space, channelTitle, channelInfo], 0)
-channel_HeaderView.borderRadius = 20
-channel_HeaderView.clip = true
+channel_HeaderView = Stack.vertical([channelInfo], 0)
+makeIsland(channel_HeaderView)
 
 
 
@@ -498,15 +596,188 @@ channel_Card2 = init_VideoCard("video/video1.mp4")
 channel_Feed = Stack.vertical([channel_Card0, channel_Card1, channel_Card2], 8)
 
 channel_FeedView = Stack.vertical([channel_TabsScrollView, channel_Feed], 16)
-channel_FeedView.borderRadius = 20
-channel_FeedView.clip = true
+makeIsland(channel_FeedView)
 
 channel_Image = Stack.vertical([channel_HeaderView, channel_FeedView], 8)
-channel_Image.backgroundColor = null
-channel_Image.parent = channel_NavView.content
+channel_ImageBackground = Stack.vertical([channel_Image])
+channel_ImageBackground.backgroundColor = feedColor()
+
+init_NavigationViewContent(channel_NavView, channel_ImageBackground)
+
+# channel_Image.backgroundColor = null
+# channel_Image.parent = channel_NavView.content
 
 
 
+
+
+
+# Images
+
+images_NavView = init_NavigationView()
+
+
+images_Title = new Layer
+	width: 393.0
+	height: 82.0
+	image: "images/images_Title.png"
+
+images_Omnibox = new ButtonOmnibox
+	width: 393.0
+	height: 60.0
+	image: "images/images_Omnibox.png"
+
+
+
+images_ScrollView = new ScrollComponent
+	width: 393.0, height: 99
+	backgroundColor: "white"
+	scrollHorizontal: true
+	scrollVertical: false
+	directionLock: true
+
+images_ScrollView.on Events.SwipeRightStart, (event, layer) ->
+	if @scrollX > 0 then event.stopPropagation()
+
+
+images_ScrollContent = new Layer
+	parent: images_ScrollView.content
+	width: 812.0
+	height: 99.0
+	image: "images/images_scrollContent.png"
+
+images_ScrollContent.onTap ->
+	handler_OpenView(collection_NavView)
+
+
+
+
+imageCard1 = new Layer
+	width: 185.66666666666666
+	height: 230.0
+	image: "images/image_card_1.png"
+
+imageCard2 = new Layer
+	width: 185.66666666666666
+	height: 240.0
+	image: "images/image_card_2.png"
+
+imageCard3 = new Layer
+	width: 185.66666666666666
+	height: 155.0
+	image: "images/image_card_3.png"
+
+images_LeftImages = Stack.vertical([imageCard1, imageCard2, imageCard3], 8)
+
+
+
+imageCard4 = new Layer
+	width: 185.66666666666666
+	height: 198.0
+	image: "images/image_card_4.png"
+
+imageCard5 = new Layer
+	width: 185.66666666666666
+	height: 222.0
+	image: "images/image_card_5.png"
+
+imageCard6 = new Layer
+	width: 185.66666666666666
+	height: 205.0
+	image: "images/image_card_6.png"
+
+images_RightImages = Stack.vertical([imageCard4, imageCard5, imageCard6], 8)
+
+images_ImageView = Stack.horizontal([images_LeftImages, images_RightImages], 6, { x: 8, y: 0 })
+images_ImageView2 = Stack.vertical([space(8), images_ImageView, space(8)], 0)
+
+
+images_Header = Stack.vertical([space(58), images_Title, images_Omnibox, space(10), images_ScrollView, space(20)], 0)
+
+images_Image = Stack.vertical([images_Header, space(8), images_ImageView2], 0)
+images_Image.parent = images_NavView.content
+images_Image.backgroundColor = feedColor()
+
+makeIsland(images_Header)
+makeIsland(images_ImageView2)
+
+
+
+# Collection
+
+collection_NavView = init_ModalView()
+
+# collection_Image = new Layer
+# 	width: 393.0
+# 	backgroundColor: null
+
+
+
+# collection_ModalView = new Layer
+# 	width: 393.0
+# 	height: 852.0
+# 	image: "images/modalView_bg.png"
+
+# collection_ModalView.parent = collection_Image
+
+
+collection_Header = new Layer
+	parent: collection_Image
+	y: 66
+	width: 392.0
+	height: 340.0
+	borderRadius: 36
+	image: "images/collection_Header.png"
+
+
+
+collection_Data = new Layer
+	y: 240 + 66
+	width: 392.0
+	height: 791.0
+	backgroundColor: "white"
+
+collection_A = new Layer
+	width: 392.0
+	height: 767.0
+	image: "images/collectionA.jpg"
+
+collection_B = new Layer
+	width: 392.0
+	height: 767.0
+	image: "images/collectionB.jpg"
+
+for item in [collection_A, collection_B]
+	item.parent = collection_Data
+
+makeIsland(collection_Data)
+
+# collection_Image.height = 66 + 240 + collection_Data.height
+# collection_Image.parent = collection_NavView.content
+
+collection_B.states =
+	"shown": { opacity: 1 }
+	"hidden": { opacity: 0 }
+
+collection_TabsA = new Layer
+	width: 393.0
+	height: 66.0
+	image: "images/collection_TabsA.png"
+
+collection_TabsB = new Layer
+	width: 393.0
+	height: 66.0
+	image: "images/collection_TabsB.png"
+
+for item in [collection_TabsA, collection_TabsB]
+	item.parent = collection_Data
+	if item is collection_TabsB then item.opacity = 0
+
+
+collection_Image = Stack.vertical([collection_Header, collection_Data], -100)
+
+init_NavigationViewContent(collection_NavView, collection_Image)
+collection_NavView.custom.view.image = "images/collection_bg.jpg"
 
 
 # Camera
@@ -584,7 +855,7 @@ places_Image.parent = places_NavView.content
 # Alice
 
 alice_NavView = init_NavigationView()
-alice_NavView.backgroundColor = "EFF1F5"
+alice_NavView.backgroundColor = feedColor()
 
 alice_Space = new Layer
 	width: 393, height: 58
@@ -601,8 +872,7 @@ alice_Navigation = new Layer
 	image: "images/alice_navigation.png"
 
 alice_HeaderView = Stack.vertical([alice_Space, alice_Title, alice_Navigation], 0)
-alice_HeaderView.borderRadius = 20
-alice_HeaderView.clip = true
+makeIsland(alice_HeaderView)
 
 
 
@@ -655,7 +925,7 @@ aliceBottomBar = new Layer
 # Search
 
 search_NavView = init_SearchNavigationView()
-search_NavView.backgroundColor = "EFF1F5"
+search_NavView.backgroundColor = feedColor()
 
 search_Space = new Layer
 	width: 393, height: 58
