@@ -396,7 +396,8 @@ shopping_Title = new Layer
 shopping_Omnibox = new ButtonOmnibox
 	width: 393.0
 	height: 60.0
-	image: "images/video_Omnibox.png"
+	image: "images/shopping_Omnibox.png"
+	
 
 
 shopping_ShopScrollView = new ScrollComponent
@@ -835,10 +836,25 @@ places_Scroll = new Layer
 	image: "images/places_scroll.png"
 
 
-places_Card0 = init_VideoCard("video/video4.mp4")
-places_Card1 = init_VideoCard("video/video1.mp4")
-places_Card2 = init_VideoCard("video/video3.mp4")
-places_Feed = Stack.vertical([places_Card0, places_Card1, places_Card2], 8)
+
+# places_Card0 = init_VideoCard("video/video4.mp4")
+
+cardPlace01 = new Layer
+	width: 377.0
+	height: 570.0
+	image: "images/card_place01.png"
+
+cardPlace03 = new Layer
+	width: 377.0
+	height: 570.0
+	image: "images/card_place03.png"
+
+places_Feed = Stack.vertical([cardPlace03, cardPlace01], 8, { x: 8, y: 0 })
+
+
+# places_Card1 = init_VideoCard("video/video1.mp4")
+# places_Card2 = init_VideoCard("video/video3.mp4")
+# places_Feed = Stack.vertical([places_Card0, places_Card1, places_Card2], 8)
 
 places_FeedWithTabs = Stack.vertical([places_TabsScrollView, places_Feed])
 places_FeedWithTabs.borderRadius = 32
