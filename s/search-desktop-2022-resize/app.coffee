@@ -36,7 +36,7 @@ screen = new Layer
 
 
 { Preview } = require "PreviewComponent"
-# new Preview { view: screen, forceDesktop: true }
+# new Preview { view: screen, showBars: false, showDevice: false, borderRadius: 8 }
 
 
 

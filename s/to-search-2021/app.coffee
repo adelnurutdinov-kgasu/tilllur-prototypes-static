@@ -406,7 +406,7 @@ for titleZero, i in dataZero
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: figmaView, borderRadius: 8, visible: false }
+new Preview { view: figmaView, borderRadius: 8, showBars: false }
 
 
 

@@ -32,7 +32,7 @@ screen = new Layer
 	backgroundColor: "white"
 
 { Preview } = require "PreviewComponent"
-new Preview { view: screen, borderRadius: 12, visible: false }
+new Preview { view: screen, borderRadius: 12, showBars: false }
 
 Framer.Defaults.Animation =
 	curve: Spring(damping: 1)

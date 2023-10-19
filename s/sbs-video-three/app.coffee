@@ -180,7 +180,7 @@ print imageData.images[0]
 screen = new Layer { width: 1024 * 3 + 20, height: 1024 + 400, backgroundColor: "null" }
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: screen, forceDesktop: true, config: false }
+preview = new Preview { view: screen, showBars: false, showDevice: false, borderRadius: 8 }
 
 
 

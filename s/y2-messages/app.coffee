@@ -15,7 +15,7 @@ screen = new Layer
 	image: "images/screen.png"
 	# image: "images/screen.png"
 
-new Preview { view: screen, forceDesktop: true }
+new Preview { view: screen, showBars: false, showDevice: false, borderRadius: 8 }
 
 
 

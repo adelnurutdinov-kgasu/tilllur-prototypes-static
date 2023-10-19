@@ -86,6 +86,7 @@ class exports.LocationView extends DeviceView
 													{ value: "off", result: false }], @showLogo)
 												
 		shouldShowDevice = @getStateGeneric("device", [{ value: "false", result: false },
+													{ value: "off", result: false }
 													{ value: "true", result: true }], @showDevice)
 
 		

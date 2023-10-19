@@ -82,6 +82,12 @@ class exports.PhoneTypeView extends InitView
 			@createHomeIndicator new Layer
 				parent: @, width: @width, height: 34, y: Align.bottom, name: ".home bar", opacity: @visible, backgroundColor: null
 		
+		else if @viewSize(393, 852)
+			print "ok"
+			@createNotchStatusBar(@statusBarView)
+			@createHomeIndicator new Layer
+				parent: @, width: @width, height: 34, y: Align.bottom, name: ".home bar", opacity: @visible, backgroundColor: null
+		
 		else if @viewSize(375, 667) or @viewSize(414, 736) or @viewSize(320, 568)
 			@createClassicStatusBar(@statusBarView)
 		

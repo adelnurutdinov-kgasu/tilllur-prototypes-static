@@ -4,7 +4,7 @@ document.body.style.cursor = "auto"
 screen = new Layer { width: 1366, height: 768, backgroundColor: "white", borderRadius: 12, clip: true }
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: screen, forceDesktop: true, config: false }
+preview = new Preview { view: screen, showBars: false, showDevice: false, borderRadius: 0 }
 
 
 alice = new Layer

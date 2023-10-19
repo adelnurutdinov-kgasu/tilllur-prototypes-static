@@ -1,67 +1,82 @@
 
 
-# {LocationView} = require "LocationView"
-# class exports.SectionView extends LocationView
+{LocationView} = require "LocationView"
 
-{Text, ButtonTab} = require "PCButtons"
 
-class exports.SectionView extends Layer
+class exports.SectionView extends LocationView
 	constructor: (@options={}) ->
-		
-		_.defaults @options,
-			width: 200, height: 1000, y: 100
+
+		controlPanelLayer = new Layer
+			width: 360, height: 1000
+			x: 20, y: 60
 			backgroundColor: null
-			
 
+		_.defaults @options,
+			controlPanel: controlPanelLayer
+		
 		super @options
-	
 
+		controlPanelLayer.parent = @parent
+
+	
+	@define 'controlPanel',
+		get: -> @options.controlPanel
+		set: (value) -> @options.controlPanel = value
+	
 	addSection: (title, actionArray = []) =>
 		if Utils.isMobile() then return
 		else
 			sectionView = new Layer
-				parent: @
-				width: 360, height: 100, backgroundColor: null
-				x: 32, y: @children.length * 100
+				width: 360
+				height: 100
+				parent: @controlPanel
+				backgroundColor: null
+			
+			sectionView.y = (@controlPanel.children.length - 1) * 100
 
-			@addSectionTitle(sectionView, title)
-			sectionView.style = cursor: "pointer"
-			sectionView.onTap -> ;
-			sectionView.showHint = -> ;
+			@addSectionTitle(title).parent = sectionView
 
 			sumX = 0
-			for actionItem, i in actionArray
-				sectionButton = @addActionButton(actionItem, i)
+			for actionItem, index in actionArray
+				sectionButton = @addSectionButton(actionItem)
 				sectionButton.parent = sectionView
 				sectionButton.x = sumX
 				sumX += sectionButton.width + 8
-			
-			@width = Math.max(@width, sumX)
+				
 
 
 
-	addActionButton: (actionItem, index) =>
-		buttonLayer = new ButtonTab
+
+	addSectionButton: (actionItem, pV = 6, pH = 9) =>
+		buttonLayer = new TextLayer
 			text: actionItem.title
 			y: 42
-			selected: if index is 0 then true else false
-			custom:
-				actionItem: actionItem
+			padding: { top: pV, bottom: pV + 2, left: pH, right: pH }
+			fontSize: 18
+			fontWeight: 500
+			color: "white"
+			backgroundColor: "rgba(0,0,0,0.5)"
+			borderRadius: 8
 		
-		complexHandler = () ->
-			@custom.actionItem.handler(@custom.actionItem.data, @)
-			for button in @parent.children
-				if button.name isnt ".sectionTitle"
-					button.selected = true if button is @
-					button.selected = false if button isnt @
-
-		buttonLayer.on(Events.Tap, complexHandler)
+		buttonLayer.on(Events.Tap, actionItem.handler)
 		return buttonLayer
 
 
-	addSectionTitle: (localParent, title = "Header Title") =>
-		new Text
-			parent: localParent
-			text: title, name: ".sectionTitle"
-			fontSize: 16, opacity: 0.5, padding: { top: 12 }
+	addSectionTitle: (title = "Header Title") =>
+		return new TextLayer
+			text: title
+			fontSize: 15
+			fontWeight: 500
+			color: "white"
+			opacity: 0.6
+			padding:
+				top: 12
 
+
+
+
+# # Example
+# preview.addSection("Choose Background", [
+# 	{ title: test1, handler: test2 },
+# 	{ title: test1, handler: test2 }
+# ])

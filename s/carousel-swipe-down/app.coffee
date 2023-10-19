@@ -938,4 +938,4 @@ bg.sendToBack()
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: screen, borderRadius: 8, topTheme: "light", forceAndroidBar: true }
+new Preview { view: screen, borderRadius: 8, statusBar_theme: "light", forceAndroidBar: true }
