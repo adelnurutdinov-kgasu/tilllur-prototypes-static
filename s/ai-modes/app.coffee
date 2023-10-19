@@ -14,7 +14,7 @@ Stack = require "Stack"
 screen = new Layer { width: 375, height: 812 }
 
 preview = new Preview { view: screen, showHints: false }
-preview.statusBar.backgroundColor = "white"
+if !Utils.isMobile() then preview.statusBar.backgroundColor = "white"
 
 flow = new NavigationComponent
 	parent: screen
