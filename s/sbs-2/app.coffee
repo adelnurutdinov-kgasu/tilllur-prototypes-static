@@ -123,7 +123,7 @@ imageData = JSON.parse Utils.domLoadDataSync jsonURL
 screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 400, backgroundColor: "null" }
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: screen, showBars: false, showDevice: false, borderRadius: 8 }
+preview = new Preview { view: screen, showHints: false, showUI: false, showDevice: false, showBars: false }
 
 
 
@@ -524,3 +524,4 @@ saveResults = () ->
 
 saveButton.handler = saveResults
 
+# print preview.showHints

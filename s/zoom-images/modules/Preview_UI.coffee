@@ -47,10 +47,7 @@ class exports.Preview_UI extends Preview_Init
 	# Fill ◎
 
 	addConfig: () =>
-		@configView = new UI_Config { view: @ } 
-
-		if @showHints then Framer.Extras.Hints.enable()
-		else Framer.Extras.Hints.disable()
+		@configView = new UI_Config { view: @ }
 
 		scaleTuple = ["Fit", "100%"]
 		hintsTuple = ["Hints ◉", "Hints ◎"]
