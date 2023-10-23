@@ -37,6 +37,14 @@ tempFix = new Layer
 	width: 375, height: 44
 	backgroundColor: "white"
 
+postedImage = new Layer
+	parent: startImage
+	size: 363
+	x: Align.center, y: Align.top(226)
+	backgroundColor: null
+	borderRadius: 12
+
+
 startView.add(startImage)
 
 createButton = new Button
@@ -260,6 +268,8 @@ CV_PW_ButtonMusic = CV_PublishView.buttonMusic(CV_PW_TopView, () -> flow.open(mu
 CV_PW_ButtonTag = CV_PublishView.buttonTag(CV_PW_TopView, () -> flow.open(tagModal))
 
 CV_PW_PublishHandler = () =>
+	postedImage.image = CV_PW_ImageView.children[1].image
+
 	flow.showPrevious()
 	flow.showPrevious()
 
