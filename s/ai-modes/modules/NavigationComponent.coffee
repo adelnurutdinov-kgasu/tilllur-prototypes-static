@@ -134,8 +134,8 @@ class NavigationComponent extends FlowComponent
 		
 		navigationView_Wrapper.custom.handler = navigationView_Handler
 
-		navigationView.on Events.SwipeRightStart, (event, layer) ->
-			@custom.flow.showPrevious()
+		# navigationView.on Events.SwipeRightStart, (event, layer) ->
+		# 	@custom.flow.showPrevious()
 
 		navigationView.on Events.SwipeDownStart, (event, layer) ->
 			if @scrollY < 0 then @custom.flow.showPrevious()
