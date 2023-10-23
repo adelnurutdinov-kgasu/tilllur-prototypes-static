@@ -1,0 +1,27 @@
+{
+    "mode": "blending",
+    "name-1": "image_qformer___v30___tushka",
+    "name-2": "image_qformer___v30___ViT-g-14",
+    "images": [
+      {
+        "image-1": "http://cvlab.s3.yandex.net/sbs/8970fa410a8d91381c8bcdbed25dc9f1.png",
+        "image-2": "http://cvlab.s3.yandex.net/sbs/cd43317636330f38650bd5341d10b2fd.png",
+        "image_prompt": [
+            "http://cvlab.s3.yandex.net/sbs/8970fa410a8d91381c8bcdbed25dc9f1.png",
+            "http://cvlab.s3.yandex.net/sbs/cd43317636330f38650bd5341d10b2fd.png"]
+      },
+      {
+        "image-1": "http://cvlab.s3.yandex.net/sbs/67d8c3e16e16f23d8c0cf1584d30c0a4.png",
+        "image-2": "http://cvlab.s3.yandex.net/sbs/7684a3592142aa35bf52384dd15038f7.png",
+        "image_prompt": [
+            "http://cvlab.s3.yandex.net/sbs/67d8c3e16e16f23d8c0cf1584d30c0a4.png",
+            "http://cvlab.s3.yandex.net/sbs/7684a3592142aa35bf52384dd15038f7.png"]
+      },
+      {
+        "image-1": "http://cvlab.s3.yandex.net/sbs/b8ae08adc411bbb2ea714075534a9192.png",
+        "image-2": "http://cvlab.s3.yandex.net/sbs/4ce6421b242e266fcd2a41e67cbba490.png",
+        "image_prompt": [
+            "http://cvlab.s3.yandex.net/sbs/b8ae08adc411bbb2ea714075534a9192.png"]
+      }
+    ]
+  }

@@ -63,7 +63,6 @@ class TextButton extends Text
 		@updateTuple(@tuple)
 	
 	
-		
 	Hover: =>
 		@opacity = @tuple.hover
 	HoverOff: =>
@@ -493,11 +492,11 @@ composeResults = () ->
 	value = (numb * 100).toFixed()
 	
 	if showResults
-		# resultsButton.text = "#{imageData["name-1"]} — #{value} %\n#{imageData["name-2"]} – #{100 - value} %"
 		resultsButton.text = "#{imageData["name-1"]} — #{cleanValue(allOne, allResults)} %\n#{imageData["name-2"]} – #{cleanValue(allTwo, allResults)} %\n"
 	else
 		resultsButton.text = "#{imageData["name-1"]} — X %\n#{imageData["name-2"]} – Y %"
 
+	resultsButton.y = Align.center
 
 
 

@@ -1,0 +1,16 @@
+{
+  "name-1": "custom_model_v1.0",
+  "name-2": "model_v1.1",
+  "images": [
+    {
+      "prompt": "Интерьер кухни гостиной оттенки терракотовый серый нежно розовый пыльно розовый много серого бетон",
+      "image-1": "https://masterpiecer-images.s3.yandex.net/0f3e9e9f718711ee94492ab2a9c6ab46:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/7e771eb9716211eeb7a9261105627a54:upscaled"
+    },
+    {
+      "prompt": "запудрил мозги, эстетично, красиво, реалистично, крупным планом, профессиональное фото, 4k",
+      "image-1": "https://masterpiecer-images.s3.yandex.net/f5dea351716511eeb7ea6a0259d7362a:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/d01d32d9716811eeb060baea8797b5f2:upscaled"
+    }
+  ]
+}
