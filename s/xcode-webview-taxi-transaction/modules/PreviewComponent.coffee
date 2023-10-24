@@ -1,5 +1,9 @@
 # Preview Component
 
+Framer.Defaults.Animation =
+	curve: Spring(damping: 1)
+	time: 0.5
+
 # {Preview_Class} = require "Preview_Class"
 # {Preview_Init} = require "Preview_Init"
 {Preview_UI} = require "Preview_UI"

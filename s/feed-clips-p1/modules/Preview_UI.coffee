@@ -26,6 +26,7 @@ class exports.Preview_UI extends Preview_Init
 
 
 
+
 	createLogoButton: () =>
 		
 		openHomeHandler = () ->
@@ -46,27 +47,43 @@ class exports.Preview_UI extends Preview_Init
 	# Fill ◎
 
 	addConfig: () =>
-		@configView = new UI_Config { view: @ } 
+		@configView = new UI_Config { view: @ }
+
+		scaleTuple = ["Fit", "100%"]
+		hintsTuple = ["Hints ◉", "Hints ◎"]
+
 
 		toggleScale = (emptyData, localButton) =>
 			if @stateGuard.states.current.name == "normal"
 				@animateStateToFill()
-				localButton.text = "Fit"
+				localButton.text = scaleTuple[0]
 			else
 				@animateStateToNormal()
-				localButton.text = "100%"
+				localButton.text = scaleTuple[1]
+				
 		
 		toggleTips = (emptyData, localButton) =>
 			if @showHints
 				@hideHintsHandler()
-				localButton.text = "Hints ◎"
+				localButton.text = hintsTuple[1]
 			else
 				@showHintsHandler()
-				localButton.text = "Hints ◉"
+				localButton.text = hintsTuple[0]
+		
+		initScaleTitle = if @showHints then hintsTuple[0] else hintsTuple[1]
+		initStateTitle = if @stateGuard.states.current.name == "normal" then scaleTuple[1] else scaleTuple[0]
+
+		# print initScaleTitle + " " + initStateTitle
 
 		@configView.addSection([
-			{ title: "Hints ◉", handler: toggleTips },
-			{ title: "Fit", handler: toggleScale },
+			{
+				title: initScaleTitle,
+				handler: toggleTips
+				},
+			{
+				title: initStateTitle,
+				handler: toggleScale
+			},
 		])
 	
 	

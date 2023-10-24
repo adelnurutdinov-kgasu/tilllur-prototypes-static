@@ -233,6 +233,11 @@ class exports.Preview_Class extends Layer
 													{ value: "on", result: true },
 													{ value: "false", result: false },
 													{ value: "true", result: true }], @showDevice)
+		
+		@showHints = @getStateGeneric("hints", [{ value: "off", result: false },
+													{ value: "on", result: true },
+													{ value: "false", result: false },
+													{ value: "true", result: true }], @showHints)
 
 
 
