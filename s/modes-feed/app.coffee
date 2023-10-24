@@ -18,7 +18,7 @@ shuffle = (source) ->
 	return source
 
 allImages = []
-for i in [1..16]
+for i in [1..15]
 	if i < 10 then strIndex = "0#{i}" else strIndex = "#{i}"
 
 	imageData =
@@ -29,10 +29,11 @@ for i in [1..16]
 
 imagesForCards = shuffle(allImages)
 
+delay = (time, fn, args...) ->
+	setTimeout fn, time, args...
 
 
 
-# Side by Side Image
 
 getMovableImage = (imageData) ->
 	imageView = new Layer
@@ -64,14 +65,16 @@ getMovableImage = (imageData) ->
 		"shown": { x: clipView.states.shown.width }
 	breaker.stateSwitch("start")
 
+
 	imageMode = new Layer
 		parent: clipView
 		width: 375.0, height: 375.0, image: imageData.new
 
 
+
 	# Proxy
 
-	boxProxy = new Layer { parent: imageView, opacity: 0 }
+	boxProxy = new Layer { opacity: 0 }
 	boxProxy.states =
 		"hidden": { opacity: 0 }
 		"shown": { opacity: 0 }
@@ -88,7 +91,7 @@ getMovableImage = (imageData) ->
 			breaker.animate(to, animationOptions)
 			
 			Utils.delay 2, =>
-				@animate(from, animationOptions)
+				boxProxy.animate(from, animationOptions)
 
 	boxProxy.stateSwitch("hidden")
 
@@ -128,7 +131,8 @@ getSlider = (imageData) ->
 		borderRadius: 100
 		x: Align.right(-14), y: Align.top(14)
 		padding: 7
-	
+
+
 	slider.on "change:currentPage", ->
 		if @currentPage == @content.children[0]
 			@children[1].text = "1 из 2"
@@ -142,7 +146,7 @@ getSlider = (imageData) ->
 
 
 feedScroll = new ScrollComponent
-	parent: screen
+	parent: homeView
 	width: 375
 	height: 812
 	backgroundColor: "eee"
@@ -153,7 +157,7 @@ feedScroll = new ScrollComponent
 		bottom: 120
 
 bottomBar = new Layer
-	parent: screen
+	parent: homeView
 	width: 375.0, height: 76.0, image: "images/bottomBar.png"
 
 
@@ -211,10 +215,17 @@ promptView = () ->
 	return new Layer
 		width: 375.0, height: 60.0, image: "images/prompt_view.png"
 
-promptWithImageView = (imageData, handler = null, slider = null) ->
+promptWithImageView = (imageData, handler = null, handlerSlider = null, slider = null) ->
 
 	localView = new Layer
 		width: 375.0, height: 60.0, image: "images/prompt_with_image_view.png"
+		
+	
+	secondBox = new Button
+		parent: localView
+		width: 375 - 56, height: 60, x: 56, backgroundColor: null
+		scaleTo: 1
+		handler: handler
 	
 	childView = new Button
 		parent: localView
@@ -222,7 +233,7 @@ promptWithImageView = (imageData, handler = null, slider = null) ->
 		x: Align.left(14), y:Align.center
 		image: imageData.orig
 		scaleTo: 1
-		handler: handler
+		handler: handlerSlider
 		custom:
 			slider: slider
 	
@@ -237,21 +248,21 @@ titleView = () ->
 
 Stack = require "Stack"
 
+modeHandler = (event, layer) =>
+		flow.open(animeView)
 
 card_Slider = (currentData) ->
 	cardHandler = (event, layer) =>
 		localSlider = layer.custom.slider
 		secondPage = layer.custom.slider.content.children[1]
-		
 		localSlider.snapToPage(secondPage)
-
+	
 	slider = getSlider(currentData)
-	prompt = promptWithImageView(currentData, cardHandler, slider)
-
+	prompt = promptWithImageView(currentData, modeHandler, cardHandler, slider)
 	card = Stack.vertical([titleView(), slider, prompt, commentsView()], 0)
 
 card_Movable = (currentData) ->
-	return Stack.vertical([titleView(), getMovableImage(currentData), promptWithImageView(currentData), commentsView()], 0)
+	return Stack.vertical([titleView(), getMovableImage(currentData), promptWithImageView(currentData, modeHandler), commentsView()], 0)
 
 card_General = (currentData) ->
 	return Stack.vertical([titleView(), getSimpleImage(currentData), promptView(), commentsView()], 0)
@@ -259,12 +270,12 @@ card_General = (currentData) ->
 
 cards = [
 	headerImage,
-	card_General(imagesForCards[0]),
-	card_Slider(imagesForCards[1]),
+	card_Slider(imagesForCards[0]),
+	card_Movable(imagesForCards[1]),
 	card_General(imagesForCards[2]),
-	card_Movable(imagesForCards[3]),
-	card_General(imagesForCards[4]),
-	card_Slider(imagesForCards[5]),
+	card_Slider(imagesForCards[3]),
+	card_Movable(imagesForCards[4]),
+	card_General(imagesForCards[5]),
 	card_General(imagesForCards[6]),
 	card_Movable(imagesForCards[7]),
 	card_General(imagesForCards[8]),
@@ -274,10 +285,18 @@ cards = [
 	card_Movable(imagesForCards[12]),
 	card_General(imagesForCards[13]),
 	card_Slider(imagesForCards[14]),
-	card_Movable(imagesForCards[15]),
 
 ]
+
 feedContent = Stack.vertical(cards, 8)
 feedContent.backgroundColor = "eee"
 feedContent.parent = feedScroll.content
 
+
+
+animeView = flow.createView()
+
+inputAnime = new Layer
+	width: 375.0, height: 812.0, image: "images/input_anime.png"
+
+animeView.add(inputAnime)
