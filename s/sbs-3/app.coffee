@@ -16,9 +16,25 @@ testBlendingJSON = "images/testing-blending.json"
 
 defaultJSON = testBlendingJSON
 
-jsonURL = preview.getStateGeneric("json", [{ value: "sbs", result: testSBSJSON },
-	{ value: "blending", result: testBlendingJSON }], defaultJSON)
+# jsonURL = preview.getStateGeneric("json", [{ value: "sbs", result: testSBSJSON },
+# 	{ value: "blending", result: testBlendingJSON }], defaultJSON)
 
+getState = (stateKey = "json", defaultResult = defaultJSON) ->
+	result = defaultResult
+
+	for item in location.search[1..].split('&')
+		keyValuePair = item.split("=")
+		keyPart = keyValuePair[0]
+		valuePart = keyValuePair[1]
+
+		if keyPart == stateKey
+			return valuePart
+	
+	return defaultResult
+
+
+
+jsonURL = getState()
 
 showResults = false
 imageData = JSON.parse Utils.domLoadDataSync jsonURL
