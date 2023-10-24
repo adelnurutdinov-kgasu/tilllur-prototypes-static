@@ -1,0 +1,77 @@
+{
+  "mode": "blending",
+  "name-1": "светлая",
+  "name-2": "темная",
+  "images": [
+    {
+        "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+        "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+        "image_prompt": [
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    },
+    {
+      "image-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+      "image-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+      "image_prompt": [
+          "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+          "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"]
+    }
+  ]
+}

@@ -9,9 +9,10 @@ screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 200 + 200, backgroundC
 preview = new Preview { view: screen, showHints: false, showUI: false, showDevice: false, showBars: false, scaleState: "fill", borderRadius: 0 }
 
 
-testSBSJSON = "images/test1.json"
-testSBSJSON2 = "images/test2.json"
-testBlendingJSON = "images/image_blending_sbs.json"
+testSBSJSON = "images/testing-sbs.json"
+# testSBSJSON2 = "images/test2.json"
+# testBlendingJSON = "images/image_blending_sbs.json"
+testBlendingJSON = "images/testing-blending.json"
 
 defaultJSON = testBlendingJSON
 
@@ -243,7 +244,7 @@ nextButton = new Button
 selectLeftHandler = Utils.throttle 0.2, ->
 	child1 = pages.currentPage.children[0]
 	child2 = pages.currentPage.children[1]
-	print selectNone
+	# print selectNone
 	selectNone.image = "images/button_cancel.png"
 	
 	if child1.x == 0 then child1.emit Events.Tap
