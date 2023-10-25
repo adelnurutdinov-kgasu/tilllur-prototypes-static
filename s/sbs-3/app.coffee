@@ -6,12 +6,9 @@ document.body.style.cursor = "auto"
 { Text, TextButton, ImageButton } = require "SBS_Button"
 
 screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 200 + 200, backgroundColor: "null" }
-preview = new Preview { view: screen, showHints: false, showUI: false, showDevice: false, showBars: false, scaleState: "fill", borderRadius: 0 }
 
 
 testSBSJSON = "images/testing-sbs.json"
-# testSBSJSON2 = "images/test2.json"
-# testBlendingJSON = "images/image_blending_sbs.json"
 testBlendingJSON = "images/testing-blending.json"
 
 defaultJSON = testBlendingJSON
@@ -68,11 +65,30 @@ pages.on "change:currentPage", ->
 		promptTitleText.y = Align.center
 	
 	else if imageMode == imageModeEnum.blending
+
+		pairBoxesView.width = 0
+		lastSumBox = null
+
 		for i in [0..4]
 			if pages.currentPage.custom.image_prompt[i] != undefined
 				pairBoxes[i].image = pages.currentPage.custom.image_prompt[i]
+				pairBoxes[i].style = { cursor: "pointer" }
+				pairBoxesView.width += pairBoxes[i].width + 88
+				
+				sumBoxes[i].opacity = 0.5
+				lastSumBox = sumBoxes[i]
 			else
 				pairBoxes[i].image = null
+				pairBoxes[i].style = { cursor: "auto" }
+				sumBoxes[i].opacity = 0
+				
+
+		
+		try
+			lastSumBox.opacity = 0
+
+		if pairBoxesView.width > 88 then pairBoxesView.width = pairBoxesView.width - 88
+		pairBoxesView.x = Align.center
 	
 	currentIndex = -1
 	for item, i in pages.content.children
@@ -167,6 +183,12 @@ topView = new Layer
 	width: screen.width, height: 200
 	backgroundColor: null
 
+bottomView = new Layer
+	parent: screen
+	width: screen.width, height: 200
+	y: Align.bottom
+	backgroundColor: null
+
 
 
 
@@ -174,7 +196,10 @@ topView = new Layer
 
 
 promptTitleText = null
+
 pairBoxes = []
+sumBoxes = []
+pairBoxesView = null
 
 if imageMode == imageModeEnum.sbs
 
@@ -190,35 +215,66 @@ if imageMode == imageModeEnum.sbs
 		
 
 else if imageMode == imageModeEnum.blending
-	for i in [0..4]
-		box =  new Layer
-			parent: topView
-			size: 170, borderRadius: 12
-			x: (170 + 10) * i
-			backgroundColor: null
 
-		if imageData.images[0].image_prompt[i] != undefined
-			box.image = imageData.images[0].image_prompt[i]
+	topView.height = topView.height + 200
+	pages.y = pages.y + 200
+	bottomView.y = bottomView.y + 200
+
+
+	lastSumIcon = null
+
+	pairBoxesView = new Layer
+		parent: topView
+		width: 0, height: 340, borderRadius: 24
+		backgroundColor: "null"
+
+	for i in [0..4]
+		boxHandler = (event, layer) ->
+			if layer.image == "" or layer.image == undefined or layer.image == null then return
+			try
+				scaledImageView.opacity = 1
+				scaledImageView.ignoreEvents = false
+				scaledImageView.children[0].image = layer.image
+
+		box =  new Button
+			parent: pairBoxesView
+			size: 340, borderRadius: 24
+			x: (340 + 88) * i
+			style: cursor: "pointer"
+			backgroundColor: null
+			style: { cursor: "auto" }
+			scaleTo: 1
+			handler: boxHandler
 		
 		pairBoxes.push box
 
+		sumIcon = new Layer
+			parent: pairBoxesView
+			width: 88.0, height: 88.0, image: "images/sum_icon.png"
+			x: ((340 + 88) * i) + 340, y: Align.center
+			opacity: 0
+
+		sumBoxes.push sumIcon
+
+		if imageData.images[0].image_prompt[i] != undefined
+			box.image = imageData.images[0].image_prompt[i]
+			box.style = { cursor: "pointer" }
+			pairBoxesView.width += box.width + 88
+
+			sumIcon.opacity = 0.5
+			
+			lastSumIcon = sumIcon
+
+	if pairBoxesView.width > 88 then pairBoxesView.width = pairBoxesView.width - 88
+	pairBoxesView.x = Align.center()
+
+	try lastSumIcon.opacity = 0
 
 
 
 
 
 
-
-
-
-
-
-
-bottomView = new Layer
-	parent: screen
-	width: screen.width, height: 200
-	y: Align.bottom
-	backgroundColor: null
 
 
 
@@ -333,7 +389,7 @@ resultsButton = new Text
 	width: 800, autoHeight: true
 	text: "Hello", textAlign: "right", fontSize: 24
 	x: Align.right(), y: Align.center
-	backgroundColor: "red"
+	# backgroundColor: "red"
 	backgroundColor: null
 	opacity: 0.5
 
@@ -443,5 +499,32 @@ saveButton = new Button
 `
 
 
+
+
 resultsButton.y = Align.center
 
+screen.height = topView.height + pages.height + bottomView.height
+preview = new Preview { view: screen, showHints: false, showUI: false, showDevice: false, showBars: false, scaleState: "fill", borderRadius: 0 }
+
+scaledImageView = null
+
+if imageMode == imageModeEnum.blending
+	
+	scaledImageView = new Layer
+		width: Screen.width
+		height: Screen.height
+		backgroundColor: "rgba(34,34,34,.8)"
+		scaleTo: 1
+		opacity: 0
+	
+	scaledImageView.onTap (event, layer) =>
+		scaledImageView.opacity = 0
+		scaledImageView.ignoreEvents = true
+
+	scaledImageView.ignoreEvents = true
+
+	scaledImage = new Layer
+		parent: scaledImageView
+		size: scaledImageView.height / 1.2
+		x: Align.center, y: Align.center
+		borderRadius: 16

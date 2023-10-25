@@ -4,7 +4,7 @@
 { Button } = require "Buttons"
 
 screen = new Layer { width: 375, height: 812 }
-preview = new Preview { view: screen, showUI: false, showHints: false }
+preview = new Preview { view: screen, showUI: true, showHints: false }
 
 flow = new NavigationComponent { parent: screen, width: screen.width, height: screen.height }
 homeView = flow.createView("white")
@@ -105,40 +105,59 @@ getSimpleImage = (imageData) ->
 		size: 375, image: imageData.new
 
 getSlider = (imageData) ->
+
+
 	slider = new PageComponent
 		size: 375
 		scrollVertical: false
-		scrollHorizontal: true
+		scrollHorizontal: false
 		directionLock: true
 	
 	image1 = new Layer
 		parent: slider.content
 		size: 375
-		image: imageData.new
+		# image: imageData.new
+		image: imageData.orig
 
 	image1 = new Layer
 		parent: slider.content
 		size: 375, x: 375
-		image: imageData.orig
+		# image: imageData.orig
+		image: imageData.new
 	
 	text = new TextLayer
 		parent: slider
-		width: 54
+		width: 86
 		fontSize: 13, fontWeight: 700
 		color: "white", textAlign: "center"
 		backgroundColor: "rgba(0,0,0,0.3)"
-		text: "1 из 2"
+		text: "оригинал"
 		borderRadius: 100
-		x: Align.right(-14), y: Align.top(14)
+		x: Align.right(-14), y: Align.bottom(-14)
 		padding: 7
+		opacity: 0
 
+
+	slider.on Events.TouchStart, ->
+		@snapToPage(@content.children[0], false)
+	
+	slider.on Events.TouchEnd, ->
+		@snapToPage(@content.children[1], false)
+	
+	slider.on Events.Swipe, ->
+		@snapToPage(@content.children[1], false)
 
 	slider.on "change:currentPage", ->
 		if @currentPage == @content.children[0]
-			@children[1].text = "1 из 2"
+			@children[1].opacity = 0
 		else
-			@children[1].text = "2 из 2"
+			@children[1].opacity = 1
 
+
+	magic = new Layer
+		parent: slider
+		width: 240.0, height: 240.0, image: "images/magic.gif"
+		x: Align.center, y: Align.center
 	
 	return slider
 
@@ -218,12 +237,14 @@ promptView = () ->
 promptWithImageView = (imageData, handler = null, handlerSlider = null, slider = null) ->
 
 	localView = new Layer
-		width: 375.0, height: 60.0, image: "images/prompt_with_image_view.png"
-		
+		width: 375.0, height: 60.0
+		# image: "images/prompt_with_image_view.png"
+		image: "images/prompt_mode.png"
+
 	
 	secondBox = new Button
 		parent: localView
-		width: 375 - 56, height: 60, x: 56, backgroundColor: null
+		width: 375 - 0, height: 60, x: 0, backgroundColor: null
 		scaleTo: 1
 		handler: handler
 	
@@ -233,6 +254,7 @@ promptWithImageView = (imageData, handler = null, handlerSlider = null, slider =
 		x: Align.left(14), y:Align.center
 		image: imageData.orig
 		scaleTo: 1
+		opacity: 0
 		handler: handlerSlider
 		custom:
 			slider: slider
@@ -259,7 +281,7 @@ card_Slider = (currentData) ->
 	
 	slider = getSlider(currentData)
 	prompt = promptWithImageView(currentData, modeHandler, cardHandler, slider)
-	card = Stack.vertical([titleView(), slider, prompt, commentsView()], 0)
+	return Stack.vertical([titleView(), slider, prompt, commentsView()], 0)
 
 card_Movable = (currentData) ->
 	return Stack.vertical([titleView(), getMovableImage(currentData), promptWithImageView(currentData, modeHandler), commentsView()], 0)
@@ -268,29 +290,65 @@ card_General = (currentData) ->
 	return Stack.vertical([titleView(), getSimpleImage(currentData), promptView(), commentsView()], 0)
 
 
+# cards = [
+# 	headerImage,
+# 	card_Slider(imagesForCards[0]),
+# 	card_Movable(imagesForCards[1]),
+# 	card_General(imagesForCards[2]),
+# 	card_Slider(imagesForCards[3]),
+# 	card_Movable(imagesForCards[4]),
+# 	card_General(imagesForCards[5]),
+# 	card_General(imagesForCards[6]),
+# 	card_Movable(imagesForCards[7]),
+# 	card_General(imagesForCards[8]),
+# 	card_Slider(imagesForCards[9]),
+# 	card_Slider(imagesForCards[10]),
+# 	card_Movable(imagesForCards[11]),
+# 	card_Movable(imagesForCards[12]),
+# 	card_General(imagesForCards[13]),
+# 	card_Slider(imagesForCards[14]),
+# ]
+
 cards = [
 	headerImage,
-	card_Slider(imagesForCards[0]),
-	card_Movable(imagesForCards[1]),
+	card_General(imagesForCards[0]),
+	card_Slider(imagesForCards[1]),
 	card_General(imagesForCards[2]),
 	card_Slider(imagesForCards[3]),
-	card_Movable(imagesForCards[4]),
-	card_General(imagesForCards[5]),
-	card_General(imagesForCards[6]),
-	card_Movable(imagesForCards[7]),
-	card_General(imagesForCards[8]),
-	card_Slider(imagesForCards[9]),
-	card_Slider(imagesForCards[10]),
-	card_Movable(imagesForCards[11]),
-	card_Movable(imagesForCards[12]),
-	card_General(imagesForCards[13]),
-	card_Slider(imagesForCards[14]),
-
+	card_General(imagesForCards[4]),
+	card_Slider(imagesForCards[5]),
 ]
 
 feedContent = Stack.vertical(cards, 8)
 feedContent.backgroundColor = "eee"
 feedContent.parent = feedScroll.content
+
+
+showFlags = []
+for item in cards
+	showFlags.push true
+
+compareFocusFor = (currentIndex) ->
+	if showFlags[currentIndex]
+		showFlags[currentIndex] = false
+		Utils.delay 1, ->
+			cards[currentIndex].children[1].snapToPage(cards[currentIndex].children[1].content.children[1], false, { time: 1.0, curve: Spring(damping: 1) })
+			cards[currentIndex].children[1].children[2].opacity = 0
+
+feedScroll.content.on "change:y", ->
+	v = feedScroll.scrollY
+
+	focusPointY = feedScroll.screenFrame.y + feedScroll.screenFrame.height / 8 * 5
+	
+	if cards[2].screenFrame.y < focusPointY then compareFocusFor(2)
+	if cards[4].screenFrame.y < focusPointY then compareFocusFor(4)
+	if cards[6].screenFrame.y < focusPointY then compareFocusFor(6)
+	
+	# if cards[4].screenFrame.y < focusPointY
+	# 	if showTestFlag4
+	# 		showTestFlag4 = false
+	# 		Utils.delay 1, ->
+	# 			cards[4].children[1].snapToPage(cards[4].children[1].content.children[1], true, { time: 1.0, curve: Spring(damping: 1) })
 
 
 
