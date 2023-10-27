@@ -99,6 +99,15 @@ pages.on "change:currentPage", ->
 		if currentIndex == pages.content.children.length - 1
 			showResults = true
 			composeResults()
+	
+	if pages.currentPage.custom.score.one == -1 and pages.currentPage.custom.score.two == -1
+		pages.currentPage.children[0].stateSwitch("start")
+		pages.currentPage.children[1].stateSwitch("start")
+		selectNone.image = "images/button_draw.png"
+	else
+		pages.currentPage.children[0].stateSwitch("deselect")
+		pages.currentPage.children[1].stateSwitch("deselect")
+		selectNone.image = "images/button_cancel.png"
 
 	
 

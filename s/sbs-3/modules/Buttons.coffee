@@ -19,8 +19,6 @@ class exports.Button extends Layer
 
 		super @options
 
-		# @style = cursor: "pointer"
-
 		@states =
 			"pressed": { scale: @scaleTo }
 			"normal": { scale: 1.0 }

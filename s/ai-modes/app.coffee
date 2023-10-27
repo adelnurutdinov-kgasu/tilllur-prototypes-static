@@ -8,23 +8,20 @@ screenGuard = new Layer
 { Preview } = require "PreviewComponent"
 { CameraLayer } = require "CameraLayer"
 { Button } = require "Buttons"
-{ NavigationComponent } = require "NavigationComponent"
+{ FlowView, NavigationView, ModalView } = require "NavigationComponent"
 Stack = require "Stack"
 
 screen = new Layer { width: 375, height: 812 }
 
-preview = new Preview { view: screen, showHints: false }
+preview = new Preview { view: screen }
 # if !Utils.isMobile() then preview.statusBar.backgroundColor = "white"
 
-flow = new NavigationComponent
-	parent: screen
-	width: screen.width
-	height: screen.height
+flow = new FlowView { parent: screen }
 
 
 
 
-startView = flow.createView("white")
+startView = new NavigationView { parent: flow, backgroundColor: "white", scrollVertical: false }
 
 startImage = new Layer
 	parent: startView
@@ -45,7 +42,7 @@ postedImage = new Layer
 	borderRadius: 12
 
 
-startView.add(startImage)
+startImage.parent = startView.content
 
 createButton = new Button
 	parent: startImage
@@ -60,7 +57,13 @@ createButton = new Button
 M_withImage = false
 M_toysMode = false
 
-createModal = flow.createModal("white", 812-380, 42)
+createModal = new ModalView
+	parent: flow
+	height: 812 - 440, y: 440
+	borderRadius: 42
+	backgroundColor: "white"
+
+# flow.createModal("white", 812-380, 42)
 CV_ModalView = require "CV_ModalView"
 
 CV_MV_CreateHandler = () =>
@@ -77,7 +80,7 @@ CV_MV_ChangeHandler = () =>
 	flow.open(CV_IW_PhotoModal)
 
 CV_MV_Background = CV_ModalView.background()
-createModal.add(CV_MV_Background)
+CV_MV_Background.parent = createModal.content
 
 CV_MV_ModesView = CV_ModalView.modesView(CV_MV_Background)
 CV_MV_ChangeButton = CV_ModalView.changeButton(CV_MV_Background, CV_MV_ChangeHandler)
@@ -86,9 +89,9 @@ CV_MV_CreateButton = CV_ModalView.createButton(CV_MV_Background, CV_MV_CreateHan
 
 
 
-toysModal = flow.createView()
+toysModal = new NavigationView { parent: flow }
 CV_MV_ToysBackground = CV_ModalView.toysBackground()
-toysModal.add(CV_MV_ToysBackground)
+CV_MV_ToysBackground.parent = toysModal.content
 
 TOYS_OpenModalHandler = () ->
 	flow.showPrevious()
@@ -132,7 +135,7 @@ CV_MV_ModesView.content.children[0].handler = TOYS_OpenModalHandler
 
 
 
-inputView = flow.createView()
+inputView = new NavigationView { parent: flow }
 CV_InputView = require "CV_InputView"
 
 CV_IW_ImageAdded = false
@@ -226,33 +229,44 @@ CV_IW_ButtonCamera = CV_InputView.buttonCamera(CV_IW_BottomView, CV_IW_OpenCamer
 CV_IW_ButtonContinue = CV_InputView.buttonContinue(CV_IW_BottomView, CV_IW_ContinueHandler)
 CV_IW_ButtonNext = CV_InputView.buttonNext(CV_IW_BottomView, CV_IW_CreateHandler)
 
-inputView.add(CV_IW_Background)
+CV_IW_Background.parent = inputView.content
 
 
 
 # Add Image Override
 
-CV_IW_PhotoModal = flow.createModal("white", 812-740.0, 32)
+CV_IW_PhotoModal = new ModalView
+	parent: flow
+	height: 740, y: 812 - 740
+	borderRadius: 32
+	backgroundColor: "white"
+
+# flow.createModal("white", 812-740.0, 32)
 CV_IW_ChooseView = CV_InputView.chooseView()
 
 CV_IW_Images = CV_InputView.images(CV_IW_ChooseView, CV_IW_AddImageHandler)
 CV_IW_ChooseButtonClose = CV_InputView.chooseButtonClose(CV_IW_ChooseView, () -> flow.showPrevious())
 
-CV_IW_PhotoModal.add(CV_IW_ChooseView)
+CV_IW_ChooseView.parent = CV_IW_PhotoModal.content
 
 
-CV_IW_SettingsModal = flow.createModal("white", 812-740.0, 32)
+CV_IW_SettingsModal = new ModalView
+	parent: flow
+	height: 740, y: 812 - 740
+	borderRadius: 32
+	backgroundColor: "white"
+
 CV_IW_SettingsView = CV_InputView.settingsView()
 CV_IW_SettingsButtonClose = CV_InputView.settingsButtonClose(CV_IW_SettingsView, () -> flow.showPrevious())
 
-CV_IW_SettingsModal.add(CV_IW_SettingsView)
+CV_IW_SettingsView.parent = CV_IW_SettingsModal.content
 
 
 
 
 
 
-publishView = flow.createView()
+publishView = new NavigationView { parent: flow }
 
 CV_PublishView = require "CV_PublishView"
 
@@ -319,7 +333,7 @@ CV_PW_ButtonReroll = CV_PublishView.buttonReroll(CV_PW_BottomView, CV_PW_RerollH
 CV_PW_ButtonSave = CV_PublishView.buttonSave(CV_PW_BottomView, null)
 CV_PW_ButtonPublish = CV_PublishView.buttonPublish(CV_PW_BottomView, CV_PW_PublishHandler)
 
-publishView.add(CV_PW_Background)
+CV_PW_Background.parent = publishView.content
 
 
 
@@ -331,8 +345,19 @@ publishView.add(CV_PW_Background)
 
 
 
-inputCropView = flow.createModal("white", 812-361.0, 42)
-inputSettingsView = flow.createModal("white", 812-557, 42)
+inputCropView = new ModalView
+	parent: flow
+	height: 361, y: 812-361
+	borderRadius: 42
+	backgroundColor: "white"
+
+# flow.createModal("white", 812-361.0, 42)
+inputSettingsView = new ModalView
+	parent: flow
+	height: 557, y: 812-557
+	borderRadius: 42
+	backgroundColor: "white"
+	# flow.createModal("white", 812-557, 42)
 
 aspectRatio_Image = new Layer
 	width: 375.0
@@ -345,8 +370,8 @@ settings_Image = new Layer
 	image: "images/settings_Image.png"
 
 
-inputSettingsView.add(settings_Image)
-inputCropView.add(aspectRatio_Image)
+settings_Image.parent = inputSettingsView.content
+aspectRatio_Image.parent = inputCropView.content
 
 
 
@@ -356,9 +381,23 @@ inputCropView.add(aspectRatio_Image)
 
 
 
-filterModal = flow.createModal("white", 812-743, 42)
-musicModal = flow.createModal("white", 812-743, 42)
-tagModal = flow.createModal("white", 812-743, 42)
+filterModal = new ModalView
+	parent: flow
+	height: 743, y: 812-743
+	borderRadius: 42
+	backgroundColor: "white"
+
+musicModal = new ModalView
+	parent: flow
+	height: 743, y: 812-743
+	borderRadius: 42
+	backgroundColor: "white"
+
+tagModal = new ModalView
+	parent: flow
+	height: 743, y: 812-743
+	borderRadius: 42
+	backgroundColor: "white"
 
 filterView = new Layer
 	width: 375.0
@@ -375,9 +414,9 @@ tagView = new Layer
 	height: 743.0
 	image: "images/tagView.png"
 
-filterModal.add(filterView)
-musicModal.add(musicView)
-tagModal.add(tagView)
+filterView.parent = filterModal.content
+musicView.parent = musicModal.content
+tagView.parent = tagModal.content
 
 
 
@@ -394,7 +433,7 @@ tagModal.add(tagView)
 
 
 
-chooseAnimeView = flow.createView()
+chooseAnimeView = new NavigationView { parent: flow }
 
 chooseAnimeView_Image = new Layer
 	width: 375.0, height: 812.0
@@ -406,12 +445,12 @@ chooseAnimeView_ButtonNext = new Button
 	y: 100, backgroundColor: null
 	handler: () -> flow.open(animeView)
 
-chooseAnimeView.add(chooseAnimeView_Image)
+chooseAnimeView_Image.parent = chooseAnimeView.content
 
 
 
 
-chooseBarbieView = flow.createView()
+chooseBarbieView = new NavigationView { parent: flow }
 
 chooseBarbieView_Image = new Layer
 	width: 375.0
@@ -424,14 +463,14 @@ chooseBarbieView_ButtonNext = new Button
 	y: 100, backgroundColor: null
 	handler: () -> flow.open(barbieView)
 
-chooseBarbieView.add(chooseBarbieView_Image)
+chooseBarbieView_Image.parent = chooseBarbieView
 
 
 
 
 
-animeView = flow.createView()
-barbieView = flow.createView()
+animeView = new NavigationView { parent: flow }
+barbieView = new NavigationView { parent: flow }
 
 animeView_Image = new Layer
 	width: 375.0, height: 812.0
@@ -441,8 +480,8 @@ barbieView_Image = new Layer
 	width: 375.0, height: 812.0
 	image: "images/barbieView.png"
 
-animeView.add(animeView_Image)
-barbieView.add(barbieView_Image)
+animeView_Image.parent = animeView.content
+barbieView_Image.parent = barbieView.content
 
 
 animeView_ButtonNext = new Button

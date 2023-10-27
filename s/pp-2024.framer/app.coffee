@@ -1,4 +1,4 @@
-Framer.Extras.Hints.disable()
+# Framer.Extras.Hints.disable()
 
 class ButtonVideo extends VideoLayer
 	constructor: (@options={}) ->

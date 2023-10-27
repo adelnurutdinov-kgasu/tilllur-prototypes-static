@@ -1,13 +1,13 @@
 
 { Preview } = require "PreviewComponent"
-{ NavigationComponent } = require "NavigationComponent"
+{ FlowView, NavigationView, ModalView } = require "NavigationComponent"
 { Button } = require "Buttons"
 
 screen = new Layer { width: 375, height: 812 }
-preview = new Preview { view: screen, showUI: true, showHints: false }
+preview = new Preview { view: screen }
 
-flow = new NavigationComponent { parent: screen, width: screen.width, height: screen.height }
-homeView = flow.createView("white")
+flow = new FlowView { parent: screen }
+homeView = new NavigationView { parent: flow, backgroundColor: "white" }
 
 
 shuffle = (source) ->
@@ -352,7 +352,7 @@ feedScroll.content.on "change:y", ->
 
 
 
-animeView = flow.createView()
+animeView = new NavigationView { parent: flow }
 
 inputAnime = new Layer
 	width: 375.0, height: 812.0, image: "images/input_anime.png"
