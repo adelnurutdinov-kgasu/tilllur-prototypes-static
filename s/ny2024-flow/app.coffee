@@ -92,6 +92,8 @@ createModalImage = new Button
 	scaleTo: 1
 	handler: () ->
 		flow.showPrevious()
+		if imageView.states.current.name == "done"
+			publishToggleView.emit Events.Tap
 		flow.open(createView)
 
 
@@ -120,7 +122,11 @@ nextButton = new Button
 	x: Align.right, y: Align.bottom(-32)
 	scaleTo: 1
 	opacity: 0
-	handler: () -> flow.open(resultView)
+	handler: () ->
+		flow.open(resultView)
+		Utils.delay 0.5, ->
+			if imageView.states.current.name == "init"
+				publishToggleView.emit Events.Tap
 
 
 
@@ -135,7 +141,6 @@ outputImage = new Layer
 	parent: resultView.content
 	width: 375.0, height: 812.0
 	backgroundColor: "white"
-	# image: "images/output.png"
 
 backImageView = new Layer
 	parent: outputImage
@@ -156,8 +161,7 @@ imageView = new Layer
 imageView.states =
 	"init": { opacity: 0 }
 	"done": { opacity: 1 }
-
-imageView.stateSwitch("done")
+imageView.stateSwitch("init")
 
 # imageView.on Events.StateSwitchStart, (from, to) ->
 # 	if to == "init"
@@ -178,7 +182,7 @@ resultView.content.onSwipe ->
 	imageView.stateSwitch("done")
 
 
-Framer.Extras.Preloader.addImage("images/image02.png")
+# Framer.Extras.Preloader.addImage("images/image02.png")
 Framer.Extras.Preloader.addImage("images/image03.png")
 
 
@@ -198,15 +202,15 @@ publishToggleView = new Button
 
 		else
 			publishToggleView_Success.opacity = 1
-			imageView.stateSwitch("done")
-			promptTag.stateSwitch("done")
+			imageView.animate("done")
+			promptTag.animate("done")
 			messageView.animate("done")
 			resultView.updateContent()
 
 publishToggleView_Success = new Layer
 	parent: publishToggleView
 	width: 375.0, height: 63.0, image: "images/Publish Toggle View Success.png"
-	opacity: 1
+	opacity: 0
 
 
 publishButton = new Button
@@ -232,11 +236,12 @@ messageView = new Layer
 	parent: outputImage
 	width: 375.0, height: 100.0, image: "images/asdasd.png"
 	y: Align.top(526)
-	opacity: 1
+	originY: 0.1
 
 messageView.states =
-	"init": { opacity: 0 }
-	"done": { opacity: 1 }
+	"init": { opacity: 0, scale: 0.7 }
+	"done": { opacity: 1, scale: 1 }
+messageView.stateSwitch("init")
 
 messageView.onTouchStart ->
 	if publishToggleView_Success.opacity == 1
@@ -266,7 +271,7 @@ promptTag = new Layer
 promptTag.states =
 	"init": { y: 531 }
 	"done": { y: 626 }
-promptTag.stateSwitch("done")
+promptTag.stateSwitch("init")
 
 
 
@@ -300,6 +305,7 @@ systemModalImage = new Button
 	parent: systemModal
 	width: 375.0, height: 812.0, image: "images/systemModal.png"
 	handler: () -> flow.showPrevious(animate: false)
+	scaleTo: 1
 
 
 
