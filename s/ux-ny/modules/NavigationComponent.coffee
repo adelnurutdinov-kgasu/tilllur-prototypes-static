@@ -367,6 +367,7 @@ class NavigationView extends ScrollComponent
 			flow: null
 			backButton: null
 			showBack: true
+			preventBackSwipe: false
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
@@ -378,9 +379,9 @@ class NavigationView extends ScrollComponent
 
 		try @backButton.bringToFront()
 
-		@on Events.SwipeRightStart, (event, layer) =>
-			try @flow.showPrevious()
-			# try @flow.iterateThroughChildren @, @custom.customAction_Array, @flow.customAction_switchOffLayers
+		if @preventBackSwipe == false
+			@on Events.SwipeRightStart, (event, layer) =>
+				try @flow.showPrevious()
 		
 		@on "change:children", ->
 			try @backButton.bringToFront()
@@ -392,6 +393,11 @@ class NavigationView extends ScrollComponent
 			@options.flow = value
 			value.showNext(@)
 			value.showPrevious(animate: false)
+	
+
+	@define 'preventBackSwipe',
+		get: -> @options.preventBackSwipe
+		set: (value) -> @options.preventBackSwipe = value
 
 
 
