@@ -1,0 +1,395 @@
+
+{ Preview } = require "PreviewComponent"
+{ FlowView, NavigationView, ModalView } = require "NavigationComponent"
+{ Button } = require "Buttons"
+
+screen = new Layer { width: 375, height: 812 }
+preview = new Preview { view: screen }
+
+flow = new FlowView { parent: screen }
+homeView = new NavigationView { parent: flow, backgroundColor: "eee", showBack: false }
+
+updatePosition = (layerArray, sum = 0, gap = 8) ->
+	for item in layerArray
+		item.y = sum
+		sum += item.height + gap
+
+headerStart = new Layer
+	parent: homeView.content
+	width: 375.0, height: 178.0, image: "images/headerStart.png"
+
+
+
+
+
+postNY = new Layer
+	parent: homeView.content
+	width: 375.0, height: 519.0, image: "images/Post NY.png"
+	opacity: 0
+
+postNY_imageView = new Layer
+	parent: postNY
+	size: 363
+	x: Align.center, y: 56
+	borderRadius: 12
+	image: "images/image01.png"
+	backgroundColor: "eee"
+
+postNY_imageView.states =
+	"init": { image: "images/image01.png" }
+	"load": { image: "images/image02.png" }
+	"done": { image: "images/image03.png" }
+
+postNY_imageView.stateSwitch("init")
+
+postNY_imageView.onTouchStart ->
+	postNY_imageView.image = "images/image03.png"
+	modeButton.opacity = 0.5
+
+postNY_imageView.onTouchEnd ->
+	postNY_imageView.image = "images/image01.png"
+	modeButton.opacity = 1.0
+
+modeButton = new Layer
+	parent: postNY_imageView
+	width: 117.0, height: 58.0, image: "images/mode temp button.png"
+	x: Align.right, y: Align.bottom
+
+
+
+
+
+
+messagePromo = new Layer
+	parent: homeView.content
+	width: 375.0, height: 216.0, image: "images/messagePromo.png"
+
+post201 = new Layer
+	parent: homeView.content
+	width: 375.0, height: 567.0, image: "images/Post 1.png"
+
+post202 = new Layer
+	parent: homeView.content
+	width: 375.0, height: 567.0, image: "images/Post 2.png"
+
+updatePosition([headerStart, messagePromo, post201, post202])
+homeView.updateContent()
+
+bottomBar = new Button
+	parent: homeView
+	width: 375.0, height: 80.0, image: "images/bottomBar.png"
+	y: Align.bottom
+	scaleTo: 1
+	handler: () -> flow.open(createModal)
+
+
+
+
+createModal = new ModalView { parent: flow, backgroundColor: "eee", y: 812-272, borderRadius: 40 }
+
+createModalImage = new Button
+	parent: createModal.content
+	width: 375.0, height: 272.0, image: "images/createModal.png"
+	scaleTo: 1
+	handler: () ->
+		flow.showPrevious()
+		if imageView.states.current.name == "done"
+			try switchImage.emit Events.Tap
+		flow.open(createView)
+
+
+
+createView = new NavigationView { parent: flow }
+
+inputView = new Layer
+	parent: createView
+	width: 375.0, height: 812.0, image: "images/input.png"
+
+input01 = new Button
+	parent: inputView
+	width: 375.0, height: 240.0, image: "images/input01.png"
+	y: 194
+	scaleTo: 1
+	handler: () -> try input02.opacity = 1
+
+input02 = new Layer
+	parent: input01
+	width: 375.0, height: 240.0, image: "images/input02.png"
+	opacity: 0
+
+nextButton = new Button
+	parent: createView
+	width: 200, height: 64
+	x: Align.right, y: Align.bottom(-32)
+	scaleTo: 1
+	opacity: 0
+	handler: () ->
+		flow.open(resultView)
+		Utils.delay 0.5, ->
+			if imageView.states.current.name == "init"
+				switchImage.emit Events.Tap
+
+
+
+
+
+resultView = new NavigationView
+	parent: flow, backgroundColor: "white"
+	contentInset:
+		bottom: 120
+
+resultView.content.onSwipeStart ->
+	imageView.stateSwitch("done")
+
+resultView.content.onSwipe ->
+	imageView.stateSwitch("done")
+
+
+# Image
+outputImage = new Layer
+	parent: resultView.content
+	width: 375.0, height: 812.0
+	backgroundColor: "white"
+
+backImageView = new Layer
+	parent: outputImage
+	size: 363, x: Align.center, y: 100
+	borderRadius: 12, backgroundColor: "eee"
+	image: "images/image01.png"
+
+imageView = new Layer
+	parent: outputImage
+	size: 363, x: Align.center, y: 100
+	borderRadius: 12, backgroundColor: "eee"
+	image: "images/image03.png"
+
+imageView.states =
+	"init": { opacity: 0 }
+	"done": { opacity: 1 }
+imageView.stateSwitch("init")
+
+# imageView.onTouchStart ->
+# 	if publishToggleView_Success.opacity == 1 and !resultView.content.draggable.isMoving
+# 		imageView.stateSwitch("init")
+
+# imageView.onTouchEnd ->
+# 	if publishToggleView_Success.opacity == 1
+# 		imageView.stateSwitch("done")
+
+Framer.Extras.Preloader.addImage("images/image03.png")
+
+
+
+statusView = new Layer
+	parent: outputImage
+	width: 375 - 32, height: 68 + 84
+	x: Align.center, y: 463 + 12
+	borderRadius: 20, backgroundColor: "#f3f2f2"
+	clip: true
+
+statusView.states =
+	"on": { height: 68 + 84 }
+	"off": { height: 68 }
+statusView.stateSwitch("off")
+
+switchButton = new Button
+	parent: statusView
+	width: 343.0, height: 68.0
+	backgroundColor: null
+	scaleTo: 1
+	handler: () ->
+		if imageView.states.current.name == "done"
+			imageView.animate("init")
+
+			toggle.setOn(false)
+			statusView.animate("off")
+			messageInfo.animate("hidden")
+			breakerLine.animate("hidden")
+
+			resultView.updateContent()
+
+		else
+			imageView.animate("done")
+
+			toggle.setOn(true)
+			statusView.animate("on")
+			messageInfo.animate("shown")
+			breakerLine.animate("shown")
+
+			resultView.updateContent()
+
+
+
+switchImage = new Layer
+	parent: statusView
+	width: 343.0, height: 68.0, backgroundColor: null
+
+switchImage.states =
+	"line1": { image: "images/line1.png" }
+	"line2": { image: "images/line2.png" }
+switchImage.stateSwitch("line1")
+
+{ iOSSwitch } = require "SwitchTest"
+toggle = new iOSSwitch
+	parent: switchImage
+	x: Align.right(-16), y: Align.center
+	isOn: false
+
+
+
+breakerLine = new Layer
+	parent: statusView
+	width: 343, height: 1
+	y: Align.top(68)
+
+breakerLine.states =
+	"shown": { opacity: .3 }
+	"hidden": { opacity: 0 }
+breakerLine.stateSwitch("hidden")
+
+
+messageInfo = new Layer
+	parent: statusView, y: 69
+	width: 343.0, height: 84.0, image: "images/messageInfo.png"
+	# y: Align.center
+
+messageInfo.states =
+	"shown": { opacity: 1 }
+	"hidden": { opacity: 0 }
+messageInfo.stateSwitch("shown")
+
+
+
+
+
+
+# publishToggleView = new Button
+# 	parent: outputImage
+# 	width: 375.0, height: 63.0, image: "images/Publish Toggle View.png"
+# 	y: Align.top(100)
+# 	scaleTo: 1
+# 	handler: () ->
+
+# 		if imageView.states.current.name == "done"
+# 			publishToggleView_Success.opacity = 0
+# 			imageView.animate("init")
+# 			promptTag.animate("init")
+# 			messageView.animate("init")
+# 			resultView.updateContent()
+
+# 		else
+# 			publishToggleView_Success.opacity = 1
+# 			imageView.animate("done")
+# 			promptTag.animate("done")
+# 			messageView.animate("done")
+# 			resultView.updateContent()
+
+# publishToggleView_Success = new Layer
+# 	parent: publishToggleView
+# 	width: 375.0, height: 63.0, image: "images/Publish Toggle View Success.png"
+# 	opacity: 0
+
+
+publishButton = new Button
+	parent: outputImage
+	width: 200, height: 64
+	x: Align.right, y: Align.bottom(-32)
+	scaleTo: 1
+	opacity: 0
+	handler: () ->
+		postNY.opacity = 1
+		messagePromo.opacity = 0
+		updatePosition([headerStart, postNY, post201, post202])
+		homeView.updateContent()
+		homeView.scrollToTop()
+
+		flow.showPrevious()
+		flow.showPrevious()
+		Utils.delay 0.5, ->
+			flow.open(pushModal)
+
+
+# messageView = new Layer
+# 	parent: outputImage
+# 	width: 375.0, height: 100.0, image: "images/asdasd.png"
+# 	y: Align.top(526)
+# 	originY: 0.1
+
+# messageView.states =
+# 	"init": { opacity: 0, scale: 0.7 }
+# 	"done": { opacity: 1, scale: 1 }
+# messageView.stateSwitch("init")
+
+# messageView.onTouchStart ->
+# 	if publishToggleView_Success.opacity == 1
+# 		imageView.stateSwitch("init")
+
+# messageView.onTouchEnd ->
+# 	if publishToggleView_Success.opacity == 1
+# 		imageView.stateSwitch("done")
+
+
+
+
+
+
+bottomPublishView = new Layer
+	parent: resultView
+	width: 375.0, height: 96.0, image: "images/bottomPublishView.png"
+	y: Align.bottom
+
+
+tempHeaderView = new Layer
+	parent: resultView
+	width: 375.0, height: 100.0, image: "images/tempHeaderView.png"
+
+
+
+# promptTag = new Layer
+# 	parent: outputImage
+# 	width: 375.0, height: 185.0, image: "images/promptTag.png"
+
+# promptTag.states =
+# 	"init": { y: 531 }
+# 	"done": { y: 626 }
+# promptTag.stateSwitch("init")
+
+
+
+
+
+
+pushModal = new ModalView { parent: flow, backgroundColor: "eee", y: 812-316, borderRadius: 40 }
+
+pushModalImage = new Layer
+	parent: pushModal
+	width: 375.0, height: 316.0, image: "images/pushModal.png"
+
+pushModal_closeButton = new Button
+	parent: pushModalImage
+	size: 80, x: Align.right, y: Align.top
+	opacity: 0
+	handler: () -> flow.showPrevious()
+
+pushModal_allowButton = new Button
+	parent: pushModalImage
+	width: 375, height: 100, y: Align.bottom(-32)
+	opacity: 0
+	handler: () ->
+		flow.showPrevious()
+		flow.showOverlayCenter(systemModalImage, animate: false)
+
+
+systemModal = new ModalView { parent: flow, backgroundColor: "null", y: 0, borderRadius: 40 }
+
+systemModalImage = new Button
+	parent: systemModal
+	width: 375.0, height: 812.0, image: "images/systemModal.png"
+	handler: () -> flow.showPrevious(animate: false)
+	scaleTo: 1
+
+
+
+flow.showNext(resultView, false)
+# flow.open(systemModal)
+

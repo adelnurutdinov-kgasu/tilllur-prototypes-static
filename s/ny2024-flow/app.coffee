@@ -87,7 +87,7 @@ bottomBar = new Button
 createModal = new ModalView { parent: flow, backgroundColor: "eee", y: 812-272, borderRadius: 40 }
 
 createModalImage = new Button
-	parent: createModal
+	parent: createModal.content
 	width: 375.0, height: 272.0, image: "images/createModal.png"
 	scaleTo: 1
 	handler: () ->

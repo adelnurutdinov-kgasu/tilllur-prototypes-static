@@ -266,8 +266,6 @@ themeScroll = new PageComponent
 	scrollHorizontal: true
 	scrollVertical: false
 	directionLock: true
-	# backgroundColor: "blue"
-
 
 themeScroll.content.on Events.DragStart, ->
 	scrollView.content.draggable.enabled = false
@@ -385,3 +383,5 @@ scrollView.content.on "change:y", ->
 
 
 
+Utils.delay 2, ->
+	print themeScroll.shouldShowHint()

@@ -21,7 +21,11 @@ flow = new FlowView { parent: screen }
 
 
 
-startView = new NavigationView { parent: flow, backgroundColor: "white", scrollVertical: false }
+startView = new NavigationView
+	parent: flow
+	backgroundColor: "white"
+	scrollVertical: false
+	showBack: false
 
 startImage = new Layer
 	parent: startView

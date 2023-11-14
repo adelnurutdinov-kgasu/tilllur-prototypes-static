@@ -271,7 +271,7 @@ titleView = () ->
 Stack = require "Stack"
 
 modeHandler = (event, layer) =>
-		flow.open(animeView)
+	flow.open(animeView)
 
 card_Slider = (currentData) ->
 	cardHandler = (event, layer) =>
@@ -355,6 +355,18 @@ feedScroll.content.on "change:y", ->
 animeView = new NavigationView { parent: flow }
 
 inputAnime = new Layer
+	parent: animeView
 	width: 375.0, height: 812.0, image: "images/input_anime.png"
 
-animeView.add(inputAnime)
+# removeBox = new Button
+# 	x: Align.right
+# 	handler: () ->
+# 		# flow.iterateThroughChildren homeView, homeView.custom.customAction_Array, flow.customAction_switchOffLayers
+# 		print flow.shouldShowHintOverride(homeView)
+# 		print flow.shouldShowHintOverride(homeView.content)
+
+# 		homeView.ignoreEvents = true
+# 		homeView.content.ignoreEvents = true
+
+# 		print flow.shouldShowHintOverride(homeView)
+# 		print flow.shouldShowHintOverride(homeView.content)
