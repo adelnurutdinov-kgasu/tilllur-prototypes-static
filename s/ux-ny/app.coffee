@@ -627,7 +627,7 @@ treeView_message_Button = new Button
 updatePosition([treeViewHeader, treeView_message, tree_post1, tree_post2, tree_post3, tree_post4, tree_post5])
 
 
-flow.open(homeView)
+# flow.open(homeView)
 # flow.open(resultView, false)
 # flow.open(systemModal)
 
