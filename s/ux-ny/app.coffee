@@ -55,6 +55,12 @@ toys20small = new Layer
 	x: -60, y: 70
 	scale: 0.6
 
+yaRound = new Button
+	parent: cutTop
+	size: 200, backgroundColor: null
+	x: Align.right(-8), y: Align.bottom(-280)
+	handler: () -> flow.open(storeView)
+
 yaLoad = new Button
 	parent: cutBottom
 	width: 304.0, height: 100.0, image: "images/ya_load.png"
@@ -81,7 +87,7 @@ yaView.content.on "change:y", ->
 
 
 storeView = new NavigationView
-	parent: flow, backgroundColor: "white", showBack: false, preventBackSwipe: true
+	parent: flow, backgroundColor: "white", preventBackSwipe: true
 
 store = new Layer
 	parent: storeView
@@ -295,9 +301,16 @@ createModal_newToy = new Button
 	scaleTo: 1
 	handler: () ->
 		flow.showPrevious()
+		try createView_inputFill.opacity = 0
+		try createView_nextButton_fix.opacity = 1
+
 		if resultView_Image.states.current.name == "done"
 			try resultView_ToggleText.emit Events.Tap
+		
 		flow.open(createView)
+
+		if post_ny != null and resultView_ToggleSwitcher.isOn
+				resultView_ToggleButton.emit Events.Tap
 
 
 
@@ -360,9 +373,11 @@ createView_nextButton = new Button
 	handler: () ->
 		if createView_nextButton_fix.opacity == 1 then return
 		flow.open(resultView)
-		Utils.delay 0.5, ->
-			if resultView_Image.states.current.name == "init"
-				resultView_ToggleButton.emit Events.Tap
+
+		if post_ny == null
+			Utils.delay 0.5, ->
+				if !resultView_ToggleSwitcher.isOn
+					resultView_ToggleButton.emit Events.Tap
 
 
 
@@ -482,12 +497,18 @@ resultView_Breaker.stateSwitch("hidden")
 messageInfo = new Layer
 	parent: resultView_StatusView, y: 69
 	width: 343.0, height: 84.0, image: "images/messageInfo.png"
-	# y: Align.center
 
 messageInfo.states =
 	"shown": { opacity: 1 }
 	"hidden": { opacity: 0 }
 messageInfo.stateSwitch("shown")
+
+messageInfo.onTouchStart ->
+	if resultView_ToggleSwitcher.isOn and !resultView.content.draggable.isMoving then resultView_Image.stateSwitch("init")
+
+messageInfo.onTouchEnd ->
+	if resultView_ToggleSwitcher.isOn then resultView_Image.stateSwitch("done")
+
 
 smallImage = new Layer
 	parent: messageInfo
@@ -509,13 +530,17 @@ resultView_PublishButton = new Button
 	scaleTo: 1
 	backgroundColor: null
 	handler: () ->
+		if post_ny == null
+			Utils.delay 0.5, ->
+				flow.open(pushModal)
+		
 		updatePosition([homeView_Header, post_ny_singleTone(), post5, post4, post2, post1, post3, messagePromo])
 		homeView.scrollToTop()
 
 		flow.showPrevious()
 		flow.showPrevious()
-		Utils.delay 0.5, ->
-			flow.open(pushModal)
+		
+		
 
 resultView_DeleteButton = new Button
 	parent: resultView_PublishView
@@ -531,6 +556,7 @@ resultView_DeleteButton = new Button
 resultView_Header = new Layer
 	parent: resultView
 	width: 375.0, height: 100.0, image: "images/tempHeaderView.png"
+
 changePrompt = new Button
 	parent: resultView_Header
 	x: Align.right, y: Align.top(44)
@@ -601,6 +627,7 @@ treeView_message_Button = new Button
 updatePosition([treeViewHeader, treeView_message, tree_post1, tree_post2, tree_post3, tree_post4, tree_post5])
 
 
+flow.open(homeView)
 # flow.open(resultView, false)
 # flow.open(systemModal)
 
