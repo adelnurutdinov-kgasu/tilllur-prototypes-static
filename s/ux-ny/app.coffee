@@ -71,6 +71,12 @@ cutBottom = new Layer
 	width: 375.0, height: 1304.0, image: "images/cut_bottom.png"
 	y: cutTop.height
 
+toyEmpty = new Layer
+	parent: cutTop
+	x: Align.right, y: Align.top(700)
+	width: 200.0, height: 260.0, image: "images/toy_empty.png"
+
+
 yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
 
 omnibox = new Layer
@@ -335,9 +341,11 @@ message_ny_singleTone = () ->
 			scaleTo: 1
 			handler: () ->
 				toys20small.image = getNYImage().crop
+				toyEmpty.image = "images/toy_filled.png"
 				flow.open(yaView)
 				yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
 				update_yaLoad()
+
 		
 		Utils.delay 10, -> message_ny.image = "images/messageOn.png"
 
