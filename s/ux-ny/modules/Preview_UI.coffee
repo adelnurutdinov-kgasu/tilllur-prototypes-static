@@ -17,8 +17,7 @@ class exports.Preview_UI extends Preview_Init
 
 
 	showDesktopUI: () =>
-		if Utils.isMobile()
-			return
+		if Utils.isMobile() then return
 
 		if @showLogo then @createLogoButton()
 		if @showUI then @addConfig()
