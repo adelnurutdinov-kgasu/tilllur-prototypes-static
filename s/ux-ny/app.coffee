@@ -3,6 +3,8 @@
 { FlowView, NavigationView, ModalView } = require "NavigationComponent"
 { Button } = require "Buttons"
 
+preview = new Preview { opacity: 0, showDevice: false }
+
 screen = new Layer { width: 375, height: 812 }
 
 screen.centerX()
@@ -16,7 +18,7 @@ screen.height = screen.width * aspectRatio
 scaleW = Screen.width / screen.width
 screen.scale = scaleW
 
-# preview = new Preview { view: screen }
+
 
 
 flow = new FlowView { parent: screen }
@@ -88,13 +90,6 @@ yaHeader = new Layer
 	parent: yaView
 	width: 375.0, height: 106.0, image: "images/ya_Header.png"
 
-small20logo = new Button
-	parent: cutBottom
-	width: 247.0, height: 68.0, image: "images/small logo.png"
-	x: Align.center, y: 100
-	handler: () ->
-		if post_ny == null then flow.open(storeView)
-		else flow.open(homeView)
 
 toys20small = new Layer
 	parent: cutBottom
@@ -126,9 +121,13 @@ yaLoad = new Button
 	opacity: 0
 	scaleTo: 1
 	handler: () ->
+		if yaLoad.image == "images/ya_load_share.png"
+			flow.open(shareModal)
+			return
 		if post_ny == null then flow.open(storeView)
 		else flow.open(fullscreenView)
-	
+
+update_yaLoad = () -> yaLoad.image = "images/ya_load_share.png"
 
 
 yaView.content.on "change:y", ->
@@ -143,6 +142,13 @@ yaView.content.on "change:y", ->
 
 	yaLoad.opacity = Utils.modulate(v, [cutTop.height - 100, cutTop.height - 200], [0, 1], true)
 
+
+small20logo = new Button
+	parent: cutBottom
+	width: 247.0, height: 68.0, image: "images/small logo.png"
+	x: Align.center, y: 100
+	handler: () ->
+		yaView.scrollToPoint( { x: 0, y: cutTop.height - 400 }, true)
 
 
 
@@ -331,6 +337,7 @@ message_ny_singleTone = () ->
 				toys20small.image = getNYImage().crop
 				flow.open(yaView)
 				yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
+				update_yaLoad()
 		
 		Utils.delay 10, -> message_ny.image = "images/messageOn.png"
 
@@ -732,6 +739,7 @@ pushModal_allowButton = new Button
 		flow.showOverlayCenter(systemModalImage, animate: false)
 
 
+
 systemModal = new ModalView { parent: flow, backgroundColor: "null", y: 0, borderRadius: 40 }
 
 systemModalImage = new Button
@@ -740,6 +748,13 @@ systemModalImage = new Button
 	y: Align.bottom
 	handler: () -> flow.showPrevious(animate: false)
 	scaleTo: 1
+
+
+shareModal = new ModalView { parent: flow, backgroundColor: "eee", y: screen.height - 400, height: 400, borderRadius: 40 }
+
+systemShareImage = new Layer
+	parent: shareModal.content
+	width: 375.0, height: 732.0, image: "images/systemShare.jpg"
 
 
 

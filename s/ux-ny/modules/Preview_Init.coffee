@@ -48,7 +48,7 @@ class exports.Preview_Init extends Preview_Class
 
 	
 	previewMobile: () =>
-		Framer.Extras.Hints.disable()
+		if @showHints then Framer.Extras.Hints.enable()
 		
 		@scale = Screen.width / @width
 		@x = Align.center
