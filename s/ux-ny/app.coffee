@@ -18,7 +18,43 @@ screen.scale = scaleW
 
 # preview = new Preview { view: screen }
 
+
 flow = new FlowView { parent: screen }
+
+
+isImageBroken = false
+isFirstGeneration = true
+
+brokenImage = 
+	original: "images/bad crop.png"
+	crop: "images/bad crop bg.png"
+
+correctImage = 
+	original: "images/image01.png"
+	crop: "images/image03.png"
+
+getNYImage = () ->
+	if isImageBroken then return brokenImage
+	return correctImage
+
+
+changeResultImage = () ->
+	isImageBroken = !isImageBroken
+	updateResultImage()
+
+updateResultImage = () ->
+	try resultView_BackImage.image = getNYImage().original
+	try resultView_Image.image = getNYImage().crop
+	try smallImage.image = getNYImage().original
+
+	if post_ny != null
+		try
+			feedImageLayer = post_ny_singleTone().children[1]
+			feedImageLayer.states =
+				"original": { image: getNYImage().original }
+				"crop": { image: getNYImage().crop }
+			feedImageLayer.stateSwitch("original")
+
 
 
 yaView = new NavigationView
@@ -40,14 +76,25 @@ omnibox = new Layer
 	width: 375.0, height: 94.0, image: "images/omnibox.png"
 	y: Align.bottom(1)
 
+omniboxRefresh = new Button
+	parent: omnibox
+	size: 64, x: Align.right, y: Align.top
+	backgroundColor: null
+	handler: () ->
+		yaView.scrollToPoint( { x: 0, y: cutTop.height }, true)
+
+
 yaHeader = new Layer
 	parent: yaView
 	width: 375.0, height: 106.0, image: "images/ya_Header.png"
 
-small20logo = new Layer
+small20logo = new Button
 	parent: cutBottom
 	width: 247.0, height: 68.0, image: "images/small logo.png"
 	x: Align.center, y: 100
+	handler: () ->
+		if post_ny == null then flow.open(storeView)
+		else flow.open(homeView)
 
 toys20small = new Layer
 	parent: cutBottom
@@ -55,11 +102,22 @@ toys20small = new Layer
 	x: -60, y: 70
 	scale: 0.6
 
+toysButton = new Button
+	parent: toys20small
+	width: 200.0, height: 200.0, backgroundColor: null
+	handler: () ->
+		if post_ny == null then flow.open(storeView)
+		else flow.open(homeView)
+
+
+
 yaRound = new Button
 	parent: cutTop
 	size: 200, backgroundColor: null
 	x: Align.right(-8), y: Align.bottom(-280)
-	handler: () -> flow.open(storeView)
+	handler: () ->
+		if post_ny == null then flow.open(storeView)
+		else flow.open(homeView)
 
 yaLoad = new Button
 	parent: cutBottom
@@ -67,7 +125,10 @@ yaLoad = new Button
 	x: Align.center, y: Align.top(40)
 	opacity: 0
 	scaleTo: 1
-	handler: () -> flow.open(storeView)
+	handler: () ->
+		if post_ny == null then flow.open(storeView)
+		else flow.open(fullscreenView)
+	
 
 
 yaView.content.on "change:y", ->
@@ -173,10 +234,10 @@ getImageNY = (localParent, localImage, nyImage) ->
 		backgroundColor: "eee"
 
 	postNY_resultView_Image.states =
-		"init": { image: localImage }
-		"done": { image: nyImage }
+		"original": { image: localImage }
+		"crop": { image: nyImage }
 
-	postNY_resultView_Image.stateSwitch("init")
+	postNY_resultView_Image.stateSwitch("original")
 
 
 	postNY_ModeButton = new Layer
@@ -185,11 +246,11 @@ getImageNY = (localParent, localImage, nyImage) ->
 		x: Align.right, y: Align.bottom
 
 	postNY_ModeButton.onTouchStart ->
-		@parent.image = @parent.states.done.image
+		@parent.image = @parent.states.crop.image
 		@opacity = 0.5
 
 	postNY_ModeButton.onTouchEnd ->
-		@parent.image = @parent.states.init.image
+		@parent.image = @parent.states.original.image
 		@opacity = 1.0
 	
 	return postNY_resultView_Image
@@ -214,8 +275,7 @@ nyBackImages = ["images/ny_post_image01 Background Removed.png", "images/ny_post
 Framer.Extras.Preloader.addImage(nyBackImage) for nyBackImage in nyBackImages
 nextNYBackImage = Utils.cycle(nyBackImages)
 
-myImage = "images/image01.png"
-myBackImage = "images/image03.png"
+
 
 
 createPost = (imageURL, localParent, nyImage = null) ->
@@ -253,10 +313,28 @@ createPost = (imageURL, localParent, nyImage = null) ->
 post_ny = null
 post_ny_singleTone = () ->
 	if post_ny == null
-		post_ny = createPost(myImage, homeView.content, myBackImage)
+		post_ny = createPost(getNYImage().original, homeView.content, getNYImage().crop)
 		post_ny.children[0].image = "images/user_you.png"
+		post_ny.children[2].image = "images/prompt_you.png"
 
 	return post_ny
+
+
+message_ny = null
+message_ny_singleTone = () ->
+	if message_ny == null
+		message_ny = new Button
+			parent: homeView.content
+			width: 375.0, height: 60.0, image: "images/messageOff.png"
+			scaleTo: 1
+			handler: () ->
+				toys20small.image = getNYImage().crop
+				flow.open(yaView)
+				yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
+		
+		Utils.delay 10, -> message_ny.image = "images/messageOn.png"
+
+	return message_ny
 
 post1 = createPost(nextPostImage(), homeView.content)
 post2 = createPost(nextPostImage(), homeView.content)
@@ -310,7 +388,7 @@ createModal_newToy = new Button
 		flow.open(createView)
 
 		if post_ny != null and resultView_ToggleSwitcher.isOn
-				resultView_ToggleButton.emit Events.Tap
+			resultView_ToggleButton.emit Events.Tap
 
 
 
@@ -364,6 +442,14 @@ createView_nextButton_fix = new Layer
 	x: Align.right, y: Align.bottom(-32)
 	backgroundColor: "white", opacity: 1
 
+createView_TagButton = new Button
+	parent: createView
+	width: 56, height: 64
+	x: Align.left(10 + 54), y: Align.bottom(-32)
+	scaleTo: 1
+	backgroundColor: null
+	handler: () -> flow.open(tagModal)
+
 createView_nextButton = new Button
 	parent: createView
 	width: 132, height: 64
@@ -372,9 +458,12 @@ createView_nextButton = new Button
 	backgroundColor: null, opacity: 1
 	handler: () ->
 		if createView_nextButton_fix.opacity == 1 then return
+		
+		changeResultImage()
 		flow.open(resultView)
 
-		if post_ny == null
+		if isFirstGeneration
+			isFirstGeneration = false
 			Utils.delay 0.5, ->
 				if !resultView_ToggleSwitcher.isOn
 					resultView_ToggleButton.emit Events.Tap
@@ -407,13 +496,15 @@ resultView_BackImage = new Layer
 	parent: resultView_Container
 	size: 363, x: Align.center, y: 100
 	borderRadius: 13, backgroundColor: "eee"
-	image: "images/image01.png"
+	image: getNYImage().original
+
+
 
 resultView_Image = new Layer
 	parent: resultView_Container
 	size: 363, x: Align.center, y: 100
 	borderRadius: 12, backgroundColor: "eee"
-	image: "images/image03.png"
+	image: getNYImage().crop
 
 resultView_Image.states =
 	"init": { opacity: 0 }
@@ -425,6 +516,28 @@ resultView_Image.onTouchStart ->
 
 resultView_Image.onTouchEnd ->
 	if resultView_ToggleSwitcher.isOn then resultView_Image.stateSwitch("done")
+
+
+
+
+resultView_ProgressImage = new Layer
+	parent: resultView_Container
+	size: 363, x: Align.center, y: 100
+	borderRadius: 12, backgroundColor: "white"
+	image: "images/progress_toys.png"
+
+resultView_ProgressImage.states =
+	"load": { opacity: 1 }
+	"done": { opacity: 0 }
+resultView_ProgressImage.stateSwitch("done")
+
+resultView_ProgressImage.on Events.StateSwitchEnd, (from, to) ->
+	if to == "load"
+		Utils.delay 2, => @stateSwitch("done")
+
+
+
+
 
 
 
@@ -534,13 +647,23 @@ resultView_PublishButton = new Button
 			Utils.delay 0.5, ->
 				flow.open(pushModal)
 		
-		updatePosition([homeView_Header, post_ny_singleTone(), post5, post4, post2, post1, post3, messagePromo])
+		updatePosition([homeView_Header, message_ny_singleTone(), post_ny_singleTone(), post5, post4, post2, post1, post3, messagePromo])
 		homeView.scrollToTop()
 
 		flow.showPrevious()
 		flow.showPrevious()
-		
-		
+
+
+resultView_RefreshButton = new Button
+	parent: resultView_PublishView
+	width: 56, height: 64
+	x: Align.left(10 + 54), y: Align.bottom(-32)
+	scaleTo: 1
+	backgroundColor: null
+	handler: () ->
+		resultView_ProgressImage.stateSwitch("load")
+		changeResultImage()
+
 
 resultView_DeleteButton = new Button
 	parent: resultView_PublishView
@@ -553,6 +676,29 @@ resultView_DeleteButton = new Button
 		flow.showPrevious()
 
 
+resultView_TagButton = new Button
+	parent: resultView_PublishView
+	width: 56, height: 64
+	x: Align.left(10 + 54 + 54), y: Align.bottom(-32)
+	scaleTo: 1
+	backgroundColor: null
+	handler: () -> flow.open(tagModal)
+
+
+tagModal = new ModalView { parent: flow, y: screen.height - 420 - 32, backgroundColor: "white", borderRadius: 20 }
+
+tagView = new Layer
+	parent: tagModal.content
+	width: 375, height: 420.0, image: "images/tagView.png"
+
+tagClose = new Button
+	parent: tagView
+	width: 200, height: 64
+	x: Align.right, y: Align.bottom(-32)
+	backgroundColor: null
+	handler: () -> flow.showPrevious()
+
+
 resultView_Header = new Layer
 	parent: resultView
 	width: 375.0, height: 100.0, image: "images/tempHeaderView.png"
@@ -560,7 +706,7 @@ resultView_Header = new Layer
 changePrompt = new Button
 	parent: resultView_Header
 	x: Align.right, y: Align.top(44)
-	width: 178.0, height: 56.0, image: "images/changePrompt.png"
+	width: 56.0, height: 56.0, image: "images/editButton.png"
 	handler: () -> flow.showPrevious()
 
 
@@ -632,3 +778,11 @@ updatePosition([treeViewHeader, treeView_message, tree_post1, tree_post2, tree_p
 # flow.open(systemModal)
 
 
+saved = new Button
+	parent: yaView
+	width: 40.0, height: 40.0, image: "images/saved.gif"
+	rotation: 180
+	x: Align.center, y: Align.top(44)
+	borderRadius: "100%"
+	handler: () ->
+		yaView.scrollToPoint( { x: 0, y: cutTop.height - 400 }, true)
