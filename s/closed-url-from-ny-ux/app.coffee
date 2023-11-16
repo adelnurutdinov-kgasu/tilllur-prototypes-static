@@ -3,20 +3,25 @@
 { FlowView, NavigationView, ModalView } = require "NavigationComponent"
 { Button } = require "Buttons"
 
-preview = new Preview { opacity: 0, showDevice: false }
 
 screen = new Layer { width: 375, height: 812 }
-
-screen.centerX()
-screen.y = 0
-screen.originY = 0
-
-aspectRatio = Screen.height / Screen.width
-screen.height = screen.width * aspectRatio
+preview = new Preview { view: screen }
 
 
-scaleW = Screen.width / screen.width
-screen.scale = scaleW
+# preview = new Preview { opacity: 0, showDevice: false }
+
+# screen = new Layer { width: 375, height: 812 }
+
+# screen.centerX()
+# screen.y = 0
+# screen.originY = 0
+
+# aspectRatio = Screen.height / Screen.width
+# screen.height = screen.width * aspectRatio
+
+
+# scaleW = Screen.width / screen.width
+# screen.scale = scaleW
 
 
 
