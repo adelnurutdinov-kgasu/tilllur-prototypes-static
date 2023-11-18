@@ -65,8 +65,9 @@ class exports.Preview_Init extends Preview_Class
 			@borderView.x = Align.center
 			@borderView.y = Align.center
 
-		scaleX = (Screen.width - 112) / @width
-		scaleY = (Screen.height - 112) / @height
+		scaleX = (Screen.width - @scaleGap * 2) / @width
+		scaleY = (Screen.height - @scaleGap * 2) / @height
+		
 		@states["fill"].scale = Math.min(scaleX, scaleY)
 
 		if @borderView
