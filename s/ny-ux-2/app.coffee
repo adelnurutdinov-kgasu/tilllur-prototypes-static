@@ -76,12 +76,16 @@ cutBottom = new Layer
 	width: 375.0, height: 1304.0, image: "images/cut_bottom.jpg"
 	y: cutTop.height
 
-# toyEmpty = new Layer
-# 	parent: cutTop
-# 	x: Align.right, y: Align.top(700)
-# 	width: 200.0, height: 260.0
-# 	# image: "images/toy_empty.png"
-# 	backgroundColor: "red"
+toyEmpty = new Button
+	parent: cutTop
+	x: Align.right, y: Align.top(640)
+	width: 200.0, height: 260.0
+	image: "images/toy_empty.png"
+	backgroundColor: "null"
+	scaleTo: 1
+	handler: () ->
+		if post_ny == null then flow.open(storeView)
+		else flow.open(homeView)
 
 
 yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
@@ -350,7 +354,7 @@ message_ny_singleTone = () ->
 			scaleTo: 1
 			handler: () ->
 				toys20small.image = getNYImage().crop
-				# toyEmpty.image = "images/toy_filled.png"
+				toyEmpty.image = "images/toy_filled.png"
 				flow.open(yaView)
 				yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
 				update_yaLoad()
