@@ -33,12 +33,12 @@ isImageBroken = false
 isFirstGeneration = true
 
 brokenImage = 
-	original: "images/9c4b5f67f872148f97aa1de76cc0dbb7a4ae12c05ff5fb77a13294a7.jpg"
-	crop: "images/9c4b5f67f872148f97aa1de76cc0dbb7a4ae12c05ff5fb77a13294a7 Background Removed.png"
-
-correctImage = 
 	original: "images/image01.png"
 	crop: "images/image03.png"
+
+correctImage = 
+	original: "images/06834d845cbcd4fece9f23dda96d4c264ae95c237e0499e42b4766fe.jpg"
+	crop: "images/06834d845cbcd4fece9f23dda96d4c264ae95c237e0499e42b4766fe Background Removed.png"
 
 getNYImage = () ->
 	if isImageBroken then return brokenImage
@@ -355,6 +355,11 @@ message_ny_singleTone = () ->
 				yaView.scrollToPoint( { x: 0, y: cutTop.height }, false)
 				update_yaLoad()
 
+		# messagePromo_Image = new Layer
+		# 	parent: message_ny
+		# 	size: 36, x: Align.right(-16), y: Align.center
+		# 	backgroundColor: "eee"
+		# 	borderRadius: 9
 		
 		Utils.delay 10, -> message_ny.image = "images/messageOn.png"
 
@@ -694,8 +699,12 @@ resultView_PublishButton = new Button
 		updatePosition([homeView_Header, message_ny_singleTone(), post_ny_singleTone(), post5, post4, post2, post1, post3, messagePromo])
 		homeView.scrollToTop()
 
+		# try message_ny_singleTone().children[0].image = getNYImage().crop
+
 		flow.showPrevious()
 		flow.showPrevious()
+
+
 
 
 resultView_RefreshButton = new Button
@@ -852,3 +861,15 @@ arrow.on Events.StateSwitchEnd, (from, to) ->
 	else @animate("top", curve: Bezier.easeInOut, time: 0.8)
 
 arrow.stateSwitch("top")
+
+
+
+shedevrumSiteView = new NavigationView
+	parent: flow
+	backButton: new Button
+		parent: resultView, backgroundColor: null
+		size: 56, x: Align.left, y: Align.top(44)
+
+shed = new Layer
+	parent: shedevrumSiteView.content
+	width: 375.0, height: 1507.0, image: "images/shed.png"
