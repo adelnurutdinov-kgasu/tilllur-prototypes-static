@@ -165,7 +165,7 @@ yaLoad = new Button
 	x: Align.center, y: Align.bottom(50)
 	scaleTo: 1
 	handler: () ->
-		if yaLoad.image == "images/yaru-message-done.png"
+		if yaLoad.image == "images/yaButtonDone.png"
 			flow.open(shareModal)
 			return
 		if post_ny == null then flow.open(storeView)
