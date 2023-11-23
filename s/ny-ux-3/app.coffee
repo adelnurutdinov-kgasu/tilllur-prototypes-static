@@ -103,6 +103,11 @@ fix_yaMessageDone = new Layer
 update_yaMessage = () ->
 	yaMessageDone.image = "images/yaMessageDone.png"
 
+statusBarFix = new Layer
+	parent: yaView
+	width: 375.0, height: 44.0
+	backgroundColor: "white"
+
 
 omnibox = new Layer
 	parent: yaView
