@@ -130,8 +130,8 @@ yaHeader = new Layer
 toys20small = new Layer
 	parent: cutBottom
 	width: 200.0, height: 200.0, image: "images/toys small.png"
-	x: -30, y: 40
-	scale: 0.6
+	x: -40, y: 24
+	scale: 0.5
 
 toysButton = new Button
 	parent: toys20small
