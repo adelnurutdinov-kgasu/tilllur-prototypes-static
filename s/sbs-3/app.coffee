@@ -10,8 +10,9 @@ screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 200 + 200, backgroundC
 
 testSBSJSON = "images/testing-sbs.json"
 testBlendingJSON = "images/testing-blending.json"
+testRemixJSON = "images/testing-remix.json"
 
-defaultJSON = testBlendingJSON
+defaultJSON = testRemixJSON
 
 # jsonURL = preview.getStateGeneric("json", [{ value: "sbs", result: testSBSJSON },
 # 	{ value: "blending", result: testBlendingJSON }], defaultJSON)
@@ -39,6 +40,7 @@ imageData = JSON.parse Utils.domLoadDataSync jsonURL
 imageModeEnum = {
 	sbs: "sbs"
 	blending: "blending"
+	remix: "remix"
 }
 imageMode = imageData.mode ? imageModeEnum.sbs
 
@@ -58,6 +60,8 @@ pages.on "change:currentPage", ->
 	currentIndexText.text = getCurrentPairText()
 	resultsButton.autoHeight = true
 	resultsButton.y = Align.center
+
+
 
 	if imageMode == imageModeEnum.sbs
 		promptTitleText.text = pages.currentPage.custom.title
@@ -82,14 +86,47 @@ pages.on "change:currentPage", ->
 				pairBoxes[i].style = { cursor: "auto" }
 				sumBoxes[i].opacity = 0
 				
-
-		
 		try
 			lastSumBox.opacity = 0
 
 		if pairBoxesView.width > 88 then pairBoxesView.width = pairBoxesView.width - 88
 		pairBoxesView.x = Align.center
 	
+	else if imageMode == imageModeEnum.remix
+
+		promptTitleText.text = pages.currentPage.custom.title ? ""
+		promptTitleText.autoHeight = true
+		promptTitleText.y = Align.center(-32)
+		# promptTitleText.backgroundColor = "red"
+
+		pairBoxesView.width = 0
+		lastSumBox = null
+
+		for i in [0..0]
+			if pages.currentPage.custom.image_prompt[i] != undefined
+				pairBoxes[i].image = pages.currentPage.custom.image_prompt[i]
+				pairBoxes[i].style = { cursor: "pointer" }
+				pairBoxesView.width += pairBoxes[i].width + 88
+				
+				sumBoxes[i].opacity = 0.5
+				lastSumBox = sumBoxes[i]
+			else
+				pairBoxes[i].image = null
+				pairBoxes[i].style = { cursor: "auto" }
+				sumBoxes[i].opacity = 0
+				
+		try
+			lastSumBox.opacity = 0
+
+		if pairBoxesView.width > 88 then pairBoxesView.width = pairBoxesView.width - 88
+		pairBoxesView.x = Align.left(100)
+	
+
+
+
+
+
+
 	currentIndex = -1
 	for item, i in pages.content.children
 		if item == pages.currentPage
@@ -278,6 +315,74 @@ else if imageMode == imageModeEnum.blending
 	pairBoxesView.x = Align.center()
 
 	try lastSumIcon.opacity = 0
+
+
+else if imageMode == imageModeEnum.remix
+
+	topView.height = topView.height + 200
+	pages.y = pages.y + 200
+	bottomView.y = bottomView.y + 200
+
+
+	lastSumIcon = null
+
+	pairBoxesView = new Layer
+		parent: topView
+		width: 0, height: 340, borderRadius: 24
+		backgroundColor: "null"
+
+	for i in [0..0]
+		boxHandler = (event, layer) ->
+			if layer.image == "" or layer.image == undefined or layer.image == null then return
+			# print "ok?"
+			try
+				scaledImageView.opacity = 1
+				scaledImageView.ignoreEvents = false
+				scaledImageView.children[0].image = layer.image
+
+		box =  new Button
+			parent: pairBoxesView
+			size: 340, borderRadius: 24
+			x: (340 + 88) * i
+			style: cursor: "pointer"
+			backgroundColor: null
+			style: { cursor: "auto" }
+			scaleTo: 1
+			handler: boxHandler
+		
+		pairBoxes.push box
+
+		sumIcon = new Layer
+			parent: pairBoxesView
+			width: 88.0, height: 88.0, image: "images/sum_icon.png"
+			x: ((340 + 88) * i) + 340, y: Align.center
+			opacity: 0
+
+		sumBoxes.push sumIcon
+
+		if imageData.images[0].image_prompt[i] != undefined
+			box.image = imageData.images[0].image_prompt[i]
+			box.style = { cursor: "pointer" }
+			pairBoxesView.width += box.width + 88
+
+			sumIcon.opacity = 0.5
+			
+			lastSumIcon = sumIcon
+
+	if pairBoxesView.width > 88 then pairBoxesView.width = pairBoxesView.width - 88
+	pairBoxesView.x = Align.left(100)
+
+	try lastSumIcon.opacity = 0
+
+	promptTitleText = new Text
+		parent: topView
+		width: 1024*2 - 100*2 - 340 - 40*2
+		autoHeight: true
+		x: Align.left(100 + 340 + 40), y: Align.center(-32)
+		text: imageData.images[0].prompt
+		textAlign: "left", fontSize: 36
+		color: "white"
+		backgroundColor: null
 
 
 
@@ -517,7 +622,7 @@ preview = new Preview { view: screen, showHints: false, showUI: false, showDevic
 
 scaledImageView = null
 
-if imageMode == imageModeEnum.blending
+if imageMode == imageModeEnum.blending or imageMode == imageModeEnum.remix
 	
 	scaledImageView = new Layer
 		width: Screen.width

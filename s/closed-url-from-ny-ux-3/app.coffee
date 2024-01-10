@@ -5,23 +5,23 @@
 
 
 screen = new Layer { width: 375, height: 812 }
-# preview = new Preview { view: screen }
+preview = new Preview { view: screen }
 
 
-preview = new Preview { opacity: 0, showDevice: false }
+# preview = new Preview { opacity: 0, showDevice: false }
 
-screen = new Layer { width: 375, height: 812 }
+# screen = new Layer { width: 375, height: 812 }
 
-screen.centerX()
-screen.y = 0
-screen.originY = 0
+# screen.centerX()
+# screen.y = 0
+# screen.originY = 0
 
-aspectRatio = Screen.height / Screen.width
-screen.height = screen.width * aspectRatio
+# aspectRatio = Screen.height / Screen.width
+# screen.height = screen.width * aspectRatio
 
 
-scaleW = Screen.width / screen.width
-screen.scale = scaleW
+# scaleW = Screen.width / screen.width
+# screen.scale = scaleW
 
 
 
