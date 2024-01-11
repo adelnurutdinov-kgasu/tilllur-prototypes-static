@@ -11,8 +11,9 @@ screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 200 + 200, backgroundC
 testSBSJSON = "images/testing-sbs.json"
 testBlendingJSON = "images/testing-blending.json"
 testRemixJSON = "images/testing-remix.json"
+testRatioJSON = "images/testing-ratio.json"
 
-defaultJSON = testRemixJSON
+defaultJSON = testRatioJSON
 
 # jsonURL = preview.getStateGeneric("json", [{ value: "sbs", result: testSBSJSON },
 # 	{ value: "blending", result: testBlendingJSON }], defaultJSON)
@@ -173,10 +174,18 @@ for currentImage, i in imageData.images
 		text: ""
 		width: 1024, height: 1024
 		x: Align.left, borderRadius: 24
-		image: currentImage["image-1"]
+		# image: currentImage["image-1"]
 		custom:
 			type: "one"
 			twin: null
+	
+	aspect1 = new Layer
+		parent: image1
+		width: image1.width, height: image1.height
+		# backgroundColor: "red"
+		image: currentImage["image-1"]
+	
+	applyImageRatio(currentImage["image-1"], aspect1, (error, ratio) -> if error then print error else ratio )
 	
 	image2 = new ImageButton
 		parent: page
@@ -184,10 +193,18 @@ for currentImage, i in imageData.images
 		width: 1024, height: 1024
 		x: Align.right, borderRadius: 24
 		backgroundColor: null
-		image: currentImage["image-2"]
+		# image: currentImage["image-2"]
 		custom:
 			type: "two"
 			twin: null
+	
+	aspect2 = new Layer
+		parent: image2
+		width: image2.width, height: image2.height
+		# backgroundColor: "green"
+		image: currentImage["image-2"]
+	
+	applyImageRatio(currentImage["image-2"], aspect2, (error, ratio) -> if error then print error else ratio )
 	
 	image1.custom.twin = image2
 	image2.custom.twin = image1
@@ -642,3 +659,30 @@ if imageMode == imageModeEnum.blending or imageMode == imageModeEnum.remix
 		size: scaledImageView.height / 1.2
 		x: Align.center, y: Align.center
 		borderRadius: 16
+
+
+
+
+
+updateImageToRatio = (imageLayer, ratio) ->
+	if ratio < 1
+		imageLayer.width = imageLayer.width * ratio
+		imageLayer.x = Align.center
+	else if ratio > 1
+		imageLayer.height = imageLayer.height / ratio
+		imageLayer.y = Align.center
+
+
+`function applyImageRatio(url, imageLayer, callback) {
+	var img = new Image();
+	img.onload = function () {
+		var ratio = img.width / img.height;
+		updateImageToRatio(imageLayer, ratio)
+		callback(null, ratio);
+	};
+	img.onerror = function () {
+		callback("Error loading for: " + url);
+	};
+	img.src = url;
+}`
+

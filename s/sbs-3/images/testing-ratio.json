@@ -1,0 +1,156 @@
+{
+    "name-1": "random",
+    "name-2": "random",
+    "images": [
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpfMEnORPl_xF/orig",
+            "result": "url2",
+            "prompt": "Image-1: Коллаж. Звёзд:-1.  Image-2: Гармоничное расположение объектов, фон, удачное сочетание цветов. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/FJyaRPhHCXRuZ/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FBSxOGGx0EA2w/orig",
+            "result": "url2",
+            "prompt": "Image-1: Слишком тёмная фотография. Звёзд:-1.  Image-2: Сбалансированные объекты, сочетаемость цветов. Звёзд:2."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Fm8o2g5VpulhZ/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/F8mHFL0U43VLs/orig",
+            "result": "url2",
+            "prompt": "Image-1: Рамка вокруг изображения. Звёзд:-1.  Image-2: Выполняется правило третей, удачно подобраны цвета. Звёзд:2."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/FhKURWHLV8tY4/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Ft5vIS5KVNlLO/orig",
+            "result": "url2",
+            "prompt": "Image-1: Подпись фотографа снизу справа, она не засчитывается как вотермарка. Звёзд:0.  Image-2: Фон и окружение. Звёзд:1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FJfnWeh89I6Wc/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Ft5vIS5KVNlLO/orig",
+            "result": "url2",
+            "prompt": "Image-1: Обычное изображение. Звёзд:0.  Image-2: Фон и окружение. Звёзд:1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/Fh5IsPZUkv_NB/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+            "result": "url1",
+            "prompt": "Image-1: Обычное изображение. Звёзд:0.  Image-2: Коллаж. Звёзд:-1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FyvXJuiucznEP/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/FJyaRPhHCXRuZ/orig",
+            "result": "url1",
+            "prompt": "Image-1: Выполняется правило третей. Звёзд:1.  Image-2: Слишком тёмная фотография. Звёзд:-1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5395315/FIe2SJ4PqmEJl/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+            "result": "url1",
+            "prompt": "Image-1: Обычное изображение. Звёзд:0.  Image-2: Коллаж. Звёзд:-1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Ft5vIS5KVNlLO/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FJfnWeh89I6Wc/orig",
+            "result": "url1",
+            "prompt": "Image-1: Фон и окружение. Звёзд:1.  Image-2: Обычное изображение. Звёзд:0."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/FG9ELTyghBdBb/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FAUZd4Bvj9R8K/orig",
+            "result": "url2",
+            "prompt": "Image-1: Центрирование на главном объекте. Звёзд:1.  Image-2: Центрирование, фон, удачное сочетание цветов. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/F2coq5hAjDGsX/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FBSxOGGx0EA2w/orig",
+            "result": "url2",
+            "prompt": "Image-1: Игра света в листве. Звёзд:1.  Image-2: Сбалансированные объекты, сочетаемость цветов. Звёзд:2."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FOLy4Cx0gk4H-/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FtqtH0eZ1WVeO/orig",
+            "result": "url2",
+            "prompt": "Image-1: Симметрия. Звёзд:1.  Image-2: Правило третей, фон, игра света в облаках. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/F5Ix_1H9oLYRk/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Flve17-SRYsPf/orig",
+            "result": "url2",
+            "prompt": "Image-1: Гармоничное расположение паутины (узор) - засчитывается композиция. Игра света в каплях воды. Подпись фотографа слева снизу не засчитывается как вотермарка. Звёзд:2.  Image-2: Симметрия в композиции, игра света, необычный момент. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/F8mHFL0U43VLs/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Flve17-SRYsPf/orig",
+            "result": "url2",
+            "prompt": "Image-1: Выполняется правило третей, удачно подобраны цвета. Звёзд:2.  Image-2: Симметрия в композиции, игра света, необычный момент. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/F2GU1qAn-RwfV/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FMGrvSAqtZZ4i/orig",
+            "result": "url2",
+            "prompt": "Image-1: Гармоничное расположение дома в кадре (композиция), тёмный фон контрастирует с объектом и выделяет его (фон). Звёзд:2.  Image-2: Сбалансированные объекты + правило третей, фон, удачное сочетание цветов, игра света. Звёзд:4."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FlkGL30riLRkN/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Flve17-SRYsPf/orig",
+            "result": "url2",
+            "prompt": "Image-1: Правило третей, фон. Эмблема фотографа справа снизу не засчитывается как вотермарка. Звёзд:2.  Image-2: Симметрия в композиции, игра света, необычный момент. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FBSxOGGx0EA2w/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Flve17-SRYsPf/orig",
+            "result": "url2",
+            "prompt": "Image-1: Сбалансированные объекты, сочетаемость цветов. Звёзд:2.  Image-2: Симметрия в композиции, игра света, необычный момент. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FYU4yCrdD6flQ/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Flve17-SRYsPf/orig",
+            "result": "url2",
+            "prompt": "Image-1: Фон, игра света в каплях. Звёзд:2.  Image-2: Симметрия в композиции, игра света, необычный момент. Звёзд:3."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/Flve17-SRYsPf/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/F8mHFL0U43VLs/orig",
+            "result": "url1",
+            "prompt": "Image-1: Симметрия в композиции, игра света, необычный момент. Звёзд:3.  Image-2: Выполняется правило третей, удачно подобраны цвета. Звёзд:2."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FmZKDE889UmYW/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5395315/Fy5uPWDuZYXdU/orig",
+            "result": "url2",
+            "prompt": "Image-1: Гармоничное расположение объектов, фон, сюжет. Звёзд:3.  Image-2: Правило третей, фон, удачное сочетание цветов, игра света. Лого студии по снизу по центру не засчитывается как вотермарка. Звёзд:4."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FAUZd4Bvj9R8K/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FyvXJuiucznEP/orig",
+            "result": "url1",
+            "prompt": "Image-1: Центрирование, фон, удачное сочетание цветов. Звёзд:3.  Image-2: Выполняется правило третей. Звёзд:1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpfMEnORPl_xF/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5395315/Fy5uPWDuZYXdU/orig",
+            "result": "url2",
+            "prompt": "Image-1: Гармоничное расположение объектов, фон, удачное сочетание цветов. Звёзд:3.  Image-2: Правило третей, фон, удачное сочетание цветов, игра света. Лого студии по снизу по центру не засчитывается как вотермарка. Звёзд:4."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FtqtH0eZ1WVeO/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FBSxOGGx0EA2w/orig",
+            "result": "url1",
+            "prompt": "Image-1: Правило третей, фон, игра света в облаках. Звёзд:3.  Image-2: Сбалансированные объекты, сочетаемость цветов. Звёзд:2."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5395315/Fy5uPWDuZYXdU/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+            "result": "url1",
+            "prompt": "Image-1: Правило третей, фон, удачное сочетание цветов, игра света. Лого студии по снизу по центру не засчитывается как вотермарка. Звёзд:4.  Image-2: Коллаж. Звёзд:-1."
+        },
+        {
+            "image-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FMGrvSAqtZZ4i/orig",
+            "image-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5394993/FG9ELTyghBdBb/orig",
+            "result": "url1",
+            "prompt": "Image-1: Сбалансированные объекты + правило третей, фон, удачное сочетание цветов, игра света. Звёзд:4.  Image-2: Центрирование на главном объекте. Звёзд:1."
+        }
+    ]
+}
