@@ -1,0 +1,87 @@
+{
+  "mode": "remix",
+  "name-1": "From caption + description",
+  "name-2": "From description only",
+  "images": [
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/d81755462c8413f4c766a46278810f76.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/59e0508b5e3395df5e9d208d27129c78.png",
+          "prompt": "Baked eggplant With Kamchatka crab and suluguni cheese fondue",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a815c4f968958f86765b108df9e9f2f"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/ab0f33ecbd9f86dbb1fc2c6b3f5bfa0a.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/c0bfbab4c4e6d71e1fd4dd6588fc4701.png",
+          "prompt": "Caesar with prawns Tiger prawns, salad mix, cherry tomatoes, crackers, Caesar sauce with anchovies, Parmesan cheese",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a973f01c9d5804c715929b7f67f4078"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/a07a4084fe5cbf0dd51d2f77653ca535.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/745ecd5b9f85edfabcb98fd95567f818.png",
+          "prompt": "Caviar from ground eggplant with crispy baguette Caviar from ground eggplant, onion, bell pepper and tomatoes. Served with a crispy baguette",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a977cb524c1427f764a2bd5b6165a48"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/5a9fab31d49917f59c9a9c45318815a5.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/430ce89172301449f4db470edf8e48c7.png",
+          "prompt": "English breakfast Fried eggs from three eggs, fried mushrooms on a pillow of arugula, sausage, bacon, beans, grilled cherry, toast with parmesan",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a91eaa7309d26af4f19d55a67520f62"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/eb0f392474afd48248d0b7aa5a1fd308.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/e3cd38974158a05ad23ab8b2dccdbaac.png",
+          "prompt": "French fries with golf sauce Deep-fried potatoes are served with Golf sauce based on homemade mayonnaise, sweet and sour sauce and chives",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a8f5e74362472d08bb1be1d361fc7a9"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/a99d18acedb7e200f9d1dcd58314128c.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/32a47be39ad2f030b7e0614283406031.png",
+          "prompt": "Gazpacho soup Cold broth based on mutti tomatoes with spices, bell pepper, red onion and herbs",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a98f987a1b05d4149d02f23cb279035"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/c9e07ec852c133ab8cb739e1fab5b5b7.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/333e72719a521e04a1884c33c4b06984.png",
+          "prompt": "Hawaiian pizza Cream sauce, ham, marinated chicken breast, pineapples, mozzarella cheese, greens (25 cm)",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a7ae1fe8ed1163eb118a4669ffd88af"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/45eefc88062984e3bbe7d37bf0bdf300.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/6acddc8a3e0c77cda18e7c6b073ae09a.png",
+          "prompt": "Kaiso Maki Rice Roll, nori seaweed, chuka, sesame sauce, white sesame",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a7701239d141e1fd4dcdf2ac4fd9227"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/8bb631a92258928322450fe811f6d697.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/38ad0783afd03ca9471bcfb505b7f200.png",
+          "prompt": "Lyulya-kebab chicken Lyulya kebab",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a92248b761698eab21cc50444dc9565"
+          ]
+      },
+      {
+          "image-1": "http://cvlab.s3.yandex.net/sbs/0d0b4138cd121d9f9d18ff9e59fe9fee.png",
+          "image-2": "http://cvlab.s3.yandex.net/sbs/e8ec9b00ecb0f48b47101f825aa0fb60.png",
+          "prompt": "Poppies with salmon Rice, nori, salmon",
+          "image_prompt": [
+              "https://eda.yandex/images/1368744/8a7ea8fa4596de6393e04f689cf10468"
+          ]
+      }
+  ]
+}

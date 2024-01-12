@@ -13,6 +13,8 @@ testBlendingJSON = "images/testing-blending.json"
 testRemixJSON = "images/testing-remix.json"
 testRatioJSON = "images/testing-ratio.json"
 
+testRemix2JSON = "images/testing-remix-2.json"
+
 defaultJSON = testRatioJSON
 
 # jsonURL = preview.getStateGeneric("json", [{ value: "sbs", result: testSBSJSON },
