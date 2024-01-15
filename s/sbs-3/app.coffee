@@ -8,6 +8,8 @@ document.body.style.cursor = "auto"
 screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 200 + 200, backgroundColor: "null" }
 
 
+
+
 testSBSJSON = "images/testing-sbs.json"
 testBlendingJSON = "images/testing-blending.json"
 testRemixJSON = "images/testing-remix.json"
@@ -33,9 +35,11 @@ getState = (stateKey = "json", defaultResult = defaultJSON) ->
 	
 	return defaultResult
 
+checkRandomKey = (stringKey) -> if stringKey == "false" then return false else return true
 
 
 jsonURL = getState()
+jsonSwapRandom = checkRandomKey(getState("random", true))
 
 showResults = false
 imageData = JSON.parse Utils.domLoadDataSync jsonURL
@@ -235,11 +239,12 @@ for currentImage, i in imageData.images
 			# nextHandler(true)
 			composeResults()
 		
+	if jsonSwapRandom
+		shouldSwap = Utils.randomChoice([true, false])
+		if shouldSwap
+			image1.x = Align.right
+			image2.x = Align.left
 	
-	shouldSwap = Utils.randomChoice([true, false])
-	if shouldSwap
-		image1.x = Align.right
-		image2.x = Align.left
 	
 
 
