@@ -1,6 +1,6 @@
 
 
-# {SectionView} = require "SectionView"
+# {UISection} = require "UI_Section"
 
 
 class exports.TreeLayerView extends SectionView

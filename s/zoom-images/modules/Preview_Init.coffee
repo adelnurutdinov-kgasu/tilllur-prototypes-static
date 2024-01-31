@@ -15,6 +15,9 @@ class exports.Preview_Init extends Preview_Class
 	
 	
 	scalePreview: () =>
+		if @showHints then Framer.Extras.Hints.enable()
+		else Framer.Extras.Hints.disable()
+
 		if Utils.isMobile() then @previewMobile()
 		else @previewDesktop()
 	
@@ -32,8 +35,8 @@ class exports.Preview_Init extends Preview_Class
 	previewDesktop: () =>
 		if @showDevice then @borderView = new Device_Class { view: @ }
 
-		if @showHints then Framer.Extras.Hints.enable()
-		else Framer.Extras.Hints.disable()
+		# if @showHints then Framer.Extras.Hints.enable()
+		# else Framer.Extras.Hints.disable()
 
 		if @showBars
 			if @showHomeBar then @homeBarView = new HomeBar_Class { view: @ }
@@ -48,7 +51,8 @@ class exports.Preview_Init extends Preview_Class
 
 	
 	previewMobile: () =>
-		Framer.Extras.Hints.disable()
+		# if @showHints then Framer.Extras.Hints.enable()
+		# else Framer.Extras.Hints.disable()
 		
 		@scale = Screen.width / @width
 		@x = Align.center
@@ -65,8 +69,9 @@ class exports.Preview_Init extends Preview_Class
 			@borderView.x = Align.center
 			@borderView.y = Align.center
 
-		scaleX = (Screen.width - 112) / @width
-		scaleY = (Screen.height - 112) / @height
+		scaleX = (Screen.width - @scaleGap * 2) / @width
+		scaleY = (Screen.height - @scaleGap * 2) / @height
+		
 		@states["fill"].scale = Math.min(scaleX, scaleY)
 
 		if @borderView

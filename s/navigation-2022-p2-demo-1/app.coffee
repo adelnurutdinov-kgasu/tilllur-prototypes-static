@@ -383,5 +383,5 @@ scrollView.content.on "change:y", ->
 
 
 
-Utils.delay 2, ->
-	print themeScroll.shouldShowHint()
+# Utils.delay 2, ->
+	# print themeScroll.shouldShowHint()

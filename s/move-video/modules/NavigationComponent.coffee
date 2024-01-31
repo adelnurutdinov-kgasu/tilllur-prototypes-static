@@ -15,34 +15,12 @@ class FlowView extends FlowComponent
 			@height = @parent.height
 
 
-		# @on Events.TransitionStop, (layerA, layerB) ->
-		# 	print layerB.name
-
-
 		@on Events.TransitionStart, (layerA, layerB) ->
-		# 	# print "start —> " + layerA.name ? 1 + " " + layerB.name ? 2
-		# 	print "-"
-		# 	print "start —> " + layerB.name ? 2
 			if layerB != undefined and layerB.custom != undefined and layerB.custom.customAction_Array != undefined
 				@iterateThroughChildren layerB, layerB.custom.customAction_Array, @customAction_switchOnLayers
 			
 			if layerA != undefined and layerA.custom != undefined and layerA.custom.customAction_Array != undefined
 				@iterateThroughChildren layerA, layerA.custom.customAction_Array, @customAction_switchOffLayers
-		
-		# @on Events.TransitionHalt, (layerA, layerB) ->
-		# 	print "halt —> " + layerB.name ? 2
-
-		# @on Events.TransitionStop, (layerA, layerB) ->
-		# 	print "stop —> " + layerB.name ? 2
-
-		# @on Events.TransitionEnd, (layerA, layerB) ->
-		# 	# print "end —> " + layerA.name ? 1 + " " + layerB.name ? 2
-		# 	print "end —> " + layerB.name ? 2
-			
-		# 	if @stack and @stack.length == 1 and @stack[0] == layerB and layerB != undefined
-		# 		@iterateThroughChildren layerB, layerB.custom.customAction_Array, @customAction_switchOnLayers
-		
-		
 
 
 
@@ -120,6 +98,18 @@ class FlowView extends FlowComponent
 			overlay:
 				show: {opacity: .5, x: 0, y: 0, size: nav.size}
 				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
+	
+	appTransition: (nav, layerA, layerB, overlay) ->
+		transition =
+			layerA:
+				show: {x: 0, y: 0, scale: 1}
+				hide: {x: 0 - layerA?.width, y: 0, scale: 0.8}
+			layerB:
+				show: {x: 0, y: 0, scale: 1}
+				hide: {x: layerB.width, y: 0, scale: 0.8}
+			overlay:
+				show: {opacity: .5, x: 0, y: 0, size: nav.size}
+				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
 
 
 	customAction_switchOnLayers: (layer, box, flow) ->
@@ -135,53 +125,11 @@ class FlowView extends FlowComponent
 
 
 	customAction_switchOffLayers: (layer, box, flow) ->
-		
-		# if layer.name == "tempname" then print "ok"
-		# if layer.shouldShowHint()
-		# print "check: " + layer.name
 
 		if flow.shouldShowHintOverride(layer)
 			# print "will off layer " + layer.name
 			box.push layer
 			layer.ignoreEvents = true
-		
-
-		# if layer.parent instanceof ScrollComponent or layer.parent instanceof PageComponent
-		# 	# print "here"
-		# 	# print layer
-		# 	# print layer.parent
-		# 	# print layer.ignoreEvents
-
-		# 	if layer.ignoreEvents == false
-		# 		# print "inside"
-		# 		box.push layer
-		# 		layer.ignoreEvents = true
-
-
-
-		# if layer instanceof Button
-		# 	if !layer.ignoreEvents
-		# 		box.push layer
-		# 		layer.ignoreEvents = true
-		
-		# else if layer.parent instanceof NavigationView
-		# 	box.push layer
-		# 	layer.ignoreEvents = true
-
-		# 	box.push layer.parent
-		# 	layer.parent.ignoreEvents = true
-		
-		# else if layer.parent instanceof ModalView
-
-		# 	box.push layer
-		# 	layer.ignoreEvents = true
-
-		# 	box.push layer.parent
-		# 	layer.parent.ignoreEvents = true
-
-		# 	box.push layer.parent.parent
-		# 	layer.parent.parent.ignoreEvents = true
-
 	
 	
 	
@@ -367,6 +315,7 @@ class NavigationView extends ScrollComponent
 			flow: null
 			backButton: null
 			showBack: true
+			preventBackSwipe: false
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
@@ -378,9 +327,9 @@ class NavigationView extends ScrollComponent
 
 		try @backButton.bringToFront()
 
-		@on Events.SwipeRightStart, (event, layer) =>
-			try @flow.showPrevious()
-			# try @flow.iterateThroughChildren @, @custom.customAction_Array, @flow.customAction_switchOffLayers
+		if @preventBackSwipe == false
+			@on Events.SwipeRightStart, (event, layer) =>
+				try @flow.showPrevious()
 		
 		@on "change:children", ->
 			try @backButton.bringToFront()
@@ -392,6 +341,11 @@ class NavigationView extends ScrollComponent
 			@options.flow = value
 			value.showNext(@)
 			value.showPrevious(animate: false)
+	
+
+	@define 'preventBackSwipe',
+		get: -> @options.preventBackSwipe
+		set: (value) -> @options.preventBackSwipe = value
 
 
 

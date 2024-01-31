@@ -44,8 +44,13 @@ class exports.Preview_Class extends Layer
 			# Controls
 			showUI: true
 			showLogo: true
-			scaleState: "fill" # fill / normal
 			showHints: true
+
+			# Scale
+			scaleState: "fill" # fill / normal
+			scaleGap: 56
+			
+			
 		
 		super @options
 
@@ -195,8 +200,9 @@ class exports.Preview_Class extends Layer
 		get: -> @options.scaleState
 		set: (value) -> @options.scaleState = value
 	
-
-
+	@define 'scaleGap',
+		get: -> @options.scaleGap
+		set: (value) -> @options.scaleGap = value
 
 
 
@@ -213,7 +219,7 @@ class exports.Preview_Class extends Layer
 												{ value: "off", result: "normal" },
 												{ value: "true", result: "fill" },
 												{ value: "false", result: "normal" }], @scaleState)
-
+		
 		@showUI = @getStateGeneric("button", [{ value: "false", result: false },
 												{ value: "true", result: true },
 												{ value: "on", result: true },

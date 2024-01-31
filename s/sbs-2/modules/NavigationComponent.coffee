@@ -1,9 +1,7 @@
 
-
-
 { Button } = require "Buttons"
 
-
+{ Preview_Class } = require "Preview_Class"
 
 class FlowView extends FlowComponent
 	constructor: (@options={}) ->
@@ -15,6 +13,14 @@ class FlowView extends FlowComponent
 		if @parent
 			@width = @parent.width
 			@height = @parent.height
+
+
+		@on Events.TransitionStart, (layerA, layerB) ->
+			if layerB != undefined and layerB.custom != undefined and layerB.custom.customAction_Array != undefined
+				@iterateThroughChildren layerB, layerB.custom.customAction_Array, @customAction_switchOnLayers
+			
+			if layerA != undefined and layerA.custom != undefined and layerA.custom.customAction_Array != undefined
+				@iterateThroughChildren layerA, layerA.custom.customAction_Array, @customAction_switchOffLayers
 
 
 
@@ -64,11 +70,8 @@ class FlowView extends FlowComponent
 			@emit "change:parent", @_parent, oldParent
 			@emit "change:superLayer", @_parent, oldParent
 			
-			# print layer
 			@width = layer.width
 			@height = layer.height
-
-			# print @width + " " + @height
 
 
 	stackTransition: (nav, layerA, layerB, overlay) ->
@@ -95,15 +98,86 @@ class FlowView extends FlowComponent
 			overlay:
 				show: {opacity: .5, x: 0, y: 0, size: nav.size}
 				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
+	
+	appTransition: (nav, layerA, layerB, overlay) ->
+		transition =
+			layerA:
+				show: {x: 0, y: 0, scale: 1}
+				hide: {x: 0 - layerA?.width, y: 0, scale: 0.8}
+			layerB:
+				show: {x: 0, y: 0, scale: 1}
+				hide: {x: layerB.width, y: 0, scale: 0.8}
+			overlay:
+				show: {opacity: .5, x: 0, y: 0, size: nav.size}
+				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
 
+
+	customAction_switchOnLayers: (layer, box, flow) ->
+		# if box == undefined then return
+
+		layerToCheck = layer
+		index = box.indexOf(layerToCheck)
+
+		if index != -1
+			layer.ignoreEvents = false
+			box.splice(index, 1)
+
+
+
+	customAction_switchOffLayers: (layer, box, flow) ->
+
+		if flow.shouldShowHintOverride(layer)
+			# print "will off layer " + layer.name
+			box.push layer
+			layer.ignoreEvents = true
+	
+	
+	
+	shouldShowHintOverride: (layer) ->
+		if layer.ignoreEvents is true then return false
+		# if layer.isAnimating then return false
+
+		# for parent in @ancestors()
+			# return false if parent.isAnimating
+
+		# for parent in layer.ancestors()
+		# 	# if parent instanceof Preview_Class
+		# 	# 	# if layer instanceof Button then print "HERE"
+		# 	# 	continue
+		# 	# if parent.isAnimating
+		# 	# 	if layer instanceof Button then print "???"
+		# 	# 	if layer instanceof Button then print parent
+		# 	return false if parent.isAnimating
+
+		if layer._draggable and layer._draggable.horizontal is false and layer._draggable.vertical is false
+			return false
+
+		return false if layer.opacity is 0
+
+		for eventName in layer.listenerEvents()
+			return true if Events.isInteractive(eventName)
+		
+		return false
+
+
+
+	iterateThroughChildren: (layer, box, actionCallback) ->
+		actionCallback layer, box, @
+		for child in layer.children
+			@iterateThroughChildren child, box, actionCallback
 
 
 	open: (navigationView) ->
 		navigationView.scrollToTop(false)
+		# @iterateThroughChildren @current, @current.custom.customAction_Array, @customAction_switchOffLayers
+
 		if navigationView.wrapper != undefined and navigationView.wrapper != null
 			@transition(navigationView.parent, @modalTransition)
+			# @iterateThroughChildren navigationView.parent, navigationView.parent.custom.customAction_Array, @customAction_switchOnLayers
 		else
 			@transition(navigationView, @stackTransition)
+			# @iterateThroughChildren navigationView, navigationView.custom.customAction_Array, @customAction_switchOnLayers
+
 
 
 
@@ -115,6 +189,8 @@ class ModalView extends ScrollComponent
 		navigationView_Wrapper = new Layer
 			name: "wrapper"
 			backgroundColor: null
+			custom:
+				customAction_Array: []
 
 		navigationView_Wrapper.on Events.Tap, ->
 			@children[0].flow.showPrevious()
@@ -134,33 +210,22 @@ class ModalView extends ScrollComponent
 			event.stopPropagation()
 
 		@on Events.SwipeDownStart, (event, layer) ->
-			if @scrollY < 0 then @flow.showPrevious()
+			if @scrollY < 0
+				@flow.showPrevious()
+				# @flow.iterateThroughChildren @, @custom.customAction_Array, @flow.customAction_switchOffLayers
 
-		# navigationView_Handler = new Layer
-		# 	parent: @
-		# 	borderRadius: 8
-		# 	width: 40, height: 3, x: Align.center, opacity: 0.5
-		# 	y: 100
-		# 	backgroundColor: "white"
-		
-		# # @on "change:y", ->
-		# # 	@parent.parent.children[1].navigationView_Handler.y = @parent.y - 11
-		
-		# @content.on "change:y", ->
-		# 	localHandler = @parent.children[1]
-		# 	# localHandler.y = @parent.y - 11
-		# 	print localHandler.y
-		
-		# @content.emit "change:y"
+		if @flow
+			@flow.showNext(@wrapper)
+			@flow.showPrevious(animate: false)
 
 
 
 	@define 'flow',
 		get: -> @options.flow
-		set: (value) ->
-			@options.flow = value
-			value.showNext(@)
-			value.showPrevious(animate: false)
+		# set: (value) ->
+		# 	@options.flow = value
+		# 	value.showNext(@)
+		# 	value.showPrevious(animate: false)
 	
 	@define 'wrapper',
 		get: -> @options.wrapper
@@ -250,18 +315,21 @@ class NavigationView extends ScrollComponent
 			flow: null
 			backButton: null
 			showBack: true
+			preventBackSwipe: false
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
 			custom:
 				backButton_name: "Back_Button"
+				customAction_Array: []
 		
 		super @options
 
 		try @backButton.bringToFront()
 
-		@on Events.SwipeRightStart, (event, layer) =>
-			try @flow.showPrevious()
+		if @preventBackSwipe == false
+			@on Events.SwipeRightStart, (event, layer) =>
+				try @flow.showPrevious()
 		
 		@on "change:children", ->
 			try @backButton.bringToFront()
@@ -273,6 +341,11 @@ class NavigationView extends ScrollComponent
 			@options.flow = value
 			value.showNext(@)
 			value.showPrevious(animate: false)
+	
+
+	@define 'preventBackSwipe',
+		get: -> @options.preventBackSwipe
+		set: (value) -> @options.preventBackSwipe = value
 
 
 
@@ -285,7 +358,9 @@ class NavigationView extends ScrollComponent
 			value.parent = @
 			value.bringToFront()
 			
-			try value.handler = () => @flow.showPrevious()
+			try value.handler = () =>
+				@flow.showPrevious()
+				# @flow.iterateThroughChildren @, @custom.customAction_Array, @flow.customAction_switchOffLayers
 	
 	@define 'showBack',
 		get: -> @options.showBack

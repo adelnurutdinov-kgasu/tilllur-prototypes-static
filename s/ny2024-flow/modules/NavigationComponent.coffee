@@ -13,36 +13,17 @@ class FlowView extends FlowComponent
 		if @parent
 			@width = @parent.width
 			@height = @parent.height
-
-
-		# @on Events.TransitionStop, (layerA, layerB) ->
-		# 	print layerB.name
-
+			for child in @children
+				child.width = @parent.width
+				child.height = @parent.height
+		
 
 		@on Events.TransitionStart, (layerA, layerB) ->
-		# 	# print "start —> " + layerA.name ? 1 + " " + layerB.name ? 2
-		# 	print "-"
-		# 	print "start —> " + layerB.name ? 2
 			if layerB != undefined and layerB.custom != undefined and layerB.custom.customAction_Array != undefined
 				@iterateThroughChildren layerB, layerB.custom.customAction_Array, @customAction_switchOnLayers
 			
 			if layerA != undefined and layerA.custom != undefined and layerA.custom.customAction_Array != undefined
 				@iterateThroughChildren layerA, layerA.custom.customAction_Array, @customAction_switchOffLayers
-		
-		# @on Events.TransitionHalt, (layerA, layerB) ->
-		# 	print "halt —> " + layerB.name ? 2
-
-		# @on Events.TransitionStop, (layerA, layerB) ->
-		# 	print "stop —> " + layerB.name ? 2
-
-		# @on Events.TransitionEnd, (layerA, layerB) ->
-		# 	# print "end —> " + layerA.name ? 1 + " " + layerB.name ? 2
-		# 	print "end —> " + layerB.name ? 2
-			
-		# 	if @stack and @stack.length == 1 and @stack[0] == layerB and layerB != undefined
-		# 		@iterateThroughChildren layerB, layerB.custom.customAction_Array, @customAction_switchOnLayers
-		
-		
 
 
 
@@ -120,6 +101,18 @@ class FlowView extends FlowComponent
 			overlay:
 				show: {opacity: .5, x: 0, y: 0, size: nav.size}
 				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
+	
+	appTransition: (nav, layerA, layerB, overlay) ->
+		transition =
+			layerA:
+				show: {x: 0, y: 0, scale: 1}
+				hide: {x: 0 - layerA?.width, y: 0, scale: 0.8}
+			layerB:
+				show: {x: 0, y: 0, scale: 1}
+				hide: {x: layerB.width, y: 0, scale: 0.8}
+			overlay:
+				show: {opacity: .5, x: 0, y: 0, size: nav.size}
+				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
 
 
 	customAction_switchOnLayers: (layer, box, flow) ->
@@ -135,53 +128,11 @@ class FlowView extends FlowComponent
 
 
 	customAction_switchOffLayers: (layer, box, flow) ->
-		
-		# if layer.name == "tempname" then print "ok"
-		# if layer.shouldShowHint()
-		# print "check: " + layer.name
 
 		if flow.shouldShowHintOverride(layer)
 			# print "will off layer " + layer.name
 			box.push layer
 			layer.ignoreEvents = true
-		
-
-		# if layer.parent instanceof ScrollComponent or layer.parent instanceof PageComponent
-		# 	# print "here"
-		# 	# print layer
-		# 	# print layer.parent
-		# 	# print layer.ignoreEvents
-
-		# 	if layer.ignoreEvents == false
-		# 		# print "inside"
-		# 		box.push layer
-		# 		layer.ignoreEvents = true
-
-
-
-		# if layer instanceof Button
-		# 	if !layer.ignoreEvents
-		# 		box.push layer
-		# 		layer.ignoreEvents = true
-		
-		# else if layer.parent instanceof NavigationView
-		# 	box.push layer
-		# 	layer.ignoreEvents = true
-
-		# 	box.push layer.parent
-		# 	layer.parent.ignoreEvents = true
-		
-		# else if layer.parent instanceof ModalView
-
-		# 	box.push layer
-		# 	layer.ignoreEvents = true
-
-		# 	box.push layer.parent
-		# 	layer.parent.ignoreEvents = true
-
-		# 	box.push layer.parent.parent
-		# 	layer.parent.parent.ignoreEvents = true
-
 	
 	
 	
@@ -249,10 +200,14 @@ class ModalView extends ScrollComponent
 
 		_.defaults @options,
 			flow: null
+			backButton: null
+			showBack: false
 			wrapper: navigationView_Wrapper
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
+			custom:
+				backButton_name: "Back_Button"
 		
 		super @options
 		
@@ -269,6 +224,10 @@ class ModalView extends ScrollComponent
 		if @flow
 			@flow.showNext(@wrapper)
 			@flow.showPrevious(animate: false)
+		
+		try @backButton.bringToFront()
+		@on "change:children", ->
+			try @backButton.bringToFront()
 
 
 
@@ -348,6 +307,37 @@ class ModalView extends ScrollComponent
 	add: (contentView) ->
 		contentView.parent = @custom.view.content
 		@backgroundColor = null
+	
+
+	@define 'backButton',
+		get: -> @options.backButton
+		set: (value) ->
+			@options.backButton = value
+			value.name = @custom.backButton_name
+
+			value.parent = @
+			value.bringToFront()
+			
+			try value.handler = () =>
+				@flow.showPrevious()
+				# @flow.iterateThroughChildren @, @custom.customAction_Array, @flow.customAction_switchOffLayers
+	
+
+	@define 'showBack',
+		get: -> @options.showBack
+		set: (value) ->
+			@options.showBack = value
+			if value == true and @backButton == null
+				@backButton = @create_BackButton()
+
+	
+	create_BackButton: () =>
+		return new Button
+			name: @custom.backButton_name
+			parent: @, size: 80, y: 32
+			backgroundColor: null
+			# backgroundColor: "red"
+			handler: () -> @parent.flow.showPrevious()
 
 
 
@@ -367,6 +357,7 @@ class NavigationView extends ScrollComponent
 			flow: null
 			backButton: null
 			showBack: true
+			preventBackSwipe: false
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
@@ -376,14 +367,18 @@ class NavigationView extends ScrollComponent
 		
 		super @options
 
-		try @backButton.bringToFront()
+		@content.width = @width
+		@content.height = @height
 
-		@on Events.SwipeRightStart, (event, layer) =>
-			try @flow.showPrevious()
-			# try @flow.iterateThroughChildren @, @custom.customAction_Array, @flow.customAction_switchOffLayers
-		
+		try @backButton.bringToFront()
 		@on "change:children", ->
 			try @backButton.bringToFront()
+
+		if @preventBackSwipe == false
+			@on Events.SwipeRightStart, (event, layer) =>
+				try @flow.showPrevious()
+		
+		
 	
 
 	@define 'flow',
@@ -392,6 +387,11 @@ class NavigationView extends ScrollComponent
 			@options.flow = value
 			value.showNext(@)
 			value.showPrevious(animate: false)
+	
+
+	@define 'preventBackSwipe',
+		get: -> @options.preventBackSwipe
+		set: (value) -> @options.preventBackSwipe = value
 
 
 
@@ -417,7 +417,6 @@ class NavigationView extends ScrollComponent
 
 	
 	create_BackButton: () =>
-
 		return new Button
 			name: @custom.backButton_name
 			parent: @, size: 80, y: 32

@@ -9,7 +9,6 @@ screen = new Layer { width: 1024 * 2 + 10, height: 1024 + 200 + 200, backgroundC
 
 
 
-
 testSBSJSON = "images/testing-sbs.json"
 testBlendingJSON = "images/testing-blending.json"
 testRemixJSON = "images/testing-remix.json"
@@ -18,6 +17,8 @@ testRatioJSON = "images/testing-ratio.json"
 testRemix2JSON = "images/testing-remix-2.json"
 
 defaultJSON = testRatioJSON
+
+
 
 # jsonURL = preview.getStateGeneric("json", [{ value: "sbs", result: testSBSJSON },
 # 	{ value: "blending", result: testBlendingJSON }], defaultJSON)
