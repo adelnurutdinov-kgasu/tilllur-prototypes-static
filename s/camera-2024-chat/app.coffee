@@ -11,7 +11,7 @@ flow = new FlowView { parent: screen }
 startView = new NavigationView
 	parent: flow, backgroundColor: "white", showBack: false
 	preventBackSwipe: true
-	height: 812 * 2
+	height: 812
 
 cameraView = new NavigationView { parent: flow, backgroundColor: "white", showBack: false, preventBackSwipe: true }
 gptView = new NavigationView { parent: flow, backgroundColor: "white", showBack: false }
@@ -21,8 +21,10 @@ gptView = new NavigationView { parent: flow, backgroundColor: "white", showBack:
 # # Start Page
 
 start = new Layer
-	parent: startView
-	width: 375.0, height: 812.0, image: "images/start.png"
+	parent: startView.content
+	# width: 375.0, height: 812.0, image: "images/start.png"
+	width: 375.0, height: 1282.0, image: "images/start2.png"
+
 
 start.onSwipeLeftStart ->
 	flow.open(gptView)
@@ -32,26 +34,28 @@ start.onSwipeRightStart ->
 
 camera20button = new Button
 	parent: startView
-	x: 28, y: 407
-	width: 153.66666666666666, height: 52.0, image: "images/camera button.png"
+	# x: 28, y: 407
+	# width: 153.66666666666666, height: 52.0, image: "images/camera button.png"
+	x: Align.left(20), y: Align.top(328), size: 84, backgroundColor: null
 	handler: () -> flow.transition(cameraView, cameraTransition)
 
 gpt20button = new Button
 	parent: startView
-	x: Align.right(-28), y: 407
-	width: 153.66666666666666, height: 52.0, image: "images/gpt button.png"
+	# x: Align.right(-28), y: 407
+	# width: 153.66666666666666, height: 52.0, image: "images/gpt button.png"
+	x: Align.right(-20), y: Align.top(244), size: 168, backgroundColor: null
 	handler: () -> flow.open(gptView)
 
 startAttachButton = new Button
 	parent: startView
-	x: Align.left(22), y: Align.top(327), width: 64, height: 64
+	x: Align.left(22), y: Align.top(466), width: 64, height: 64
 	backgroundColor: null
 	handler: () -> flow.open(startChooseImageView)
 
 
 startSearchButton = new Button
 	parent: startView
-	x: Align.center, y: Align.top(327), width: 200, height: 64
+	x: Align.center, y: Align.top(466), width: 200, height: 64
 	backgroundColor: null
 	handler: () -> flow.transition(searchEmptyView, searchTransition)
 
@@ -361,7 +365,7 @@ searchTransition = (nav, layerA, layerB, overlay) ->
 	transition =
 		layerA:
 			show: {x: 0, y: 0, opacity: 1}
-			hide: {x: 0, y:  - layerA?.height / 6, opacity: 1}
+			hide: {x: 0, y:  - layerA?.height / 4, opacity: 1}
 		layerB:
 			show: {x: 0, y: 0, opacity: 1}
 			hide: {x: 0, y: layerB.height / 2 - 50, opacity: 0}
@@ -447,6 +451,12 @@ search20classic = new Layer
 	parent: searchResults.content
 	width: 375.0, height: 1208.0, image: "images/search classic.png"
 
+searchResults_OpenButton = new Button
+	parent: searchResults
+	width: 375, height: 160, y: Align.top(520)
+	backgroundColor: null
+	handler: () -> flow.open(siteView)
+
 
 
 searchResultsModern = new NavigationView
@@ -463,3 +473,77 @@ searchResultsModern_BottomButton = new Button
 	y: Align.bottom
 	scaleTo: 1
 
+
+
+siteView = new NavigationView
+	parent: flow
+	backgroundColor: "white"
+	showBack: false
+
+siteView_BackButton = new Button
+	parent: siteView
+	width: 64, height: 64, x: Align.left(4), y: Align.bottom(-28)
+	backgroundColor: null
+	handler: () -> flow.showPrevious()
+
+dtf = new Layer
+	parent: siteView
+	width: 375.0, height: 812.0, image: "images/dtf.png"
+
+siteBar = new Layer
+	parent: siteView
+	width: 375.0, height: 86.0, image: "images/siteBar.png", y: Align.bottom
+
+selectButton =new Button
+	parent: siteView
+	width: 200, height: 86, x: Align.center, y: Align.bottom(-28)
+	backgroundColor: null
+	handler: () -> flow.showNext(siteView_SelectView, animate: false)
+
+
+
+
+
+siteView_SelectView = new NavigationView
+	parent: flow
+	width: 375, height: 812
+	preventBackSwipe: true
+	showBack: false
+	# handler: () -> flow.open(dtf20more)
+
+
+dtf20more = new Layer
+	parent: siteView_SelectView
+	width: 375.0, height: 812.0, image: "images/dtf more.png"
+
+siteView_SelectView_BackButton = new Button
+	parent: siteView_SelectView
+	width: 375, height: 600, y: Align.top(48)
+	backgroundColor: null
+	handler: () -> flow.showPrevious(animate: false)
+
+siteView_SelectView_Next =new Button
+	parent: siteView_SelectView
+	width: 200, height: 86, x: Align.center, y: Align.bottom(-28)
+	backgroundColor: null
+	handler: () -> flow.open(siteView_Modal)
+
+
+
+
+siteView_Modal = new ModalView
+	parent: flow
+	width: 375, height: screen.height - 160, y: 160, borderRadius: 24
+	backgroundColor: "white"
+
+dtf20modal = new Layer
+	parent: siteView_Modal.content
+	width: 375.0, height: 1177.0, image: "images/dtf modal.png"
+
+siteView_Modal_Bottom = new Layer
+	parent: siteView_Modal
+	width: 375.0, height: 106.0, image: "images/genericBottom.png"
+	y: Align.bottom
+
+
+flow.open(siteView)
