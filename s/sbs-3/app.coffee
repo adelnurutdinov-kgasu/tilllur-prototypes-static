@@ -17,6 +17,7 @@ testRatioJSON = "images/testing-ratio.json"
 testRemix2JSON = "images/testing-remix-2.json"
 
 defaultJSON = testRatioJSON
+# defaultJSON = "https://cvlab.s3.yandex.net/sbs/timur/deforum_sbs2.json"
 
 
 
@@ -37,6 +38,15 @@ getState = (stateKey = "json", defaultResult = defaultJSON) ->
 	return defaultResult
 
 checkRandomKey = (stringKey) -> if stringKey == "false" then return false else return true
+
+getFileType = (url) ->
+	try 
+		fileExtension = url.split('.').pop().toLowerCase()
+		if fileExtension == "mp4" or fileExtension == "mov" or fileExtension == "webm" then return "video"
+		else return "image"
+	catch e
+		return "image"
+
 
 
 jsonURL = getState()
@@ -176,6 +186,12 @@ for currentImage, i in imageData.images
 				one: -1
 				two: -1
 	
+
+	fileType1 = getFileType(currentImage["image-1"])
+	fileType2 = getFileType(currentImage["image-2"])
+
+
+
 	image1 = new ImageButton
 		parent: page
 		text: ""
@@ -185,14 +201,23 @@ for currentImage, i in imageData.images
 		custom:
 			type: "one"
 			twin: null
-	
-	aspect1 = new Layer
-		parent: image1
-		width: image1.width, height: image1.height
-		# backgroundColor: "red"
-		image: currentImage["image-1"]
-	
-	applyImageRatio(currentImage["image-1"], aspect1, (error, ratio) -> if error then print error else ratio )
+
+	if fileType1 == "image"
+		aspect1 = new Layer
+			parent: image1
+			width: image1.width, height: image1.height
+			# backgroundColor: "red"
+			image: currentImage["image-1"]
+		
+		applyImageRatio(currentImage["image-1"], aspect1, (error, ratio) -> if error then console.log error else ratio )
+	else
+		aspect1 = new VideoLayer
+			parent: image1
+			width: 1024, height: 1024
+			video: currentImage["image-1"]
+		
+		aspect1.player.autoplay = true
+		aspect1.player.loop = true
 	
 	image2 = new ImageButton
 		parent: page
@@ -205,13 +230,23 @@ for currentImage, i in imageData.images
 			type: "two"
 			twin: null
 	
-	aspect2 = new Layer
-		parent: image2
-		width: image2.width, height: image2.height
-		# backgroundColor: "green"
-		image: currentImage["image-2"]
-	
-	applyImageRatio(currentImage["image-2"], aspect2, (error, ratio) -> if error then print error else ratio )
+
+	if fileType2 == "image"
+		aspect2 = new Layer
+			parent: image2
+			width: image2.width, height: image2.height
+			# backgroundColor: "blue"
+			image: currentImage["image-2"]
+		
+		applyImageRatio(currentImage["image-2"], aspect2, (error, ratio) -> if error then console.log error else ratio )
+	else
+		aspect2 = new VideoLayer
+			parent: image2
+			width: 1024, height: 1024
+			video: currentImage["image-2"]
+		
+		aspect2.player.autoplay = true
+		aspect2.player.loop = true
 	
 	image1.custom.twin = image2
 	image2.custom.twin = image1
@@ -679,6 +714,8 @@ updateImageToRatio = (imageLayer, ratio) ->
 	else if ratio > 1
 		imageLayer.height = imageLayer.height / ratio
 		imageLayer.y = Align.center
+
+
 
 
 `function applyImageRatio(url, imageLayer, callback) {

@@ -90,4 +90,27 @@ class ImageButton extends Text
 		set: (value) -> @on(Events.Tap, value)
 
 
-module.exports = { Text, TextButton, ImageButton }
+
+class VideoButton extends VideoLayer
+	constructor: (@options={}) ->
+		
+		_.defaults @options,
+			handler: null
+		
+		super @options
+		@style = cursor: "pointer"
+		
+		@.onMouseOver @Hover
+		@.onMouseOut @HoverOff
+	
+	Hover: =>
+		;
+	HoverOff: =>
+		;
+	
+	@define 'handler',
+		set: (value) -> @on(Events.Tap, value)
+
+
+
+module.exports = { Text, TextButton, ImageButton, VideoButton }
