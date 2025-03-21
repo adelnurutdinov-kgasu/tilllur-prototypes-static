@@ -172,29 +172,6 @@ summarySheetView = new ModalView
     borderRadius: 24
     backgroundColor: "white"
 
-# Добавляем обработчик клика для закрытия шторки только при тапе в пустой области над шторкой
-emptyAreaCloseHandler = new Layer
-    parent: flow
-    width: screen.width
-    height: 128
-    x: 0
-    y: 0
-    backgroundColor: null
-    name: "emptyAreaCloseHandler"
-    visible: false
-
-# Показываем слой при открытии шторки
-summarySheetView.on "change:visible", (visible) ->
-    if visible
-        emptyAreaCloseHandler.visible = true
-        emptyAreaCloseHandler.bringToFront()
-    else
-        emptyAreaCloseHandler.visible = false
-
-# Обработчик закрытия при тапе по пустой области сверху
-emptyAreaCloseHandler.on Events.Tap, ->
-    flow.showPrevious()
-
 # Создаем контейнер для табов с горизонтальным скроллом
 tabsScrollContainer = new ScrollComponent
     parent: summarySheetView.content
@@ -374,99 +351,6 @@ scrollGuard = new Layer
 scrollGuard.states =
     "hidden": { opacity: 0 }
     "shown": { opacity: 0 }
-
-# Добавляем функцию восстановления кнопки
-resetSummarizeButton = ->
-    # Проверяем, была ли кнопка скрыта пользователем
-    if summarizeButton.isDismissedByUser
-        # Сбрасываем флаг
-        summarizeButton.isDismissedByUser = false
-        
-        # Сперва возвращаем кнопку в исходную позицию без анимации (мгновенно)
-        summarizeButton.x = summarizeButton.originPosition.x
-        summarizeButton.y = summarizeButton.originPosition.y
-        summarizeButton.opacity = 0
-        summarizeButton.scale = 0.5
-        
-        # Анимируем появление с небольшим overscale
-        summarizeButton.animate
-            opacity: 1
-            scale: 1.1
-            options:
-                curve: Spring(damping: 0.6)
-                time: 0.35
-        
-        # Делаем легкий эффект возвращения к нормальному размеру почти сразу
-        Utils.delay 0.2, ->
-            summarizeButton.animate
-                scale: 1
-                options: 
-                    curve: Spring(damping: 0.8)
-                    time: 0.2
-
-# Переменные для отслеживания встряхивания
-lastAcceleration = { x: 0, y: 0, z: 0 }
-lastTimestamp = 0
-shakeThreshold = 15
-shakeCooldown = false
-
-# Обработчик встряхивания устройства
-handleShake = (event) ->
-    # Получаем данные акселерометра
-    acceleration = event.accelerationIncludingGravity
-    
-    # Проверяем, прошло ли достаточно времени с последнего измерения
-    currentTime = Date.now()
-    if (currentTime - lastTimestamp) > 100 # проверяем каждые 100 мс
-        
-        # Рассчитываем разницу в ускорении
-        deltaX = Math.abs(lastAcceleration.x - acceleration.x)
-        deltaY = Math.abs(lastAcceleration.y - acceleration.y)
-        deltaZ = Math.abs(lastAcceleration.z - acceleration.z)
-        
-        # Если изменение ускорения выше порога, считаем это встряхиванием
-        if (deltaX > shakeThreshold && deltaY > shakeThreshold) || 
-           (deltaX > shakeThreshold && deltaZ > shakeThreshold) || 
-           (deltaY > shakeThreshold && deltaZ > shakeThreshold)
-            
-            # Проверяем, не находимся ли мы в периоде "охлаждения" после встряхивания
-            if !shakeCooldown
-                # Устанавливаем период охлаждения
-                shakeCooldown = true
-                
-                # Восстанавливаем кнопку summarize
-                resetSummarizeButton()
-                
-                # Сбрасываем период охлаждения через 1 секунду
-                Utils.delay 1, ->
-                    shakeCooldown = false
-        
-        # Сохраняем текущие значения для следующего сравнения
-        lastAcceleration = { 
-            x: acceleration.x, 
-            y: acceleration.y, 
-            z: acceleration.z 
-        }
-        lastTimestamp = currentTime
-
-# Добавляем обработчик встряхивания если работаем на мобильном устройстве
-if Utils.isMobile()
-    window.addEventListener "devicemotion", handleShake, true
-
-# Для тестирования на десктопе - добавляем кнопку для симуляции встряхивания
-if !Utils.isMobile()
-    resetButton = new Layer
-        parent: homeView
-        width: 30
-        height: 30
-        backgroundColor: "black"
-        borderRadius: 15
-        x: Align.right(-20)
-        y: Align.top(58)
-        opacity: 0.5
-    
-    resetButton.on Events.Tap, ->
-        resetSummarizeButton()
 
 # При изменении состояния этого слоя, меняем видимость нижней панели и кнопки
 scrollGuard.on Events.StateSwitchEnd, (from, to) ->
