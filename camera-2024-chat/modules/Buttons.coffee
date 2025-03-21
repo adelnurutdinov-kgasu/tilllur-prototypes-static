@@ -3,7 +3,6 @@
 class exports.Button extends Layer
 	constructor: (@options={}) ->
 
-		# print @options
 		guard = new Layer { size: 10, backgroundColor: "null" }
 		
 		guard.states =
@@ -41,17 +40,6 @@ class exports.Button extends Layer
 		@.onTouchEnd @HoverOff
 		@.onSwipeStart @HoverOff
 		@.onDragStart @HoverOff
-
-
-		# if @name == "button2"
-			# print @options
-			# print @parent
-			# @parent = @options.parent.parent
-			# print @parent
-			# if @options.x then @x = @options.x
-			# if @options.y then @y = @options.y
-
-		
 	
 	Hover: => @guard.stateSwitch("pressed")
 	HoverOff: => @guard.stateSwitch("normal")
@@ -67,5 +55,7 @@ class exports.Button extends Layer
 		set: (value) -> @options.scaleTo = value
 	
 	@define 'handler',
-		set: (value) -> @on(Events.Tap, value)
+		get: -> @options.handler
+		set: (value) -> 
+			@on Events.Tap, Utils.throttle(0.2, value)
 	

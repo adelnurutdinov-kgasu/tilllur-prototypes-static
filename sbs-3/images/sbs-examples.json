@@ -1,0 +1,62 @@
+{
+  "name-1": "первая модель",
+  "name-2": "вторая модель",
+  "source": [
+    {
+        "prompt": "сравнение двух квадратных изображений",
+        "src-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+        "src-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpfMEnORPl_xF/orig"
+    },
+    {
+        "prompt": "сравнение двух изображений с произвольным aspect ratio",
+        "src-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+        "src-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpfMEnORPl_xF/orig"
+    },
+    {
+        "prompt": "сравнение двух квадратных видео (формат mp4)",
+        "src-1": "http://cvlab.s3.yandex.net/sbs/a9e910ffcc6a9e8dd65ba4a1976ef21f.mp4",
+        "src-2": "http://cvlab.s3.yandex.net/sbs/1c7dcddf0f583bffe7b12cf696bcb3bb.mp4"
+    },
+    {
+        "prompt": "сравнение двух видео с произвольным aspect ratio (форматы mov и webm)",
+        "src-1": "https://timurnurutdinov.github.io/temp/covers/tibogtmw/cover.webm",
+        "src-2": "https://timurnurutdinov.github.io/temp/covers/yandex-new-2022/cover.mov"
+    },
+    {
+        "prompt": "несколько изображений на входе",
+        "src-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+        "src-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+        "image-prompt": [
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"
+        ]
+    },
+    {
+        "prompt": "несколько изображений и текст на входе",
+        "src-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+        "src-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+        "image-prompt": [
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+            "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled"
+        ]
+    },
+    {
+        "prompt": "несколько изображений (разный aspect ratio) и текст на входе",
+        "src-1": "https://masterpiecer-images.s3.yandex.net/dda9c4ba717811ee87c22aa0df1cd6e5:upscaled",
+        "src-2": "https://masterpiecer-images.s3.yandex.net/cb0f21e162cd11eea6e3d20dae950626:upscaled",
+        "image-prompt": [
+            "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+            "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpfMEnORPl_xF/orig"
+        ]
+    },
+    {
+        "src-1": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpXvTYzrh4YzH/orig",
+        "src-2": "https://avatars.mds.yandex.net/get-images-similar-mturk/5396204/FpfMEnORPl_xF/orig"
+    },
+    
+  ]
+}

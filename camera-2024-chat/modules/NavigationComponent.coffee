@@ -102,7 +102,6 @@ class FlowView extends FlowComponent
 				show: {opacity: .5, x: 0, y: 0, size: nav.size}
 				hide: {opacity: 0, x: 0, y: 0, size: nav.size}
 	
-	
 	appTransition: (nav, layerA, layerB, overlay) ->
 		transition =
 			layerA:
@@ -165,6 +164,7 @@ class FlowView extends FlowComponent
 
 
 
+
 	iterateThroughChildren: (layer, box, actionCallback) ->
 		actionCallback layer, box, @
 		for child in layer.children
@@ -195,6 +195,7 @@ class ModalView extends ScrollComponent
 			backgroundColor: null
 			custom:
 				customAction_Array: []
+				
 
 		navigationView_Wrapper.on Events.Tap, ->
 			@children[0].flow.showPrevious()
@@ -207,8 +208,10 @@ class ModalView extends ScrollComponent
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
+			buttons: {}
 			custom:
 				backButton_name: "Back_Button"
+				buttonLayers: []
 		
 		super @options
 		
@@ -229,8 +232,14 @@ class ModalView extends ScrollComponent
 		try @backButton.bringToFront()
 		@on "change:children", ->
 			try @backButton.bringToFront()
+			try button.bringToFront() for button in @custom.buttonLayers
+
+		@create_Buttons()
 
 
+	@define 'buttons',
+		get: -> @options.buttons
+		set: (value) -> @options.buttons = value
 
 	@define 'flow',
 		get: -> @options.flow
@@ -339,6 +348,18 @@ class ModalView extends ScrollComponent
 			backgroundColor: null
 			# backgroundColor: "red"
 			handler: () -> @parent.flow.showPrevious()
+	
+	create_Buttons: () =>
+		
+		for buttonName of @buttons
+			buttonOptions = @buttons[buttonName]
+			if buttonOptions.fixed then buttonParent = @ else buttonParent = @content
+
+			buttonOptions2 = _.extend({}, buttonOptions, {parent: buttonParent})
+			button = new Button(buttonOptions2)
+			
+			# if buttonOptions.handler then button.handler = buttonOptions.handler
+			@custom.buttonLayers.push button
 
 
 
@@ -362,24 +383,28 @@ class NavigationView extends ScrollComponent
 			scrollVertical: true
 			scrollHorizontal: false
 			directionLock: true
+			buttons: {}
 			custom:
 				backButton_name: "Back_Button"
 				customAction_Array: []
+				buttonLayers: []
+
 		
 		super @options
 
 		@content.width = @width
 		@content.height = @height
 
-		try @backButton.bringToFront()
-		@on "change:children", ->
-			try @backButton.bringToFront()
-
 		if @preventBackSwipe == false
 			@on Events.SwipeRightStart, (event, layer) =>
 				try @flow.showPrevious()
-		
-		
+
+		try @backButton.bringToFront()
+		@on "change:children", ->
+			try @backButton.bringToFront()
+			try button.bringToFront() for button in @custom.buttonLayers
+
+		@create_Buttons()
 	
 
 	@define 'flow',
@@ -394,6 +419,9 @@ class NavigationView extends ScrollComponent
 		get: -> @options.preventBackSwipe
 		set: (value) -> @options.preventBackSwipe = value
 
+	@define 'buttons',
+		get: -> @options.buttons
+		set: (value) -> @options.buttons = value
 
 
 	@define 'backButton',
@@ -424,6 +452,18 @@ class NavigationView extends ScrollComponent
 			backgroundColor: null
 			# backgroundColor: "red"
 			handler: () -> @parent.flow.showPrevious()
+	
+	create_Buttons: () =>
+		
+		for buttonName of @buttons
+			buttonOptions = @buttons[buttonName]
+			if buttonOptions.fixed then buttonParent = @ else buttonParent = @content
+
+			buttonOptions2 = _.extend({}, buttonOptions, {parent: buttonParent})
+			button = new Button(buttonOptions2)
+			
+			# if buttonOptions.handler then button.handler = buttonOptions.handler
+			@custom.buttonLayers.push button
 
 
 	@define "parent",

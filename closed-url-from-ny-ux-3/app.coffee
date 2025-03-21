@@ -4,7 +4,7 @@
 { Button } = require "Buttons"
 
 
-screen = new Layer { width: 375, height: 812 }
+screen = new Layer { width: 393, height: 852 }
 preview = new Preview { view: screen }
 
 

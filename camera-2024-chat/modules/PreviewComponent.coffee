@@ -12,7 +12,7 @@ Framer.Defaults.Animation =
 class FixPreviewExport extends Preview_UI
 class exports.Preview extends FixPreviewExport
 
-
+{ LogView } = require "LogView"
 
 
 # Native
