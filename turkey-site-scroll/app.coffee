@@ -376,3 +376,50 @@ scrollView.content.on "change:y", ->
         else if @draggable.direction == "down" then scrollGuard.stateSwitch("shown")
     else
         scrollGuard.stateSwitch("shown")
+
+# Добавляем функцию восстановления кнопки summarize
+resetSummarizeButton = ->
+    # Проверяем, была ли кнопка скрыта пользователем
+    if summarizeButton.isDismissedByUser
+        # Сбрасываем флаг
+        summarizeButton.isDismissedByUser = false
+        
+        # Сперва возвращаем кнопку в исходную позицию без анимации (мгновенно)
+        summarizeButton.x = summarizeButton.originPosition.x
+        summarizeButton.y = summarizeButton.originPosition.y
+        summarizeButton.opacity = 0
+        summarizeButton.scale = 0.5
+        
+        # Анимируем появление с небольшим overscale
+        summarizeButton.animate
+            opacity: 1
+            scale: 1.1
+            options:
+                curve: Spring(damping: 0.6)
+                time: 0.35
+        
+        # Делаем легкий эффект возвращения к нормальному размеру почти сразу
+        Utils.delay 0.2, ->
+            summarizeButton.animate
+                scale: 1
+                options: 
+                    curve: Spring(damping: 0.8)
+                    time: 0.2
+
+# Для тестирования - добавляем кнопку для симуляции восстановления
+resetButton = new Layer
+    parent: homeView
+    width: 30
+    height: 30
+    backgroundColor: "black"
+    borderRadius: 15
+    x: Align.right(-20)
+    y: Align.top(58)
+    opacity: 0.5
+
+resetButton.on Events.Tap, ->
+    resetSummarizeButton()
+
+
+flow.open(summarySheetView)
+flow.showPrevious()
