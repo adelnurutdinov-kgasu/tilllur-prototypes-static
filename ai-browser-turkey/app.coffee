@@ -104,6 +104,7 @@ twitterButton = new Button
 	backgroundColor: null
 	handler: () -> flow.open(twitterView)
 
+
 home20view20widgets = new ScrollComponent
 	width: 393.0
 	height: 202.0
@@ -142,6 +143,16 @@ weatherVideoLayer = new VideoLayer
 
 weatherVideoLayer.player.loop = true
 weatherVideoLayer.player.play()
+
+# Добавляем кнопку sports внутрь home20view20sites
+sportsButton = new Button
+	parent: homeView
+	x: Align.left(140)
+	y: Align.top(60)
+	width: 100
+	height: 56
+	backgroundColor: null
+	handler: () -> flow.open(sportsView)
 
 # Добавляем кнопку haber7 внутрь виджетов
 haber7Button = new Button
@@ -481,16 +492,11 @@ homeButtonArticle = new Button
 # Добавляем тайл с URL для статьи
 siteArticleUrl = new Layer
 	parent: bottomViewArticle
-	width: 200
-	height: 24
+	width: 393.0
+	height: 85.0
+	image: "images/site url title article.png"
 	x: Align.center
-	y: Align.bottom(-42)
-	backgroundColor: "transparent"
-	html: "tamindir.com"
-	style: 
-		fontSize: "16px"
-		textAlign: "center"
-		color: "#666666"
+	y: Align.bottom
 
 # Настраиваем скролл для скрытия/показа нижней панели
 siteArticleView.content.onDragStart ->
@@ -596,16 +602,11 @@ homeButtonVideo = new Button
 # Добавляем тайл с URL для видео
 siteVideoUrl = new Layer
 	parent: bottomViewVideo
-	width: 200
-	height: 24
+	width: 393.0
+	height: 85.0
+	image: "images/site url title video.png"
 	x: Align.center
-	y: Align.bottom(-42)
-	backgroundColor: "transparent"
-	html: "youtube.com"
-	style: 
-		fontSize: "16px"
-		textAlign: "center"
-		color: "#666666"
+	y: Align.bottom
 
 # --- Video Modal с тремя состояниями ---
 siteVideoModalView = new ModalView
@@ -649,6 +650,14 @@ ecomView = new NavigationView
 			x: Align.center, y: 100, width: 393, height: 80, backgroundColor: null
 			handler: () -> flow.open(ecomItemView)
 
+# Добавляем фиксированную панель для Ecom
+ecom20site20bottom20bar = new Layer
+	parent: ecomView
+	width: 393.0
+	height: 54.0
+	image: "images/ecom site bottom bar.png"
+	y: Align.bottom(-85) # Размещаем над нижней панелью
+
 # Добавляем изображение ecom в скролл
 siteEcom.parent = ecomView.content
 siteEcom.x = 0
@@ -674,18 +683,13 @@ homeButtonEcom = new Button
 		flow.showPrevious()
 
 # Добавляем тайл с URL для ecom
-ecomUrl = new Layer
+siteEcomUrl = new Layer
 	parent: bottomViewEcom
-	width: 200
-	height: 24
+	width: 393.0
+	height: 85.0
+	image: "images/site url title ecom.png"
 	x: Align.center
-	y: Align.bottom(-42)
-	backgroundColor: "transparent"
-	html: "hepsiburada.com"
-	style: 
-		fontSize: "16px"
-		textAlign: "center"
-		color: "#666666"
+	y: Align.bottom
 
 ecomItemView = new NavigationView
 	parent: flow
@@ -697,6 +701,14 @@ ecomItemView = new NavigationView
 		back:
 			width: 64, height: 64, x: Align.left(4), y: Align.top(48), backgroundColor: null
 			handler: () -> flow.showPrevious()
+
+# Добавляем фиксированную панель для Ecom Item
+ecom20item20site20bottom20bar = new Layer
+	parent: ecomItemView
+	width: 393.0
+	height: 69.0
+	image: "images/ecom item site bottom bar.png"
+	y: Align.bottom(-139) # Размещаем над нижней панелью
 
 # Добавляем изображение товара в скролл
 siteEcomItem.parent = ecomItemView.content
@@ -965,40 +977,40 @@ class ActionPanel extends ScrollComponent
 		# Определяем параметры кнопок-изображений в зависимости от типа
 		if type == "article"
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button tldr.png", width: 77.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
 		else if type == "video"
 			buttonsData = [
-				{ image: "images/action-button/site action button video qa.png", width: 113.0, height: 44.0 }
 				{ image: "images/action-button/site action button video translate vocalize.png", width: 179.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button video quick recap.png", width: 188.0, height: 44.0 }
 				{ image: "images/action-button/site action button video recap 3 min.png", width: 136.0, height: 44.0 }
 				{ image: "images/action-button/site action button video key moments.png", width: 131.0, height: 44.0 }
 			]
 		else if type == "news"
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button news brief.png", width: 112.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news media tone.png", width: 115.0, height: 44.0 }
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
 			]
 		else if type == "twitter"
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
 			]
 		else
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
@@ -1018,23 +1030,18 @@ class ActionPanel extends ScrollComponent
 				x: currentX
 				y: Align.top(8)
 
-			# Добавляем обработчик для кнопки Explore Topic в Article View
-			if type == "article" and index == 0
-				btn.onClick -> flow.open(articleExploreTopicModalView)
-			# Добавляем обработчик для кнопки TLDR в Article View
-			else if type == "article" and index == 1
+			if type == "article" and index == 1
+				btn.onClick -> flow.open(articleExploreTopicModalView)			
+			else if type == "article" and index == 0
 				btn.onClick -> flow.open(siteArticleModalView)
 			# Добавляем обработчик для кнопки VideoQA в Video View
-			else if type == "video" and index == 0
+			else if type == "video" and index == 1
 				btn.onClick -> flow.open(siteVideoModalView)
-			# Добавляем обработчик для кнопки Best Price в EcomItem View
-			else if type == "item" and index == 1
-				btn.onClick -> flow.open(ecomItemModalView)
 			# Добавляем обработчики для кнопок Twitter
 			if type == "twitter"
-				if index == 0 # Explore Topic
+				if index == 1
 					btn.onClick -> flow.open(twitterExploreTopicModalView)
-				else if index == 1 # Smart Reply
+				else if index == 0
 					btn.onClick -> flow.open(twitterSmartReplyModalView)
 
 			currentX += btnData.width + gap
@@ -1067,9 +1074,9 @@ itemActions = new ActionPanel
 
 # Добавляем обработчики для кнопок в Ecom Item View
 for btn, index in itemActions.content.children
-	if index == 0 # Explore Topic
+	if index == 1 # Explore Topic
 		btn.onClick -> flow.open(ecomItemExploreTopicModalView)
-	else if index == 1 # Best Price
+	else if index == 0 # Best Price
 		btn.onClick -> flow.open(ecomItemModalView)
 
 # Добавляем обработчик скролла для видео
@@ -1095,9 +1102,19 @@ ecomView.content.onDragStart ->
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
+		ecom20site20bottom20bar.animate
+			y: ecomView.height - 54
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
 	else
 		bottomViewEcom.animate
 			y: Align.bottom
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
+		ecom20site20bottom20bar.animate
+			y: Align.bottom(-85)
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1110,9 +1127,19 @@ ecomItemView.content.onDragStart ->
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
+		ecom20item20site20bottom20bar.animate
+			y: ecomItemView.height - 69
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
 	else
 		bottomViewEcomItem.animate
 			y: Align.bottom
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
+		ecom20item20site20bottom20bar.animate
+			y: Align.bottom(-139)
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1198,18 +1225,13 @@ homeButtonNews = new Button
 		flow.showPrevious()
 
 # Добавляем тайл с URL для новостей
-newsUrl = new Layer
+siteNewsUrl = new Layer
 	parent: bottomViewNews
-	width: 200
-	height: 24
+	width: 393.0
+	height: 85.0
+	image: "images/site url title news.png"
 	x: Align.center
-	y: Align.bottom(-42)
-	backgroundColor: "transparent"
-	html: "haber7.com"
-	style: 
-		fontSize: "16px"
-		textAlign: "center"
-		color: "#666666"
+	y: Align.bottom
 
 # Добавляем панель действий для новостей
 newsActions = new ActionPanel
@@ -1218,9 +1240,9 @@ newsActions = new ActionPanel
 
 # Добавляем обработчики для кнопок в News View
 for btn, index in newsActions.content.children
-	if index == 0 # Explore Topic
+	if index == 1
 		btn.onClick -> flow.open(newsExploreTopicModalView)
-	else if index == 1 # News Brief
+	else if index == 0
 		btn.onClick -> flow.open(newsBriefModalView)
 
 # Добавляем обработчик скролла для новостей
@@ -1341,18 +1363,13 @@ homeButtonTwitter = new Button
 		flow.showPrevious()
 
 # Добавляем тайл с URL для Twitter
-twitterUrl = new Layer
+siteTwitterUrl = new Layer
 	parent: bottomViewTwitter
-	width: 200
-	height: 24
+	width: 393.0
+	height: 85.0
+	image: "images/site url title twitter.png"
 	x: Align.center
-	y: Align.bottom(-42)
-	backgroundColor: "transparent"
-	html: "x.com"
-	style: 
-		fontSize: "16px"
-		textAlign: "center"
-		color: "#666666"
+	y: Align.bottom
 
 # Добавляем панель действий для Twitter
 twitterActions = new ActionPanel
@@ -1480,4 +1497,95 @@ for btn, index in ecomItemExploreTopicModalActions.content.children
 			flow.showPrevious()
 			flow.open(ecomItemModalView)
 
-# flow.open(siteVideoView)
+# Sports ветка
+sportsView = new NavigationView
+	parent: flow
+	backgroundColor: "white"
+	showBack: false
+	height: 852
+	contentInset: bottom: 80
+	buttons:
+		back:
+			width: 64, height: 64, x: Align.left(4), y: Align.top(48), backgroundColor: null
+			handler: () -> flow.showPrevious()
+		# topBack:
+		# 	width: 64, height: 64, x: Align.left(4), y: Align.top(48), backgroundColor: null
+		# 	handler: () -> flow.showPrevious()
+
+# Добавляем изображение спортивной ленты в скролл
+sports20Feed = new Layer
+	width: 393.0
+	height: 1499.0
+	image: "images/Sports Feed.png"
+	parent: sportsView.content
+
+# Добавляем нижнюю панель
+sports20Bottom20View = new Layer
+	width: 393.0
+	height: 92.0
+	image: "images/Sports Bottom View.png"
+	parent: sportsView
+	y: Align.bottom
+
+# Добавляем кнопку возврата на главный экран
+homeButtonSports = new Button
+	parent: sports20Bottom20View
+	width: 48
+	height: 48
+	x: Align.left(12)
+	y: Align.bottom(-28)
+	backgroundColor: null
+	handler: () -> 
+		flow.showPrevious()
+
+# Добавляем обработчик скролла для спортивной ленты
+sportsView.content.onDragStart ->
+	if sportsView.content.draggable.direction is "up"
+		sports20Bottom20View.animate
+			y: sportsView.height
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
+	else
+		sports20Bottom20View.animate
+			y: Align.bottom
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
+
+# Создаем модальное окно для Ecom Explore Topic
+ecomModalExploreTopicView = new ModalView
+	parent: flow
+	width: 393
+	y: screen.height - 724
+	height: 724
+	borderRadius: 24
+	backgroundColor: "white"
+
+# Добавляем контент в модальное окно Ecom Explore Topic
+ecom20Modal20Explore20Topic = new Layer
+	width: 393.0
+	height: 724.0
+	image: "images/Ecom Modal Explore Topic.png"
+	parent: ecomModalExploreTopicView.content
+	x: 0
+	y: 0
+
+# Добавляем нижнюю панель в модальное окно
+ecomExploreTopicBottomView = new Layer
+	width: 393
+	height: 146
+	image: "images/Omnibox Modal Continue Chat.png"
+	parent: ecomModalExploreTopicView
+	y: Align.bottom
+	backgroundColor: "transparent"
+
+# Добавляем кнопку Explore Topic в нижнюю панель ecomView
+ecomExploreTopicButton = new Button
+	parent: bottomViewEcom
+	width: 48
+	height: 48
+	x: Align.left(72)
+	y: Align.bottom(-26)
+	backgroundColor: "null"
+	handler: () -> flow.open(ecomModalExploreTopicView)
