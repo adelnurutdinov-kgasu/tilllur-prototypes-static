@@ -180,8 +180,8 @@ homeButtonsData = [
 	# { image: "images/action-button/site action button homeview create text.png", width: 141.0, height: 44.0 }
 	{ image: "images/action-button/site action button homeview generate text.png", width: 160.0, height: 44.0, }
 	{ image: "images/action-button/site action button homeview summarize.png", width: 139.0, height: 44.0 }
-	{ image: "images/action-button/site action button homeview create presentation.png", width: 201.0, height: 44.0 }
-	{ image: "images/action-button/site action button homeview translate.png", width: 125.0, height: 44.0 }
+	{ image: "images/action-button/site action button homeview create presentation.png", width: 199.0, height: 44.0 }
+	{ image: "images/action-button/site action button homeview translate.png", width: 121.0, height: 44.0 }
 ]
 
 gap = 6
@@ -626,6 +626,16 @@ videoModalContent = new Layer
 	x: 0
 	y: 0
 
+# Добавляем новый контентный слой для ответа
+video20Modal20Content20Answer = new Layer
+	width: 393.0
+	height: 724.0
+	image: "images/video Modal Content Answer.png"
+	parent: siteVideoModalView.content
+	x: 0
+	y: 0
+	opacity: 0
+
 # Добавляем компонент продолжения чата в нижнюю часть модального окна видео
 videoOmniboxModalContinueChat = new Layer
 	width: 393.0
@@ -634,6 +644,19 @@ videoOmniboxModalContinueChat = new Layer
 	parent: siteVideoModalView
 	y: Align.bottom
 	backgroundColor: "transparent"
+
+# Добавляем обработчик нажатия на нижнюю панель
+videoOmniboxModalContinueChat.onTap ->
+	video20Modal20Content20Answer.animate
+		opacity: 1
+		options:
+			time: 0.3
+			curve: "ease-in-out"
+
+# Сбрасываем состояние при открытии модального окна
+siteVideoModalView.wrapper.on "change:visible", (visible) ->
+	if visible
+		video20Modal20Content20Answer.opacity = 0
 
 # Ecom ветка
 ecomView = new NavigationView
@@ -793,24 +816,24 @@ class ModalActionsPanel extends ScrollComponent
 		# Определяем параметры кнопок-изображений в зависимости от типа
 		if type == "article"
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button tldr.png", width: 77.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
 		else if type == "video"
 			buttonsData = [
-				{ image: "images/action-button/site action button video qa.png", width: 113.0, height: 44.0 }
 				{ image: "images/action-button/site action button video translate vocalize.png", width: 179.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button video quick recap.png", width: 188.0, height: 44.0 }
 				{ image: "images/action-button/site action button video recap 3 min.png", width: 136.0, height: 44.0 }
 				{ image: "images/action-button/site action button video key moments.png", width: 131.0, height: 44.0 }
 			]
 		else if type == "news"
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
 				{ image: "images/action-button/site action button news brief.png", width: 112.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news media tone.png", width: 115.0, height: 44.0 }
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
@@ -843,11 +866,11 @@ class ModalActionsPanel extends ScrollComponent
 			]
 		else if type == "twitter"
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
+				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
-				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
-				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 			]
 		else if type == "twitterExploreTopicModal"
 			buttonsData = [
@@ -878,7 +901,7 @@ class ModalActionsPanel extends ScrollComponent
 			]
 		else
 			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
@@ -978,7 +1001,7 @@ class ActionPanel extends ScrollComponent
 		if type == "article"
 			buttonsData = [
 				{ image: "images/action-button/site action button tldr.png", width: 77.0, height: 44.0 }
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
@@ -986,7 +1009,7 @@ class ActionPanel extends ScrollComponent
 		else if type == "video"
 			buttonsData = [
 				{ image: "images/action-button/site action button video translate vocalize.png", width: 179.0, height: 44.0 }
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button video quick recap.png", width: 188.0, height: 44.0 }
 				{ image: "images/action-button/site action button video recap 3 min.png", width: 136.0, height: 44.0 }
 				{ image: "images/action-button/site action button video key moments.png", width: 131.0, height: 44.0 }
@@ -994,7 +1017,7 @@ class ActionPanel extends ScrollComponent
 		else if type == "news"
 			buttonsData = [
 				{ image: "images/action-button/site action button news brief.png", width: 112.0, height: 44.0 }
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news media tone.png", width: 115.0, height: 44.0 }
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
@@ -1002,7 +1025,7 @@ class ActionPanel extends ScrollComponent
 		else if type == "twitter"
 			buttonsData = [
 				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
@@ -1010,7 +1033,7 @@ class ActionPanel extends ScrollComponent
 		else
 			buttonsData = [
 				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
-				{ image: "images/action-button/site action button explore topic.png", width: 128.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
