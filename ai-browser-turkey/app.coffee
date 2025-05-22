@@ -2,9 +2,176 @@
 { FlowView, NavigationView, ModalView } = require "NavigationComponent"
 { Button } = require "Buttons"
 
-# Устанавливаем глобальную анимационную кривую
-# Framer.Defaults.Animation =
-    # curve: Spring(damping: 1, velocity: 3)
+# Класс для централизованного управления кнопками действий
+class ActionButtonManager
+	@getButtonConfig: (type, index) ->
+		configs = {
+			article: [
+				{ action: "tldr", modal: "ModalView_Article_Content" }
+				{ action: "exploreTopic", modal: "ModalView_Article_ExploreTopic" }
+				{ action: "productDeepDive", modal: null }
+				{ action: "prosCons", modal: null }
+				{ action: "factSmartPicks", modal: null }
+			]
+			video: [
+				{ action: "translateVocalize", modal: null }
+				{ action: "exploreTopic", modal: "ModalView_Video_Content" }
+				{ action: "quickRecap", modal: null }
+				{ action: "recap3Min", modal: null }
+				{ action: "keyMoments", modal: null }
+			]
+			news: [
+				{ action: "newsBrief", modal: "ModalView_News_Brief" }
+				{ action: "exploreTopic", modal: "ModalView_News_ExploreTopic" }
+				{ action: "buzzMeter", modal: null }
+				{ action: "mediaTone", modal: null }
+				{ action: "trends", modal: null }
+			]
+			twitter: [
+				{ action: "smartReply", modal: "ModalView_Twitter_SmartReply" }
+				{ action: "exploreTopic", modal: "ModalView_Twitter_ExploreTopic" }
+				{ action: "thread", modal: null }
+				{ action: "advocate", modal: null }
+				{ action: "facts", modal: null }
+			]
+			item: [ # Для NavigationView_EcomItem -> ActionPanel
+				{ action: "bestPrice", modal: "ModalView_EcomItem_Content" } # Открывается через кастомный обработчик itemActions
+				{ action: "exploreTopic", modal: "ModalView_EcomItem_ExploreTopic" } # Открывается через кастомный обработчик itemActions
+				{ action: "factSmartPicks", modal: null }
+				{ action: "productDeepDive", modal: null }
+				{ action: "prosCons", modal: null }
+			]
+			trip: [
+				{ action: "plan", modal: "ModalView_Trip_Plan" }
+				{ action: "exploreTopic", modal: "ModalView_Trip_ExploreTopic" }
+				{ action: "thingsToDo", modal: null }
+				{ action: "weather", modal: null }
+				{ action: "weekendPlan", modal: null }
+			]
+		}
+		# Для кнопок в itemActions, у которых есть кастомные обработчики, установим modal: null,
+		# чтобы ActionButtonManager.createButton не назначал свой onClick.
+		# Кастомные обработчики для itemActions уже есть ниже.
+		if type == "item"
+			if index == 0 or index == 1 # Best Price и Explore Topic для item
+				return { action: configs[type][index].action, modal: null } # Переопределяем на null
+		
+		return configs[type]?[index] or null
+
+	@getModalButtonConfig: (type, index) ->
+		configs = {
+			articleTLDR: [
+				{ action: "productDeepDive", modal: null }
+				{ action: "prosCons", modal: null }
+				{ action: "factSmartPicks", modal: null }
+			]
+			exploreTopic: [
+				# Первая кнопка (tldr) обрабатывается кастомно в конце файла
+				{ action: "tldr", modal: null } # ИЗМЕНЕНО: было "ModalView_Article_Content"
+				{ action: "productDeepDive", modal: null }
+				{ action: "prosCons", modal: null }
+				{ action: "factSmartPicks", modal: null }
+			]
+			videoModal: [
+				{ action: "translateVocalize", modal: null }
+				{ action: "quickRecap", modal: null }
+				{ action: "recap3Min", modal: null }
+				{ action: "keyMoments", modal: null }
+			]
+			newsBriefModal: [
+				{ action: "mediaTone", modal: null }
+				{ action: "buzzMeter", modal: null }
+				{ action: "trends", modal: null }
+			]
+			newsExploreTopicModal: [
+				# Первая кнопка (newsBrief) обрабатывается кастомно
+				{ action: "newsBrief", modal: null } # ИЗМЕНЕНО: было "ModalView_News_Brief"
+				{ action: "mediaTone", modal: null }
+				{ action: "buzzMeter", modal: null }
+				{ action: "trends", modal: null }
+			]
+			twitterExploreTopicModal: [
+				# Первая кнопка (smartReply) обрабатывается кастомно
+				{ action: "smartReply", modal: null } # ИЗМЕНЕНО: было "ModalView_Twitter_SmartReply"
+				{ action: "thread", modal: null }
+				{ action: "advocate", modal: null }
+				{ action: "facts", modal: null }
+			]
+			twitterSuggestTweetModal: [
+				{ action: "thread", modal: null }
+				{ action: "advocate", modal: null }
+				{ action: "facts", modal: null }
+			]
+			ecomItemExploreTopicModal: [
+				# Первая кнопка (bestPrice) обрабатывается кастомно
+				{ action: "bestPrice", modal: null } # ИЗМЕНЕНО: было "ModalView_EcomItem_Content"
+				{ action: "factSmartPicks", modal: null }
+				{ action: "productDeepDive", modal: null }
+				{ action: "prosCons", modal: null }
+			]
+			ecomItemContentModal: [
+				{ action: "factSmartPicks", modal: null }
+				{ action: "productDeepDive", modal: null }
+				{ action: "prosCons", modal: null }
+			]
+			tripExploreTopicModal: [
+				# Первая кнопка (plan) обрабатывается кастомно
+				{ action: "plan", modal: null } # ИЗМЕНЕНО: было "ModalView_Trip_Plan"
+				{ action: "thingsToDo", modal: null }
+				{ action: "weather", modal: null }
+				{ action: "weekendPlan", modal: null }
+			]
+			tripPlanModal: [
+				{ action: "thingsToDo", modal: null }
+				{ action: "weather", modal: null }
+				{ action: "weekendPlan", modal: null }
+			]
+		}
+		console.log("getModalButtonConfig: type = #{type}, index = #{index}, config = #{JSON.stringify(configs[type]?[index])}")
+		return configs[type]?[index] or null
+
+	@createButton: (options = {}) -> # Для ActionPanel (не модальных)
+		{ parent, x, y, width, height, image, type, index } = options
+		
+		btn = new Layer
+			parent: parent
+			width: width
+			height: height
+			image: image
+			x: x
+			y: y
+			backgroundColor: "transparent"
+
+		config = @getButtonConfig(type, index)
+		# Если config.modal здесь null (из-за переопределения выше для itemActions),
+		# то onClick не будет назначен здесь, и кастомный обработчик будет единственным.
+		if config?.modal 
+			btn.onClick -> flow.open(eval(config.modal))
+
+		return btn
+
+	@createModalButton: (options = {}) -> # Для ModalActionsPanel
+		{ parent, x, y, width, height, image, type, index } = options
+		# console.log("createModalButton: type = #{type}, index = #{index}")
+		
+		btn = new Layer
+			parent: parent
+			width: width
+			height: height
+			image: image
+			x: x
+			y: y
+			backgroundColor: "transparent"
+
+		config = @getModalButtonConfig(type, index)
+		# Если config.modal здесь null (из-за изменений выше),
+		# то onClick не будет назначен здесь, и кастомный обработчик в конце файла будет единственным.
+		if config?.modal
+			btn.onClick -> flow.open(eval(config.modal))
+		
+		return btn
+
+# ... (остальной код до itemActions без изменений) ...
 
 screen = new Layer { width: 393, height: 852 }
 preview = new Preview { view: screen }
@@ -12,116 +179,117 @@ preview = new Preview { view: screen }
 flow = new FlowView { parent: screen }
 
 # Главный экран
-homeView = new NavigationView
+NavigationView_Home = new NavigationView
 	parent: flow
 	backgroundColor: "#E3F2FD" # Светло-голубой
 	showBack: false
 	preventBackSwipe: true
 	height: 852
 	buttons:
-		suggest:
+		openSuggest:
 			x: Align.center, y: Align.bottom(-20), width: 393, height: 124, backgroundColor: "#f0f0f0"
-			handler: () -> flow.open(suggestModalView)
-		# ecom:
-			# x: Align.center, y: Align.top(300), width: 200, height: 64, backgroundColor: "#f0f0f0"
-			# handler: () -> flow.open(ecomView)
+			handler: () -> flow.open(ModalView_Suggest)
 
 # Добавляем слои для Home View
-blur = new Layer
+homeBackgroundBlurLayer = new Layer
 	width: 393.0
 	height: 852.0
 	image: "images/Blur.jpg"
-	parent: homeView
+	parent: NavigationView_Home
 
-home20Content = new Layer
+homeContentLayer = new Layer
 	width: 393.0
 	height: 852.0
 	image: "images/Home Content.png"
-	parent: homeView
+	parent: NavigationView_Home
 
 # Добавляем дополнительные слои для Home View
-home20view20sites = new ScrollComponent
+homeSitesScroll = new ScrollComponent
 	width: 393.0
 	height: 100.0
 	y: 356
 	scrollVertical: false
 	scrollHorizontal: true
-	parent: homeView
+	parent: NavigationView_Home
 
-sitesContent = new Layer
+homeSitesContentLayer = new Layer
 	width: 786.0
 	height: 100.0
 	image: "images/home view sites.png"
-	parent: home20view20sites.content
+	parent: homeSitesScroll.content
 
-# Добавляем кнопку ecom внутрь home20view20sites
-ecomButton = new Button
-	parent: home20view20sites.content
+# Добавляем кнопки внутрь homeSitesScroll
+homeSitesEcomButton = new Button
+	parent: homeSitesScroll.content
 	x: Align.left(98)
 	y: Align.center
 	width: 82
 	height: 100
 	backgroundColor: null
-	handler: () -> flow.open(ecomView)
+	handler: () -> flow.open(NavigationView_Ecom)
 
-# Добавляем кнопку video внутрь home20view20sites
-videoButton = new Button
-	parent: home20view20sites.content
+homeSitesVideoButton = new Button
+	parent: homeSitesScroll.content
 	x: 345
 	y: Align.center
 	width: 82
 	height: 100
 	backgroundColor: null
-	handler: () -> flow.open(siteVideoView)
+	handler: () -> flow.open(NavigationView_Video)
 
-# Добавляем кнопку article внутрь home20view20sites
-articleButton = new Button
-	parent: home20view20sites.content
+homeSitesArticleButton = new Button
+	parent: homeSitesScroll.content
 	x: 426
 	y: Align.center
 	width: 82
 	height: 100
 	backgroundColor: null
-	handler: () -> flow.open(siteArticleView)
+	handler: () -> flow.open(NavigationView_Article)
 
-# Добавляем кнопку news внутрь home20view20sites
-newsButton = new Button
-	parent: home20view20sites.content
+homeSitesNewsButton = new Button
+	parent: homeSitesScroll.content
 	x: 181
 	y: Align.center
 	width: 82
 	height: 100
 	backgroundColor: null
-	handler: () -> flow.open(siteNewsView)
+	handler: () -> flow.open(NavigationView_News)
 
-# Добавляем кнопку twitter внутрь home20view20sites
-twitterButton = new Button
-	parent: home20view20sites.content
+homeSitesTwitterButton = new Button
+	parent: homeSitesScroll.content
 	x: 267
 	y: Align.center
 	width: 82
 	height: 100
 	backgroundColor: null
-	handler: () -> flow.open(twitterView)
+	handler: () -> flow.open(NavigationView_Twitter)
 
+homeSitesTripButton = new Button
+	parent: homeSitesScroll.content
+	x: 507
+	y: Align.center
+	width: 82
+	height: 100
+	backgroundColor: null
+	handler: () -> flow.open(NavigationView_Trip)
 
-home20view20widgets = new ScrollComponent
+homeWidgetsScroll = new ScrollComponent
 	width: 393.0
 	height: 202.0
 	y: 124
 	scrollVertical: false
 	scrollHorizontal: true
-	parent: homeView
+	parent: NavigationView_Home
 
-widgetsContent = new Layer
+homeWidgetsContentLayer = new Layer
 	width: 768.5
 	height: 202.0
 	image: "images/home view widgets.png"
-	parent: home20view20widgets.content
+	parent: homeWidgetsScroll.content
 
 # Добавляем видео слой внутрь виджетов
-weatherVideoMask = new Layer
-	parent: home20view20widgets.content
+weatherVideoMaskLayer = new Layer
+	parent: homeWidgetsScroll.content
 	x: 16, y: 12
 	width: 133
 	height: 178
@@ -129,8 +297,8 @@ weatherVideoMask = new Layer
 	clip: true
 	backgroundColor: "white"
 
-weatherVideoLayer = new VideoLayer
-	parent: weatherVideoMask
+weatherVideoPlayerLayer = new VideoLayer
+	parent: weatherVideoMaskLayer
 	width: 133
 	height: 178
 	scale: 1.01
@@ -141,28 +309,28 @@ weatherVideoLayer = new VideoLayer
 	muted: true
 	blendMode: "multiply"
 
-weatherVideoLayer.player.loop = true
-weatherVideoLayer.player.play()
+weatherVideoPlayerLayer.player.loop = true
+weatherVideoPlayerLayer.player.play()
 
-# Добавляем кнопку sports внутрь home20view20sites
-sportsButton = new Button
-	parent: homeView
+# Добавляем кнопку sports
+homeSportsButton = new Button
+	parent: NavigationView_Home
 	x: Align.left(140)
 	y: Align.top(60)
 	width: 100
 	height: 56
 	backgroundColor: null
-	handler: () -> flow.open(sportsView)
+	handler: () -> flow.open(NavigationView_Sports)
 
 # Добавляем кнопку haber7 внутрь виджетов
-haber7Button = new Button
-	parent: home20view20widgets.content
+homeWidgetsHaber7Button = new Button
+	parent: homeWidgetsScroll.content
 	x: 157
 	y: 12
 	width: 216
 	height: 178
 	backgroundColor: null
-	handler: () -> flow.open(siteNewsView)
+	handler: () -> flow.open(NavigationView_News)
 
 # Добавляем панель с действиями на Home View
 homeActionsPanel = new ScrollComponent
@@ -171,14 +339,13 @@ homeActionsPanel = new ScrollComponent
 	y: Align.bottom(-124-20-8)
 	scrollVertical: false
 	scrollHorizontal: true
-	parent: homeView
+	parent: NavigationView_Home
 	contentInset: left: 20, right: 20
 
 # Определяем параметры кнопок-изображений
-homeButtonsData = [
+homeActionButtonsData = [
 	{ image: "images/action-button/site action button homeview create image.png", width: 154.0, height: 44.0 }
-	# { image: "images/action-button/site action button homeview create text.png", width: 141.0, height: 44.0 }
-	{ image: "images/action-button/site action button homeview generate text.png", width: 160.0, height: 44.0, }
+	{ image: "images/action-button/site action button homeview generate text.png", width: 160.0, height: 44.0 }
 	{ image: "images/action-button/site action button homeview summarize.png", width: 139.0, height: 44.0 }
 	{ image: "images/action-button/site action button homeview create presentation.png", width: 199.0, height: 44.0 }
 	{ image: "images/action-button/site action button homeview translate.png", width: 121.0, height: 44.0 }
@@ -189,27 +356,29 @@ padding = 0
 currentX = padding
 totalButtonsWidth = 0
 
-for btnData in homeButtonsData
-	btn = new Layer
+for btnData, index in homeActionButtonsData
+	btn = ActionButtonManager.createButton
 		parent: homeActionsPanel.content
 		width: btnData.width
 		height: btnData.height
 		image: btnData.image
 		x: currentX
 		y: Align.top(8)
+		type: "home"
+		index: index
 
 	currentX += btnData.width + gap
 	totalButtonsWidth += btnData.width
 
 # Устанавливаем общую ширину контента скролла
-totalContentWidth = totalButtonsWidth + (homeButtonsData.length - 1) * gap + 2 * padding
+totalContentWidth = totalButtonsWidth + (homeActionButtonsData.length - 1) * gap + 2 * padding
 homeActionsPanel.content.width = totalContentWidth
 homeActionsPanel.content.height = 54
 
 homeActionsPanel.bringToFront()
 
 # Suggest модальный экран
-suggestModalView = new ModalView
+ModalView_Suggest = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 692 # Начальная высота
@@ -219,47 +388,47 @@ suggestModalView = new ModalView
 	backgroundColor: null
 
 # Добавляем слои для Suggest Modal
-partSuggestBg = new Layer
+suggestModalBackgroundLayer = new Layer
 	width: 393.0
 	height: 692.0
 	image: "images/Part Suggest Bg.png"
-	parent: suggestModalView.content
+	parent: ModalView_Suggest.content
 	x: 0
 	y: 0
 
-partSuggestText = new Layer
+suggestModalTextLayer = new Layer
 	width: 393.0
 	height: 692.0
 	image: "images/Part Suggest Text.png"
-	parent: suggestModalView.content
+	parent: ModalView_Suggest.content
 	x: 0
 	y: 0
 
-partSuggestOmnibox = new Layer
+suggestModalOmniboxLayer = new Layer
 	width: 393.0
 	height: 692.5
 	image: "images/Part Suggest Omnibox.png"
-	parent: suggestModalView.content
+	parent: ModalView_Suggest.content
 	x: 0
 	y: 0
 
-partSuggestOmniboxFilled = new Layer
+suggestModalOmniboxFilledLayer = new Layer
 	width: 393.0
 	height: 692.5
 	image: "images/Part Suggest Omnibox Filled.png"
-	parent: suggestModalView.content
+	parent: ModalView_Suggest.content
 	x: 0
 	y: 0
 	opacity: 0
 
 # Добавляем states для слоев
-partSuggestBg.states =
+suggestModalBackgroundLayer.states =
 	initial:
 		y: 0
 	filled:
 		y: 210
 
-partSuggestText.states =
+suggestModalTextLayer.states =
 	initial:
 		y: 0
 		opacity: 1
@@ -267,7 +436,7 @@ partSuggestText.states =
 		y: 210
 		opacity: 0
 
-partSuggestOmniboxFilled.states =
+suggestModalOmniboxFilledLayer.states =
 	initial:
 		opacity: 0
 	filled:
@@ -275,7 +444,7 @@ partSuggestOmniboxFilled.states =
 
 # Создаем контейнер для кнопки
 suggestButtonContainer = new Layer
-	parent: suggestModalView
+	parent: ModalView_Suggest
 	x: Align.center
 	y: 292
 	width: 361
@@ -290,19 +459,19 @@ suggestButtonContainer.states =
 		opacity: 0
 
 # Создаем кнопку внутри контейнера
-suggestButton = new Button
+suggestModalSubmitButton = new Layer
 	parent: suggestButtonContainer
 	width: 361
 	height: 116
+	x: 0
+	y: 0
 	backgroundColor: "transparent"
-	text: "Suggest"
-	textColor: "white"
 
 # Добавляем состояние для отслеживания кликов
-suggestButton.isActive = false
+suggestModalSubmitButton.isActive = false
 
 # Добавляем states для модального окна
-suggestModalView.states =
+ModalView_Suggest.states =
 	initial:
 		y: screen.height - 692
 	filled:
@@ -310,37 +479,37 @@ suggestModalView.states =
 
 # Устанавливаем начальное состояние
 suggestButtonContainer.states.switch("initial")
-suggestModalView.states.switch("initial")
-partSuggestBg.states.switch("initial")
-partSuggestText.states.switch("initial")
-partSuggestOmniboxFilled.states.switch("initial")
+ModalView_Suggest.states.switch("initial")
+suggestModalBackgroundLayer.states.switch("initial")
+suggestModalTextLayer.states.switch("initial")
+suggestModalOmniboxFilledLayer.states.switch("initial")
 
 # Обработчик нажатия на кнопку
-suggestButton.onClick ->
-	if not suggestButton.isActive
+suggestModalSubmitButton.onClick ->
+	if not suggestModalSubmitButton.isActive
 		# Первое нажатие - меняем состояние на заполненное
 		suggestButtonContainer.states.switch("filled")
-		suggestModalView.states.switch("filled")
-		partSuggestBg.states.switch("filled")
-		partSuggestText.states.switch("filled")
-		partSuggestOmniboxFilled.states.switch("filled")
-		suggestButton.isActive = true
+		ModalView_Suggest.states.switch("filled")
+		suggestModalBackgroundLayer.states.switch("filled")
+		suggestModalTextLayer.states.switch("filled")
+		suggestModalOmniboxFilledLayer.states.switch("filled")
+		suggestModalSubmitButton.isActive = true
 	else
 		# Второе нажатие - закрываем модальное окно с анимацией и переходим к результатам
 		flow.showPrevious()
 		Utils.delay 0.3, ->
-			flow.open(searchResultsView)
+			flow.open(NavigationView_SearchResults)
 
 # Сбрасываем состояние при открытии и закрытии модального окна
-suggestModalView.wrapper.on "change:visible", (visible) ->
+ModalView_Suggest.wrapper.on "change:visible", (visible) ->
 	suggestButtonContainer.states.switch("initial")
-	suggestModalView.states.switch("initial")
-	partSuggestBg.states.switch("initial")
-	partSuggestText.states.switch("initial")
-	partSuggestOmniboxFilled.states.switch("initial")
-	suggestButton.isActive = false
+	ModalView_Suggest.states.switch("initial")
+	suggestModalBackgroundLayer.states.switch("initial")
+	suggestModalTextLayer.states.switch("initial")
+	suggestModalOmniboxFilledLayer.states.switch("initial")
+	suggestModalSubmitButton.isActive = false
 
-searchResultsView = new NavigationView
+NavigationView_SearchResults = new NavigationView
 	parent: flow
 	backgroundColor: "#F9F9F9"
 	showBack: false
@@ -351,17 +520,17 @@ searchResultsView = new NavigationView
 			handler: () -> flow.showPrevious()
 		siteArticle:
 			x: Align.center, y: 980, width: 393, height: 244, backgroundColor: null
-			handler: () -> flow.open(siteArticleView)
+			handler: () -> flow.open(NavigationView_Article)
 		siteVideo:
 			x: Align.center, y: 1244, width: 393, height: 224, backgroundColor: null
-			handler: () -> flow.open(siteVideoView)
+			handler: () -> flow.open(NavigationView_Video)
 
 # Добавляем контент результатов поиска
 searchResultsContent = new Layer
 	width: 393.0
 	height: 1799.0
 	image: "images/Search Results Content.png"
-	parent: searchResultsView.content
+	parent: NavigationView_SearchResults.content
 	x: 0
 	y: -1
 
@@ -370,7 +539,7 @@ bottomViewSearchResults = new Layer
 	width: 393
 	height: 86
 	image: "images/Bottom View for Search Results.png"
-	parent: searchResultsView
+	parent: NavigationView_SearchResults
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -453,7 +622,7 @@ bottomViewActions = new Layer
 	backgroundColor: "transparent"
 	visible: false
 
-siteArticleView = new NavigationView
+NavigationView_Article = new NavigationView
 	parent: flow
 	backgroundColor: "#FFF3E0" # Светло-оранжевый
 	showBack: false
@@ -465,7 +634,7 @@ siteArticleView = new NavigationView
 			handler: () -> flow.showPrevious()
 
 # Добавляем изображение статьи в скролл
-siteArticle.parent = siteArticleView.content
+siteArticle.parent = NavigationView_Article.content
 siteArticle.x = 0
 siteArticle.y = 40 # Отступ от верхней панели
 
@@ -474,7 +643,7 @@ bottomViewArticle = new Layer
 	width: 393
 	height: 139
 	image: "images/Bottom View Actions.png"
-	parent: siteArticleView
+	parent: NavigationView_Article
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -499,10 +668,10 @@ siteArticleUrl = new Layer
 	y: Align.bottom
 
 # Настраиваем скролл для скрытия/показа нижней панели
-siteArticleView.content.onDragStart ->
-	if siteArticleView.content.draggable.direction is "up"
+NavigationView_Article.content.onDragStart ->
+	if NavigationView_Article.content.draggable.direction is "up"
 		bottomViewArticle.animate
-			y: siteArticleView.height
+			y: NavigationView_Article.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -513,7 +682,7 @@ siteArticleView.content.onDragStart ->
 				time: 0.1
 				curve: Spring(damping: 1)
 
-siteArticleModalView = new ModalView
+ModalView_Article_Content = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -526,7 +695,7 @@ article20Modal20Content = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Article Modal Content.png"
-	parent: siteArticleModalView.content
+	parent: ModalView_Article_Content.content
 	x: 0
 	y: 0
 
@@ -535,11 +704,11 @@ omniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: siteArticleModalView
+	parent: ModalView_Article_Content
 	y: Align.bottom
 	backgroundColor: "transparent"
 
-siteVideoView = new NavigationView
+NavigationView_Video = new NavigationView
 	parent: flow
 	backgroundColor: "white" # Светло-бирюзовый
 	showBack: false
@@ -551,13 +720,13 @@ siteVideoView = new NavigationView
 			handler: () -> flow.showPrevious()
 
 # Добавляем изображение видео в скролл
-siteVideo.parent = siteVideoView.content
+siteVideo.parent = NavigationView_Video.content
 siteVideo.x = 0
 siteVideo.y = 40 # Отступ от верхней панели
 
 # Создаем контейнер для видео с маской
 youtubeVideoMask = new Layer
-	parent: siteVideoView.content
+	parent: NavigationView_Video.content
 	x: 0
 	y: 85
 	width: 393
@@ -584,7 +753,7 @@ bottomViewVideo = new Layer
 	width: 393
 	height: 139
 	image: "images/Bottom View Actions.png"
-	parent: siteVideoView
+	parent: NavigationView_Video
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -609,7 +778,7 @@ siteVideoUrl = new Layer
 	y: Align.bottom
 
 # --- Video Modal с тремя состояниями ---
-siteVideoModalView = new ModalView
+ModalView_Video_Content = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -622,7 +791,7 @@ videoModalContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/video Modal Content.png"
-	parent: siteVideoModalView.content
+	parent: ModalView_Video_Content.content
 	x: 0
 	y: 0
 
@@ -631,7 +800,7 @@ video20Modal20Content20Answer = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/video Modal Content Answer.png"
-	parent: siteVideoModalView.content
+	parent: ModalView_Video_Content.content
 	x: 0
 	y: 0
 	opacity: 0
@@ -641,7 +810,7 @@ videoOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: siteVideoModalView
+	parent: ModalView_Video_Content
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -654,12 +823,12 @@ videoOmniboxModalContinueChat.onTap ->
 			curve: "ease-in-out"
 
 # Сбрасываем состояние при открытии модального окна
-siteVideoModalView.wrapper.on "change:visible", (visible) ->
+ModalView_Video_Content.wrapper.on "change:visible", (visible) ->
 	if visible
 		video20Modal20Content20Answer.opacity = 0
 
 # Ecom ветка
-ecomView = new NavigationView
+NavigationView_Ecom = new NavigationView
 	parent: flow
 	backgroundColor: "white" # Светло-индиго
 	showBack: false
@@ -671,18 +840,18 @@ ecomView = new NavigationView
 			handler: () -> flow.showPrevious()
 		item:
 			x: Align.center, y: 100, width: 393, height: 80, backgroundColor: null
-			handler: () -> flow.open(ecomItemView)
+			handler: () -> flow.open(NavigationView_EcomItem)
 
 # Добавляем фиксированную панель для Ecom
 ecom20site20bottom20bar = new Layer
-	parent: ecomView
+	parent: NavigationView_Ecom
 	width: 393.0
 	height: 54.0
 	image: "images/ecom site bottom bar.png"
 	y: Align.bottom(-85) # Размещаем над нижней панелью
 
 # Добавляем изображение ecom в скролл
-siteEcom.parent = ecomView.content
+siteEcom.parent = NavigationView_Ecom.content
 siteEcom.x = 0
 siteEcom.y = 40 # Отступ от верхней панели
 
@@ -691,7 +860,7 @@ bottomViewEcom = new Layer
 	width: 393
 	height: 86
 	image: "images/Bottom View.png"
-	parent: ecomView
+	parent: NavigationView_Ecom
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -714,7 +883,7 @@ siteEcomUrl = new Layer
 	x: Align.center
 	y: Align.bottom
 
-ecomItemView = new NavigationView
+NavigationView_EcomItem = new NavigationView
 	parent: flow
 	backgroundColor: "white" # Светло-фиолетовый
 	showBack: false
@@ -727,14 +896,14 @@ ecomItemView = new NavigationView
 
 # Добавляем фиксированную панель для Ecom Item
 ecom20item20site20bottom20bar = new Layer
-	parent: ecomItemView
+	parent: NavigationView_EcomItem
 	width: 393.0
 	height: 69.0
 	image: "images/ecom item site bottom bar.png"
 	y: Align.bottom(-139) # Размещаем над нижней панелью
 
 # Добавляем изображение товара в скролл
-siteEcomItem.parent = ecomItemView.content
+siteEcomItem.parent = NavigationView_EcomItem.content
 siteEcomItem.x = 0
 siteEcomItem.y = 40 # Отступ от верхней панели
 
@@ -743,7 +912,7 @@ bottomViewEcomItem = new Layer
 	width: 393
 	height: 139
 	image: "images/Bottom View Actions.png"
-	parent: ecomItemView
+	parent: NavigationView_EcomItem
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -772,20 +941,20 @@ ecomItemUrl = new Layer
 		textAlign: "center"
 		color: "#666666"
 
-ecomItemModalView = new ModalView
+ModalView_EcomItem_Content = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
 	height: 724
 	borderRadius: 24
-	backgroundColor: "modal" # Светло-бирюзовый
+	backgroundColor: "white"
 
 # Добавляем контент в модальное окно товара
 ecomItemModalContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Ecom Item Modal Content.png"
-	parent: ecomItemModalView.content
+	parent: ModalView_EcomItem_Content.content
 	x: 0
 	y: 0
 
@@ -794,7 +963,7 @@ itemOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: ecomItemModalView
+	parent: ModalView_EcomItem_Content
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -802,6 +971,8 @@ itemOmniboxModalContinueChat = new Layer
 class ModalActionsPanel extends ScrollComponent
 	constructor: (options = {}) ->
 		{ parent, y, type } = options
+		# console.log("ModalActionsPanel: type = #{type}")
+		@options = options
 		super
 			parent: parent
 			width: 393
@@ -813,9 +984,16 @@ class ModalActionsPanel extends ScrollComponent
 			contentInset: left: 16, right: 16
 			backgroundColor: "transparent"
 
-		# Определяем параметры кнопок-изображений в зависимости от типа
+		buttonsData = @getButtonsData(type)
+		@createButtons(buttonsData)
+
+		@.on Events.SwipeRightStart, (event, layer) ->
+			if @scrollX > 0 then event.stopPropagation()
+
+	getButtonsData: (type) ->
+		# console.log("ModalActionsPanel.getButtonsData: type = #{type}")
 		if type == "article"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button tldr.png", width: 77.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
@@ -823,7 +1001,7 @@ class ModalActionsPanel extends ScrollComponent
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
 		else if type == "video"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button video translate vocalize.png", width: 179.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button video quick recap.png", width: 188.0, height: 44.0 }
@@ -831,133 +1009,134 @@ class ModalActionsPanel extends ScrollComponent
 				{ image: "images/action-button/site action button video key moments.png", width: 131.0, height: 44.0 }
 			]
 		else if type == "news"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button news brief.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news media tone.png", width: 115.0, height: 44.0 }
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
 			]
+		else if type == "twitter"
+			return [
+				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
+				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
+				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
+				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
+			]
 		else if type == "articleModal"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
 		else if type == "videoModal"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button video translate vocalize.png", width: 179.0, height: 44.0 }
 				{ image: "images/action-button/site action button video quick recap.png", width: 188.0, height: 44.0 }
 				{ image: "images/action-button/site action button video recap 3 min.png", width: 136.0, height: 44.0 }
 				{ image: "images/action-button/site action button video key moments.png", width: 131.0, height: 44.0 }
 			]
 		else if type == "newsBriefModal"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button news media tone.png", width: 115.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
 			]
 		else if type == "newsExploreTopicModal"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button news brief.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news media tone.png", width: 115.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
 			]
-		else if type == "twitter"
-			buttonsData = [
-				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
-				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
-				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
-				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
-				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
-			]
 		else if type == "twitterExploreTopicModal"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
 			]
 		else if type == "twitterSuggestTweetModal"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
 			]
+		else if type == "ecomItemExploreTopicModal"
+			return [
+				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
+				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
+				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
+				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
+			]
+		else if type == "ecomItemContentModal"
+			return [
+				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
+				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
+				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
+			]
+		else if type == "tripExploreTopicModal"
+			return [
+				{ image: "images/action-button/site action button trip plan.png", width: 108.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip things to do.png", width: 123.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip weather.png", width: 170.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip weekedn plan.png", width: 133.0, height: 44.0 }
+			]
+		else if type == "tripPlanModal"
+			return [
+				{ image: "images/action-button/site action button trip things to do.png", width: 123.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip weather.png", width: 170.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip weekedn plan.png", width: 133.0, height: 44.0 }
+			]
 		else if type == "exploreTopic"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button tldr.png", width: 77.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
-		else if type == "ecomItemExploreTopicModal"
-			buttonsData = [
-				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
-				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
+		else if type == "articleTLDR"
+			return [
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
+				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
 		else
-			buttonsData = [
-				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
-				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
-				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
-				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
-				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
-			]
+			console.warn("Unknown button type: #{type}")
+			return []
 
+	createButtons: (buttonsData) ->
 		gap = 6
 		padding = 0
 		currentX = padding
 		totalButtonsWidth = 0
 
 		for btnData, index in buttonsData
-			btn = new Layer
+			btn = ActionButtonManager.createModalButton
 				parent: @content
 				width: btnData.width
 				height: btnData.height
 				image: btnData.image
 				x: currentX
 				y: Align.top(8)
-
-			# Добавляем обработчик для кнопки TLDR в Explore Topic
-			if type == "exploreTopic" and index == 0
-				btn.onClick ->
-					flow.showPrevious()
-					flow.open(siteArticleModalView)
-			# Добавляем обработчик для кнопки Explore Topic в Twitter Explore Topic Modal
-			else if type == "twitterExploreTopicModal" and index == 0
-				btn.onClick ->
-					flow.showPrevious()
-					flow.open(twitterSmartReplyModalView)
-			# Добавляем обработчик для кнопки Explore Topic в News Explore Topic Modal
-			else if type == "newsExploreTopicModal" and index == 0
-				btn.onClick ->
-					flow.showPrevious()
-					flow.open(newsBriefModalView)
+				type: @options.type
+				index: index
 
 			currentX += btnData.width + gap
 			totalButtonsWidth += btnData.width
 
-		# Устанавливаем общую ширину контента скролла
 		totalContentWidth = totalButtonsWidth + (buttonsData.length - 1) * gap + 2 * padding
 		@content.width = totalContentWidth
 		@content.height = 54
 
-		# Логика: если scrollX > 0, свайп вправо не вызывает back
-		@.on Events.SwipeRightStart, (event, layer) ->
-			if @scrollX > 0 then event.stopPropagation()
-
 # Добавляем панель действий в модальное окно статьи
-articleModalActions = new ModalActionsPanel
+ModalActions_Article_TLDR = new ModalActionsPanel
 	parent: omniboxModalContinueChat
-	y: 0
-	type: "articleModal"
+	type: "articleTLDR"
 
 # Создаём невидимый контейнер для шаблонной панели Explore Topic
-exploreTopicModalActionsHiddenContainer = new Layer
+ModalActions_Article_ExploreTopic_HiddenContainer = new Layer
 	parent: screen
 	width: 393
 	height: 54
@@ -966,8 +1145,8 @@ exploreTopicModalActionsHiddenContainer = new Layer
 	backgroundColor: "transparent"
 
 # Добавляем панель действий в модальное окно Explore Topic (шаблон, скрыт)
-exploreTopicModalActions = new ModalActionsPanel
-	parent: exploreTopicModalActionsHiddenContainer
+exploreTopicModalActions_template = new ModalActionsPanel
+	parent: ModalActions_Article_ExploreTopic_HiddenContainer
 	y: 0
 	type: "exploreTopic"
 
@@ -977,15 +1156,16 @@ videoModalActions = new ModalActionsPanel
 	y: 0
 	type: "videoModal"
 
-# Добавляем панель действий в модальное окно товара
 itemModalActions = new ModalActionsPanel
 	parent: itemOmniboxModalContinueChat
 	y: 0
+	type: "ecomItemContentModal"
 
 # --- ActionPanel компонент с горизонтальным скроллом и кнопками-изображениями ---
 class ActionPanel extends ScrollComponent
 	constructor: (options = {}) ->
 		{ parent, y, type } = options
+		@options = options
 		super
 			parent: parent
 			width: 393
@@ -997,9 +1177,16 @@ class ActionPanel extends ScrollComponent
 			contentInset: left: 16, right: 16
 			backgroundColor: "transparent"
 
-		# Определяем параметры кнопок-изображений в зависимости от типа
+		buttonsData = @getButtonsData(type)
+		@createButtons(buttonsData)
+
+		@.on Events.SwipeRightStart, (event, layer) ->
+			if @scrollX > 0 then event.stopPropagation()
+
+	getButtonsData: (type) -> # Для ActionPanel (не модальных)
+		# console.log("ActionPanel.getButtonsData: type = #{type}")
 		if type == "article"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button tldr.png", width: 77.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
@@ -1007,7 +1194,7 @@ class ActionPanel extends ScrollComponent
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 			]
 		else if type == "video"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button video translate vocalize.png", width: 179.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button video quick recap.png", width: 188.0, height: 44.0 }
@@ -1015,7 +1202,7 @@ class ActionPanel extends ScrollComponent
 				{ image: "images/action-button/site action button video key moments.png", width: 131.0, height: 44.0 }
 			]
 		else if type == "news"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button news brief.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button news buzz meter.png", width: 112.0, height: 44.0 }
@@ -1023,90 +1210,89 @@ class ActionPanel extends ScrollComponent
 				{ image: "images/action-button/site action button news trends.png", width: 145.0, height: 44.0 }
 			]
 		else if type == "twitter"
-			buttonsData = [
+			return [
 				{ image: "images/action-button/site action button twitter smart reply.png", width: 122.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter tread.png", width: 131.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter advocate.png", width: 150.0, height: 44.0 }
 				{ image: "images/action-button/site action button twitter facts.png", width: 112.0, height: 44.0 }
 			]
-		else
-			buttonsData = [
+		else if type == "trip"
+			return [
+				{ image: "images/action-button/site action button trip plan.png", width: 108.0, height: 44.0 }
+				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip things to do.png", width: 123.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip weather.png", width: 170.0, height: 44.0 }
+				{ image: "images/action-button/site action button trip weekedn plan.png", width: 133.0, height: 44.0 }
+			]
+		else if type == "item" # For NavigationView_EcomItem ActionPanel
+			return [
 				{ image: "images/action-button/site action button best price.png", width: 187.0, height: 44.0 }
 				{ image: "images/action-button/site action button explore topic.png", width: 112.0, height: 44.0 }
 				{ image: "images/action-button/site action button fact smark picks.png", width: 116.0, height: 44.0 }
 				{ image: "images/action-button/site action button product deep dive.png", width: 165.0, height: 44.0 }
 				{ image: "images/action-button/site action button pros cons.png", width: 120.0, height: 44.0 }
 			]
+		else
+			console.warn("ActionPanel.getButtonsData: Unknown type #{type}")
+			return []
 
+
+	createButtons: (buttonsData) ->
 		gap = 6
 		padding = 0
 		currentX = padding
 		totalButtonsWidth = 0
 
 		for btnData, index in buttonsData
-			btn = new Layer
+			btn = ActionButtonManager.createButton # Использует createButton
 				parent: @content
 				width: btnData.width
 				height: btnData.height
 				image: btnData.image
 				x: currentX
 				y: Align.top(8)
-
-			if type == "article" and index == 1
-				btn.onClick -> flow.open(articleExploreTopicModalView)			
-			else if type == "article" and index == 0
-				btn.onClick -> flow.open(siteArticleModalView)
-			# Добавляем обработчик для кнопки VideoQA в Video View
-			else if type == "video" and index == 1
-				btn.onClick -> flow.open(siteVideoModalView)
-			# Добавляем обработчики для кнопок Twitter
-			if type == "twitter"
-				if index == 1
-					btn.onClick -> flow.open(twitterExploreTopicModalView)
-				else if index == 0
-					btn.onClick -> flow.open(twitterSmartReplyModalView)
+				type: @options.type
+				index: index
 
 			currentX += btnData.width + gap
 			totalButtonsWidth += btnData.width
 
-		# Устанавливаем общую ширину контента скролла
 		totalContentWidth = totalButtonsWidth + (buttonsData.length - 1) * gap + 2 * padding
 		@content.width = totalContentWidth
 		@content.height = 54
 
-		# Логика: если scrollX > 0, свайп вправо не вызывает back
-		@.on Events.SwipeRightStart, (event, layer) ->
-			if @scrollX > 0 then event.stopPropagation()
-
 # --- Добавляем ActionPanel внутрь больших панелей ---
-# Для статьи
 articleActions = new ActionPanel
 	parent: bottomViewArticle
 	type: "article"
 
-# Для видео
 videoActions = new ActionPanel
 	parent: bottomViewVideo
 	type: "video"
 
-# Для товара
 itemActions = new ActionPanel
 	parent: bottomViewEcomItem
 	type: "item"
 
-# Добавляем обработчики для кнопок в Ecom Item View
+# Добавляем обработчики для кнопок в Ecom Item View (itemActions)
+# Теперь ActionButtonManager.createButton для этих кнопок не будет назначать свой onClick,
+# так как в ActionButtonManager.getButtonConfig мы установили modal: null для них.
+# Эти обработчики будут единственными.
 for btn, index in itemActions.content.children
-	if index == 1 # Explore Topic
-		btn.onClick -> flow.open(ecomItemExploreTopicModalView)
-	else if index == 0 # Best Price
-		btn.onClick -> flow.open(ecomItemModalView)
+	if index == 0 # Best Price (первая кнопка типа "item")
+		btn.onClick -> flow.open(ModalView_EcomItem_Content)
+	else if index == 1 # Explore Topic (вторая кнопка типа "item")
+		btn.onClick -> flow.open(ModalView_EcomItem_ExploreTopic)
+
+
+# ... (остальной код без изменений до конца) ...
 
 # Добавляем обработчик скролла для видео
-siteVideoView.content.onDragStart ->
-	if siteVideoView.content.draggable.direction is "up"
+NavigationView_Video.content.onDragStart ->
+	if NavigationView_Video.content.draggable.direction is "up"
 		bottomViewVideo.animate
-			y: siteVideoView.height
+			y: NavigationView_Video.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1118,15 +1304,15 @@ siteVideoView.content.onDragStart ->
 				curve: Spring(damping: 1)
 
 # Добавляем обработчик скролла для ecom
-ecomView.content.onDragStart ->
-	if ecomView.content.draggable.direction is "up"
+NavigationView_Ecom.content.onDragStart ->
+	if NavigationView_Ecom.content.draggable.direction is "up"
 		bottomViewEcom.animate
-			y: ecomView.height
+			y: NavigationView_Ecom.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
 		ecom20site20bottom20bar.animate
-			y: ecomView.height - 54
+			y: NavigationView_Ecom.height - 54
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1143,15 +1329,15 @@ ecomView.content.onDragStart ->
 				curve: Spring(damping: 1)
 
 # Добавляем обработчик скролла для ecom item
-ecomItemView.content.onDragStart ->
-	if ecomItemView.content.draggable.direction is "up"
+NavigationView_EcomItem.content.onDragStart ->
+	if NavigationView_EcomItem.content.draggable.direction is "up"
 		bottomViewEcomItem.animate
-			y: ecomItemView.height
+			y: NavigationView_EcomItem.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
 		ecom20item20site20bottom20bar.animate
-			y: ecomItemView.height - 69
+			y: NavigationView_EcomItem.height - 69
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1168,7 +1354,7 @@ ecomItemView.content.onDragStart ->
 				curve: Spring(damping: 1)
 
 # Создаем новое модальное окно для Explore Topic
-articleExploreTopicModalView = new ModalView
+ModalView_Article_ExploreTopic = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1181,7 +1367,7 @@ article20Modal20Content20Explore20Topic = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Article Modal Content Explore Topic.png"
-	parent: articleExploreTopicModalView.content
+	parent: ModalView_Article_ExploreTopic.content
 	x: 0
 	y: 0
 
@@ -1190,7 +1376,7 @@ exploreTopicOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: articleExploreTopicModalView
+	parent: ModalView_Article_ExploreTopic
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -1200,19 +1386,8 @@ exploreTopicModalActions = new ModalActionsPanel
 	y: 0
 	type: "exploreTopic"
 
-# Добавляем панель действий в модальное окно видео
-videoModalActions = new ModalActionsPanel
-	parent: videoOmniboxModalContinueChat
-	y: 0
-	type: "videoModal"
-
-# Добавляем панель действий в модальное окно товара
-itemModalActions = new ModalActionsPanel
-	parent: itemOmniboxModalContinueChat
-	y: 0
-
 # News ветка
-siteNewsView = new NavigationView
+NavigationView_News = new NavigationView
 	parent: flow
 	backgroundColor: "white"
 	showBack: false
@@ -1224,7 +1399,7 @@ siteNewsView = new NavigationView
 			handler: () -> flow.showPrevious()
 
 # Добавляем изображение новостей в скролл
-siteNews.parent = siteNewsView.content
+siteNews.parent = NavigationView_News.content
 siteNews.x = 0
 siteNews.y = 40 # Отступ от верхней панели
 
@@ -1233,7 +1408,7 @@ bottomViewNews = new Layer
 	width: 393
 	height: 139
 	image: "images/Bottom View Actions.png"
-	parent: siteNewsView
+	parent: NavigationView_News
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -1259,20 +1434,13 @@ siteNewsUrl = new Layer
 # Добавляем панель действий для новостей
 newsActions = new ActionPanel
 	parent: bottomViewNews
-	type: "news" # Меняем тип на "news"
-
-# Добавляем обработчики для кнопок в News View
-for btn, index in newsActions.content.children
-	if index == 1
-		btn.onClick -> flow.open(newsExploreTopicModalView)
-	else if index == 0
-		btn.onClick -> flow.open(newsBriefModalView)
+	type: "news"
 
 # Добавляем обработчик скролла для новостей
-siteNewsView.content.onDragStart ->
-	if siteNewsView.content.draggable.direction is "up"
+NavigationView_News.content.onDragStart ->
+	if NavigationView_News.content.draggable.direction is "up"
 		bottomViewNews.animate
-			y: siteNewsView.height
+			y: NavigationView_News.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1284,7 +1452,7 @@ siteNewsView.content.onDragStart ->
 				curve: Spring(damping: 1)
 
 # Создаем новое модальное окно для News Brief
-newsBriefModalView = new ModalView
+ModalView_News_Brief = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1297,7 +1465,7 @@ newsModalContentBrief = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/News Modal Content Brief.png"
-	parent: newsBriefModalView.content
+	parent: ModalView_News_Brief.content
 	x: 0
 	y: 0
 
@@ -1306,7 +1474,7 @@ newsBriefOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: newsBriefModalView
+	parent: ModalView_News_Brief
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -1317,7 +1485,7 @@ newsBriefModalActions = new ModalActionsPanel
 	type: "newsBriefModal"
 
 # Создаем новое модальное окно для News Explore Topic
-newsExploreTopicModalView = new ModalView
+ModalView_News_ExploreTopic = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1326,11 +1494,11 @@ newsExploreTopicModalView = new ModalView
 	backgroundColor: "white"
 
 # Добавляем контент в модальное окно News Explore Topic
-newsModalExploreTopic = new Layer
+newsModalExploreTopicContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/News Modal Explore Topic.png"
-	parent: newsExploreTopicModalView.content
+	parent: ModalView_News_ExploreTopic.content
 	x: 0
 	y: 0
 
@@ -1339,7 +1507,7 @@ newsExploreTopicOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: newsExploreTopicModalView
+	parent: ModalView_News_ExploreTopic
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -1350,7 +1518,7 @@ newsExploreTopicModalActions = new ModalActionsPanel
 	type: "newsExploreTopicModal"
 
 # Twitter ветка
-twitterView = new NavigationView
+NavigationView_Twitter = new NavigationView
 	parent: flow
 	backgroundColor: "white"
 	showBack: false
@@ -1362,7 +1530,7 @@ twitterView = new NavigationView
 			handler: () -> flow.showPrevious()
 
 # Добавляем изображение Twitter в скролл
-twitterContent.parent = twitterView.content
+twitterContent.parent = NavigationView_Twitter.content
 twitterContent.x = 0
 twitterContent.y = 40 # Отступ от верхней панели
 
@@ -1371,7 +1539,7 @@ bottomViewTwitter = new Layer
 	width: 393
 	height: 139
 	image: "images/Bottom View Actions.png"
-	parent: twitterView
+	parent: NavigationView_Twitter
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -1400,10 +1568,10 @@ twitterActions = new ActionPanel
 	type: "twitter"
 
 # Добавляем обработчик скролла для Twitter
-twitterView.content.onDragStart ->
-	if twitterView.content.draggable.direction is "up"
+NavigationView_Twitter.content.onDragStart ->
+	if NavigationView_Twitter.content.draggable.direction is "up"
 		bottomViewTwitter.animate
-			y: twitterView.height
+			y: NavigationView_Twitter.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1415,7 +1583,7 @@ twitterView.content.onDragStart ->
 				curve: Spring(damping: 1)
 
 # Создаем модальное окно для Twitter Explore Topic
-twitterExploreTopicModalView = new ModalView
+ModalView_Twitter_ExploreTopic = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1424,11 +1592,11 @@ twitterExploreTopicModalView = new ModalView
 	backgroundColor: "white"
 
 # Добавляем контент в модальное окно Twitter Explore Topic
-twitterModalExploreTopic = new Layer
+twitterModalExploreTopicContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Twitter Modal Explore Topic.png"
-	parent: twitterExploreTopicModalView.content
+	parent: ModalView_Twitter_ExploreTopic.content
 	x: 0
 	y: 0
 
@@ -1437,7 +1605,7 @@ twitterExploreTopicOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: twitterExploreTopicModalView
+	parent: ModalView_Twitter_ExploreTopic
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -1448,7 +1616,7 @@ twitterExploreTopicModalActions = new ModalActionsPanel
 	type: "twitterExploreTopicModal"
 
 # Создаем модальное окно для Twitter Smart Reply
-twitterSmartReplyModalView = new ModalView
+ModalView_Twitter_SmartReply = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1457,11 +1625,11 @@ twitterSmartReplyModalView = new ModalView
 	backgroundColor: "white"
 
 # Добавляем контент в модальное окно Twitter Smart Reply
-twitterModalSmartReply = new Layer
+twitterModalSmartReplyContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Twitter Modal Smart Reply.png"
-	parent: twitterSmartReplyModalView.content
+	parent: ModalView_Twitter_SmartReply.content
 	x: 0
 	y: 0
 
@@ -1470,7 +1638,7 @@ twitterSmartReplyOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: twitterSmartReplyModalView
+	parent: ModalView_Twitter_SmartReply
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -1481,7 +1649,7 @@ twitterSmartReplyModalActions = new ModalActionsPanel
 	type: "twitterSuggestTweetModal"
 
 # Создаем модальное окно для Ecom Item Explore Topic
-ecomItemExploreTopicModalView = new ModalView
+ModalView_EcomItem_ExploreTopic = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1490,11 +1658,11 @@ ecomItemExploreTopicModalView = new ModalView
 	backgroundColor: "white"
 
 # Добавляем контент в модальное окно Ecom Item Explore Topic
-ecomItemModalExploreTopic = new Layer
+ecomItemModalExploreTopicContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Article Modal Content Explore Topic.png"
-	parent: ecomItemExploreTopicModalView.content
+	parent: ModalView_EcomItem_ExploreTopic.content
 	x: 0
 	y: 0
 
@@ -1503,25 +1671,18 @@ ecomItemExploreTopicOmniboxModalContinueChat = new Layer
 	width: 393.0
 	height: 146.0
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: ecomItemExploreTopicModalView
+	parent: ModalView_EcomItem_ExploreTopic
 	y: Align.bottom
 	backgroundColor: "transparent"
 
 # Добавляем панель действий в модальное окно Ecom Item Explore Topic
-ecomItemExploreTopicModalActions = new ModalActionsPanel
+ModalActions_EcomItem_ExploreTopic = new ModalActionsPanel
 	parent: ecomItemExploreTopicOmniboxModalContinueChat
-	y: 0
 	type: "ecomItemExploreTopicModal"
 
-# Добавляем обработчик для первой кнопки (Best Price) в модальном окне Explore Topic для Ecom Item
-for btn, index in ecomItemExploreTopicModalActions.content.children
-	if index == 0 # Best Price
-		btn.onClick ->
-			flow.showPrevious()
-			flow.open(ecomItemModalView)
 
 # Sports ветка
-sportsView = new NavigationView
+NavigationView_Sports = new NavigationView
 	parent: flow
 	backgroundColor: "white"
 	showBack: false
@@ -1531,23 +1692,20 @@ sportsView = new NavigationView
 		back:
 			width: 64, height: 64, x: Align.left(4), y: Align.top(48), backgroundColor: null
 			handler: () -> flow.showPrevious()
-		# topBack:
-		# 	width: 64, height: 64, x: Align.left(4), y: Align.top(48), backgroundColor: null
-		# 	handler: () -> flow.showPrevious()
 
 # Добавляем изображение спортивной ленты в скролл
 sports20Feed = new Layer
 	width: 393.0
 	height: 1499.0
 	image: "images/Sports Feed.png"
-	parent: sportsView.content
+	parent: NavigationView_Sports.content
 
 # Добавляем нижнюю панель
 sports20Bottom20View = new Layer
 	width: 393.0
 	height: 92.0
 	image: "images/Sports Bottom View.png"
-	parent: sportsView
+	parent: NavigationView_Sports
 	y: Align.bottom
 
 # Добавляем кнопку возврата на главный экран
@@ -1562,10 +1720,10 @@ homeButtonSports = new Button
 		flow.showPrevious()
 
 # Добавляем обработчик скролла для спортивной ленты
-sportsView.content.onDragStart ->
-	if sportsView.content.draggable.direction is "up"
+NavigationView_Sports.content.onDragStart ->
+	if NavigationView_Sports.content.draggable.direction is "up"
 		sports20Bottom20View.animate
-			y: sportsView.height
+			y: NavigationView_Sports.height
 			options:
 				time: 0.1
 				curve: Spring(damping: 1)
@@ -1577,7 +1735,7 @@ sportsView.content.onDragStart ->
 				curve: Spring(damping: 1)
 
 # Создаем модальное окно для Ecom Explore Topic
-ecomModalExploreTopicView = new ModalView
+ModalView_Ecom_ExploreTopic = new ModalView
 	parent: flow
 	width: 393
 	y: screen.height - 724
@@ -1586,11 +1744,11 @@ ecomModalExploreTopicView = new ModalView
 	backgroundColor: "white"
 
 # Добавляем контент в модальное окно Ecom Explore Topic
-ecom20Modal20Explore20Topic = new Layer
+ecom20Modal20Explore20TopicContent = new Layer
 	width: 393.0
 	height: 724.0
 	image: "images/Ecom Modal Explore Topic.png"
-	parent: ecomModalExploreTopicView.content
+	parent: ModalView_Ecom_ExploreTopic.content
 	x: 0
 	y: 0
 
@@ -1599,7 +1757,7 @@ ecomExploreTopicBottomView = new Layer
 	width: 393
 	height: 146
 	image: "images/Omnibox Modal Continue Chat.png"
-	parent: ecomModalExploreTopicView
+	parent: ModalView_Ecom_ExploreTopic
 	y: Align.bottom
 	backgroundColor: "transparent"
 
@@ -1611,4 +1769,172 @@ ecomExploreTopicButton = new Button
 	x: Align.left(72)
 	y: Align.bottom(-26)
 	backgroundColor: "null"
-	handler: () -> flow.open(ecomModalExploreTopicView)
+	handler: () -> flow.open(ModalView_Ecom_ExploreTopic)
+
+# Trip ветка
+NavigationView_Trip = new NavigationView
+	parent: flow
+	backgroundColor: "white"
+	showBack: false
+	height: 852
+	contentInset: bottom: 139
+	buttons:
+		back:
+			width: 64, height: 64, x: Align.left(4), y: Align.top(48), backgroundColor: null
+			handler: () -> flow.showPrevious()
+
+# Добавляем изображение Trip в скролл
+site20Trip = new Layer
+	width: 393.0
+	height: 1651.0
+	image: "images/Site Trip.png"
+	parent: NavigationView_Trip.content
+	x: 0
+	y: 40 # Отступ от верхней панели
+
+# Добавляем нижнюю панель
+bottomViewTrip = new Layer
+	width: 393
+	height: 139
+	image: "images/Bottom View Actions.png"
+	parent: NavigationView_Trip
+	y: Align.bottom
+
+# Добавляем кнопку возврата на главный экран
+homeButtonTrip = new Button
+	parent: bottomViewTrip
+	width: 48
+	height: 48
+	x: Align.left(12)
+	y: Align.bottom(-28)
+	backgroundColor: null
+	handler: () -> 
+		flow.showPrevious()
+
+# Добавляем тайл с URL для Trip
+site20url20title20trip = new Layer
+	width: 393.0
+	height: 85.0
+	image: "images/site url title trip.png"
+	parent: bottomViewTrip
+	x: Align.center
+	y: Align.bottom
+
+# Добавляем панель действий для Trip
+tripActions = new ActionPanel
+	parent: bottomViewTrip
+	type: "trip"
+
+# Добавляем обработчик скролла для Trip
+NavigationView_Trip.content.onDragStart ->
+	if NavigationView_Trip.content.draggable.direction is "up"
+		bottomViewTrip.animate
+			y: NavigationView_Trip.height
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
+	else
+		bottomViewTrip.animate
+			y: Align.bottom
+			options:
+				time: 0.1
+				curve: Spring(damping: 1)
+
+# Создаем модальное окно для Trip Explore Topic
+ModalView_Trip_ExploreTopic = new ModalView
+	parent: flow
+	width: 393
+	y: screen.height - 724
+	height: 724
+	borderRadius: 24
+	backgroundColor: "white"
+
+# Добавляем контент в модальное окно Trip Explore Topic
+trip20Modal20Explore20TopicContent = new Layer
+	width: 393.0
+	height: 724.0
+	image: "images/Trip Modal Explore Topic.png"
+	parent: ModalView_Trip_ExploreTopic.content
+	x: 0
+	y: 0
+
+# Добавляем компонент продолжения чата в нижнюю часть модального окна Trip Explore Topic
+tripExploreTopicOmniboxModalContinueChat = new Layer
+	width: 393.0
+	height: 146.0
+	image: "images/Omnibox Modal Continue Chat.png"
+	parent: ModalView_Trip_ExploreTopic
+	y: Align.bottom
+	backgroundColor: "transparent"
+
+# Добавляем панель действий в модальное окно Trip Explore Topic
+tripExploreTopicModalActions = new ModalActionsPanel
+	parent: tripExploreTopicOmniboxModalContinueChat
+	y: 0
+	type: "tripExploreTopicModal"
+
+# Создаем модальное окно для Trip Plan
+ModalView_Trip_Plan = new ModalView
+	parent: flow
+	width: 393
+	y: screen.height - 724
+	height: 724
+	borderRadius: 24
+	backgroundColor: "white"
+
+# Добавляем контент в модальное окно Trip Plan
+trip20Modal20PlanContent = new Layer
+	width: 393.0
+	height: 1280.0
+	image: "images/Trip Modal Plan.png"
+	parent: ModalView_Trip_Plan.content
+	x: 0
+	y: 0
+
+# Добавляем компонент продолжения чата в нижнюю часть модального окна Trip Plan
+tripPlanOmniboxModalContinueChat = new Layer
+	width: 393.0
+	height: 146.0
+	image: "images/Omnibox Modal Continue Chat.png"
+	parent: ModalView_Trip_Plan
+	y: Align.bottom
+	backgroundColor: "transparent"
+
+# Добавляем панель действий в модальное окно Trip Plan
+tripPlanModalActions = new ModalActionsPanel
+	parent: tripPlanOmniboxModalContinueChat
+	y: 0
+	type: "tripPlanModal"
+
+# Кастомные обработчики onClick для кнопок в ModalActionsPanel.
+# Теперь они будут единственными, кто назначает onClick для этих конкретных кнопок,
+# так как в ActionButtonManager.getModalButtonConfig для них modal: null.
+for btn, index in ModalActions_EcomItem_ExploreTopic.content.children
+	if index == 0 # Best Price
+		btn.onClick ->
+			flow.showPrevious()
+			flow.open(ModalView_EcomItem_Content)
+
+for btn, index in tripExploreTopicModalActions.content.children
+	if index == 0 # Plan button
+		btn.onClick ->
+			flow.showPrevious()
+			flow.open(ModalView_Trip_Plan)
+
+for btn, index in newsExploreTopicModalActions.content.children
+	if index == 0 # News Brief button
+		btn.onClick ->
+			flow.showPrevious()
+			flow.open(ModalView_News_Brief)
+
+for btn, index in twitterExploreTopicModalActions.content.children
+	if index == 0 # Smart Reply button
+		btn.onClick ->
+			flow.showPrevious()
+			flow.open(ModalView_Twitter_SmartReply)
+
+for btn, index in exploreTopicModalActions.content.children
+	if index == 0 # TLDR button
+		btn.onClick ->
+			flow.showPrevious()
+			flow.open(ModalView_Article_Content)
