@@ -35,7 +35,7 @@ screen = new Layer
 
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: screen }
+preview = new Preview { view: screen , timeValue: "20:22" }
 
 
 

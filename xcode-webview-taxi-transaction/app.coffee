@@ -54,4 +54,4 @@ bottomView.x = Align.center()
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: base, borderRadius: 16 }
+new Preview { view: base, borderRadius: 16 , timeValue: "20:19" }

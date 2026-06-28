@@ -15,7 +15,7 @@ screen = new Layer
 	backgroundColor: "FFF"
 
 
-preview = new Preview { view: screen }
+preview = new Preview { view: screen , timeValue: "20:23" }
 preview.children[1].backgroundColor = "FFF"
 
 

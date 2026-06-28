@@ -285,4 +285,4 @@ clearButton.on Events.Tap, ->
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: screen, borderRadius: 16, statusBar: "light" }
+new Preview { view: screen, borderRadius: 16, statusBar: "light" , timeValue: "20:19" }

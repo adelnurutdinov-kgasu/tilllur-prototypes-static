@@ -5,7 +5,7 @@ screen = new Layer
 	backgroundColor: "white"
 
 { Preview } = require "PreviewComponent"
-new Preview { view: screen }
+new Preview { view: screen , timeValue: "20:22" }
 
 Framer.Defaults.Animation =
 	curve: Spring(damping: 1)

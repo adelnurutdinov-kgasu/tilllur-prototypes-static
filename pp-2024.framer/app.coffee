@@ -57,7 +57,7 @@ Stack = require "Stack"
 # ShoppingData = require "ShoppingData"
 
 screen = new Layer { width: 393, height: 852 }
-new Preview { view: screen }
+new Preview { view: screen, timeValue: "20:23" }
 
 # screen.center()
 # if Utils.isMobile() then screen.scale = Screen.width / 393

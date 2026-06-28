@@ -11,7 +11,7 @@ createCard = (cardHeight = 375) ->
 { Preview } = require "PreviewComponent"
 
 screen = new Layer { width: 375, height: 812, backgroundColor: "111" }
-new Preview { view: screen, statusBar: "light", homeBar: "light" }
+new Preview { view: screen, statusBar: "light", homeBar: "light" , timeValue: "20:21" }
 
 # Scroll
 

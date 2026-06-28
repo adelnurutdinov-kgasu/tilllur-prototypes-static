@@ -683,4 +683,4 @@ postNavigationPage = () ->
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: appView, borderRadius: 16 }
+new Preview { view: appView, borderRadius: 16 , timeValue: "20:19" }

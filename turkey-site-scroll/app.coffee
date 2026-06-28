@@ -3,7 +3,7 @@
 { Button } = require "Buttons"
 
 screen = new Layer { width: 375, height: 812 }
-preview = new Preview { view: screen }
+preview = new Preview { view: screen, timeValue: "20:25" }
 
 flow = new FlowView { parent: screen }
 homeView = new NavigationView { parent: flow, backgroundColor: "white", showBack: false }
@@ -48,8 +48,9 @@ summarizeButton = new Layer
 summarizeButton.on Events.Tap, ->
     # Открываем модальную шторку при нажатии на кнопку с выбранным 3-им табом
     flow.open(summarySheetView)
-    # Переключаемся на третий таб
-    switchToTab(2)
+    # Вызываем переключение таба немного позже, чтобы убедиться, что шторка полностью открыта
+    Utils.delay 0.1, ->
+        switchToTab(2)
 
 # Создаем состояния для кнопки
 summarizeButton.states =
@@ -172,6 +173,34 @@ summarySheetView = new ModalView
     borderRadius: 24
     backgroundColor: "white"
 
+# Делаем шторку перетаскиваемой
+summarySheetView.draggable = true
+summarySheetView.draggable.enabled = true
+summarySheetView.draggable.vertical = true
+summarySheetView.draggable.horizontal = false
+summarySheetView.draggable.constraints = 
+    y: 128  # Минимальное положение сверху
+    height: screen.height - 128  # Максимальная высота
+
+# Обработчики для закрытия шторки при свайпе вниз
+summarySheetView.on Events.DragMove, (event) ->
+    # Если перетаскиваем вниз более чем на 100px, то скрываем при отпускании
+    if event.offset.y > 100
+        summarySheetView.closingOffset = event.offset.y
+
+summarySheetView.on Events.DragEnd, (event) ->
+    # Если был достаточный свайп вниз - закрываем
+    if summarySheetView.closingOffset? && summarySheetView.closingOffset > 100
+        delete summarySheetView.closingOffset
+        flow.showPrevious()
+    else
+        # Иначе возвращаем на место
+        summarySheetView.animate
+            y: 128
+            options:
+                curve: Spring(damping: 0.8)
+                time: 0.3
+
 # Создаем контейнер для табов с горизонтальным скроллом
 tabsScrollContainer = new ScrollComponent
     parent: summarySheetView.content
@@ -199,23 +228,6 @@ activeTabIndex = 0
 # Массив с контентом для каждого таба
 tabContents = []
 
-# Функция для переключения табов
-switchToTab = (index) ->
-    # Меняем состояние табов
-    tab1.image = if index == 0 then "images/tab1_selected.png" else "images/tab1.png"
-    tab2.image = if index == 1 then "images/tab2_selected.png" else "images/tab2.png"
-    tab3.image = if index == 2 then "images/tab3_selected.png" else "images/tab3.png"
-    
-    # Скрываем все контенты табов
-    for content in tabContents
-        content.opacity = 0
-    
-    # Показываем только активный
-    tabContents[index].opacity = 1
-    
-    # Запоминаем активный таб
-    activeTabIndex = index
-
 # Создаем табы
 tab1 = new Layer
     parent: tabsContainer
@@ -240,6 +252,49 @@ tab3 = new Layer
     image: "images/tab3.png"
     x: tab2.maxX + 8  # Добавляем отступ 8px между табами
     y: 0
+
+# Настраиваем интерактивность табов
+tab1.ignoreEvents = false
+tab2.ignoreEvents = false
+tab3.ignoreEvents = false
+
+# Переводим все табы на передний план для правильной работы тапов
+tab1.bringToFront()
+tab2.bringToFront()
+tab3.bringToFront()
+
+# Функция для переключения табов
+switchToTab = (index) ->
+    # Меняем состояние табов
+    tab1.image = if index == 0 then "images/tab1_selected.png" else "images/tab1.png"
+    tab2.image = if index == 1 then "images/tab2_selected.png" else "images/tab2.png"
+    tab3.image = if index == 2 then "images/tab3_selected.png" else "images/tab3.png"
+    
+    # Скрываем все контенты табов
+    for content in tabContents
+        content.opacity = 0
+    
+    # Показываем только активный
+    if tabContents[index]
+        tabContents[index].opacity = 1
+    
+    # Запоминаем активный таб
+    activeTabIndex = index
+    
+    # Выносим табы на передний план после переключения
+    tab1.bringToFront()
+    tab2.bringToFront()
+    tab3.bringToFront()
+
+# Изменяем свойства ModalView, чтобы шторка не блокировала события табов
+summarySheetView.on "change:visible", (visible) ->
+    if visible
+        Utils.delay 0.1, ->
+            # После открытия шторки, переводим табы на передний план
+            tab1.bringToFront()
+            tab2.bringToFront()
+            tab3.bringToFront()
+            tabsScrollContainer.bringToFront()
 
 # Добавляем обработчики нажатия на табы
 tab1.on Events.Tap, -> switchToTab(0)
@@ -297,6 +352,10 @@ tab2Content = new Layer
     width: 375
     height: 618  # Высота картинки
     image: "images/tabContent2.png"
+    backgroundColor: "white"
+    y: 16
+    originY: 0
+    imagePosition: "top"
     opacity: 0
 
 tabContents.push(tab2Content)
@@ -308,6 +367,9 @@ tab3Content = new Layer
     height: 618  # Высота картинки
     image: "images/tabContent3.png"
     backgroundColor: "white"
+    y: 16
+    originY: 0
+    imagePosition: "top"
     opacity: 0
 
 tabContents.push(tab3Content)
@@ -334,8 +396,9 @@ sheetButton = new Layer
 sheetButton.on Events.Tap, ->
     # Открываем модальную шторку при нажатии на кнопку с выбранным 1-ым табом
     flow.open(summarySheetView)
-    # Переключаемся на первый таб
-    switchToTab(0)
+    # Вызываем переключение таба немного позже, чтобы убедиться, что шторка полностью открыта
+    Utils.delay 0.1, ->
+        switchToTab(0)
 
 # Создаем состояния для нижней панели
 bottomPanel.states =

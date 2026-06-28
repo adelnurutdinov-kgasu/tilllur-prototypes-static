@@ -5,7 +5,7 @@
 
 
 screen = new Layer { width: 375, height: 812 }
-preview = new Preview { view: screen }
+preview = new Preview { view: screen , timeValue: "20:23" }
 
 
 # preview = new Preview { opacity: 0, showDevice: false }

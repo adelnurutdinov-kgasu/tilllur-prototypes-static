@@ -174,7 +174,7 @@ class ActionButtonManager
 # ... (остальной код до itemActions без изменений) ...
 
 screen = new Layer { width: 393, height: 852 }
-preview = new Preview { view: screen }
+preview = new Preview { view: screen, timeValue: "20:25" }
 
 flow = new FlowView { parent: screen }
 

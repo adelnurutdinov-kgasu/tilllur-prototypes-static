@@ -89,7 +89,7 @@ bottomSection.stateSwitch("base")
 
 
 # new Preview { view: figmaView }
-new Preview { view: figmaView }
+new Preview { view: figmaView , timeValue: "20:19" }
 
 # Names
 

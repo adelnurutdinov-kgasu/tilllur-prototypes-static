@@ -9,7 +9,7 @@ screen = new Layer
 	image: "images/screen.png"
 
 
-preview = new Preview { view: screen }
+preview = new Preview { view: screen , timeValue: "20:23" }
 
 
 videoURL = "images/preview1.mp4"

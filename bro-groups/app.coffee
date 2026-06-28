@@ -4,7 +4,7 @@ screen = new Layer
 	width: 375, height: 812
 	backgroundColor: "333"
 
-preview = new Preview { view: screen, statusBar: "light", homeBar: "light" }
+preview = new Preview { view: screen, statusBar: "light", homeBar: "light" , timeValue: "20:22" }
 
 Framer.Defaults.Animation =
 	curve: Spring(damping: 1), time: 0.5

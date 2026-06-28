@@ -435,7 +435,7 @@ teaser.on "change:y", ->
 
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: figmaView, borderRadius: 16 }
+preview = new Preview { view: figmaView, borderRadius: 16 , timeValue: "20:19" }
 
 
 # print preview

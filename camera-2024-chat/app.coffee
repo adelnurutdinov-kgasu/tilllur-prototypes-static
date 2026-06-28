@@ -4,7 +4,7 @@
 { Button } = require "Buttons"
 
 screen = new Layer { width: 375, height: 812 }
-preview = new Preview { view: screen }
+preview = new Preview { view: screen, timeValue: "20:24" }
 
 flow = new FlowView { parent: screen }
 
@@ -508,6 +508,3 @@ siteView_Modal_Bottom = new Layer
 
 
 # flow.open(siteView)
-
-{ LogView } = require "LogView"
-new LogView { node: flow }

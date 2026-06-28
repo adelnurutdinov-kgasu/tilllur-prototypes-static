@@ -1048,5 +1048,5 @@ verticals.on "change:opacity", ->
 
 
 { Preview } = require "PreviewComponent"
-preview = new Preview { view: figmaView, borderRadius: 8, statusBar_theme: "light", forceAndroidBar: true }
+preview = new Preview { view: figmaView, borderRadius: 8, statusBar_theme: "light", forceAndroidBar: true , timeValue: "20:20" }
 # preview.printTree(0)

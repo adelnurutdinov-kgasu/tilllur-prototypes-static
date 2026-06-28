@@ -11,7 +11,7 @@ screen = new FlowComponent
 	backgroundColor: "FFF"
 
 
-preview = new Preview { view: screen }
+preview = new Preview { view: screen , timeValue: "20:23" }
 
 
 

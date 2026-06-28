@@ -1678,7 +1678,7 @@ if debugMode
 
 
 { Preview } = require "PreviewComponent"
-new Preview { view: screen, borderRadius: 16 }
+new Preview { view: screen, borderRadius: 16 , timeValue: "20:19" }
 
 
 # framerdark.opacity = 0

@@ -13,7 +13,7 @@ Stack = require "Stack"
 
 screen = new Layer { width: 375, height: 812 }
 
-preview = new Preview { view: screen }
+preview = new Preview { view: screen , timeValue: "20:23" }
 # if !Utils.isMobile() then preview.statusBar.backgroundColor = "white"
 
 flow = new FlowView { parent: screen }
